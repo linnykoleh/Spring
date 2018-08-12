@@ -17,13 +17,13 @@ import static org.junit.Assert.assertTrue;
  */
 public class SimpleOperationsServiceTest extends SimpleServiceTestBase {
 
-    public static final Long OWNER_ID=1L;
-    public static final Long SITTER_ID=2L;
+    private static final Long OWNER_ID=1L;
+    private static final Long SITTER_ID=2L;
 
-    public static final Long REQUEST_ID=1L;
+    private static final Long REQUEST_ID=1L;
 
     @Before
-    public void setup() throws  Exception {
+    public void setup() {
        init();
         //create an owner
         User owner = userService.createUser("iuliana.cosmina@gmail.com", "test", UserType.OWNER);
@@ -55,7 +55,7 @@ public class SimpleOperationsServiceTest extends SimpleServiceTestBase {
         assertNotNull(response.getRequest());
 
         // accept response
-        operationsService.acceptResponse(REQUEST_ID,response.getId());
+        operationsService.acceptResponse(REQUEST_ID, response.getId());
         assertTrue(response.getResponseStatus() == ResponseStatus.ACCEPTED);
 
         //close request
