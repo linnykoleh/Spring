@@ -8,10 +8,8 @@ import org.slf4j.LoggerFactory;
  */
 public class SimpleBeanImpl implements SimpleBean {
 
-    private Logger logger = LoggerFactory.getLogger(SimpleBean.class);
-
     public SimpleBeanImpl() {
-        logger.info("[SimpleBeanImpl instantiation]");
+        System.out.println("[SimpleBeanImpl instantiation]");
     }
 
     @Override
