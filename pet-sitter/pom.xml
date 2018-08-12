@@ -23,6 +23,10 @@
         <module>00-ps-core</module>
         <module>01-ps-start-practice</module>
         <module>01-ps-start-solution</module>
+        <module>02-ps-container-01-practice</module>
+        <module>02-ps-container-01-solution</module>
+        <module>02-ps-container-02-practice</module>
+        <module>02-ps-container-02-solution</module>
     </modules>
 
     <build>
@@ -99,6 +103,13 @@
             <version>${spring.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <!--Jackson-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -138,6 +149,13 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${apache-commons.version}</version>
+        </dependency>
+
+        <!--log4j-->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.1</version>
         </dependency>
 
 
