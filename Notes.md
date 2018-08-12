@@ -24,9 +24,7 @@ Constructor injection can be used to define beans when the bean type is a class 
   <bean id= "simpleBean" class="com.ps.beans.SimpleBeanImpl"/>
 </beans>
 ```
-
-Then the class ComplexBeanImpl looks like this:
-
+==>
 ```java
 public class ComplexBeanImpl implements ComplexBean {
     private SimpleBean simpleBean;
@@ -38,14 +36,15 @@ public class ComplexBeanImpl implements ComplexBean {
 }
 ```
 
-The **<constructor-arg />** element defines the constructor argument and does so using a number of attributes, but ref is the most common, and it is used to tell the container that the value of this attribute is a reference to another bean.
+- The **<constructor-arg />** element defines the constructor argument and does so using a number of attributes, but ref is the most common, and it is used to tell the container that the value of this attribute is a reference to another bean.
+
 ```xml
 <bean id="..." class="...">
         <constructor-arg ref="..."/>
 </bean>
 ```
 
-Another attribute that is commonly used is **value**. This attribute is used when the value to inject is a scalar
+- Another attribute that is commonly used is **value**. This attribute is used when the value to inject is a scalar
 
 ```xml
 <beans>
@@ -65,7 +64,7 @@ public class ComplexBeanImpl {
 }
 ```
 
-And also quite useful is the **index** attribute, which should be used when the constructor has more parameters of the same type.
+- And also quite useful is the **index** attribute, which should be used when the constructor has more parameters of the same type.
 
 ```xml
 <beans>
@@ -88,7 +87,7 @@ public class ComplexBean2Impl {
  }
 ```
 
-Another way to handle constructors with more parameters of the same type is to use the **name** attribute
+- Another way to handle constructors with more parameters of the same type is to use the **name** attribute
 
 ```xml
 <beans>
@@ -102,8 +101,7 @@ Another way to handle constructors with more parameters of the same type is to u
 </beans>
 ```
 
-
-If constructor-arg seems to be a long name for a configuration element, do not worry. Spring has introduced a fix for that in version 3.1 the **c-namespace** : xmlns:c="http://www.springframework.org/schema/c"
+- If constructor-arg seems to be a long name for a configuration element, do not worry. Spring has introduced a fix for that in version 3.1 the **c-namespace** : xmlns:c="http://www.springframework.org/schema/c"
 
 ```xml
 <beans>
@@ -130,3 +128,66 @@ If you are using the name of the constructor parameter to inject the dependency,
 then the attribute definition with c: should match the pattern c:nameConstructorParameter[-ref], 
 while if you are using indexes, the attribute definition should match c:_{index}[-ref].
 ```
+
+##### Setter Injection
+      
+- When creating a bean using setter injection, the bean is first instantiated by calling the constructor and then initialized by injecting the dependencies using setters.
+- The **<property />** element defines the property to be set and the value to be set with and does so using a pair of attributes: **[name, ref]** or **[name,value]**.
+
+```xml
+<bean id="..." class="...">
+        <property name="..." ref="..." />
+</bean>
+```
+
+- The `name` attribute is mandatory, because its value is the `name of the bean property` to be set.
+- The `ref` attribute is used to tell the container that the value of this attribute is a `reference to another bean`.
+- The `value`, as you probably suspect, is used to tell the container `that the value is not a bean`, but a scalar value.
+
+```xml
+<beans>
+    <bean id="simpleBean0" class="com.ps.beans.SimpleBeanImpl"/>
+    <bean id="complexBean" class="com.ps.beans.set.ComplexBeanImpl">
+         <property name="simpleBean" ref="simpleBean"/>
+    </bean>
+</beans>
+```
+==>
+```java
+public class ComplexBeanImpl implements ComplexBean {
+    private SimpleBean simpleBean;
+    
+    public ComplexBeanImpl() {}
+    
+    public void setSimpleBean(SimpleBean simpleBean) {
+        this.simpleBean = simpleBean;
+    }
+}
+```
+
+- Spring also has a namespace for simplifying XML definition when one is using setter injection. It is called the **p-namespace**: http://www.springframework.org/schema/p
+
+```xml
+<beans>
+    <bean id="simpleBean" class="com.ps.beans.SimpleBeanImpl"/>
+    <bean id="complexBean" class="com.ps.beans.set.ComplexBeanImpl"
+           p:simpleBean-ref="simpleBean" p:complex="true"/>
+</beans>
+```
+
+- Constructor and setter injection can be used together in creating the same bean
+
+```xml
+<beans>
+    <bean id="simpleBean" class="com.ps.beans.SimpleBeanImpl"/>
+    <bean id="complexBean2" class="com.ps.beans.set.ComplexBean2Impl">
+        <constructor-arg ref="simpleBean"/>
+        <property name="complex" value="true"/>
+    </bean>
+    
+    <!-- configuration optimized using p-namespace and c-namespace -->
+    <bean id="complexBean2" class="com.ps.beans.set.ComplexBean2Impl"
+               c:simpleBean-ref="simpleBean" p:complex="true"/>
+</beans>
+```
+
