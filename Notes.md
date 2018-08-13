@@ -233,7 +233,7 @@ public class ComplexBeanImpl implements ComplexBean {
  </bean>
 ```
 
-#### util namespace for deal with collections
+#### util namespace to deal with collections
 
 ```xml
 <beans>
@@ -260,4 +260,80 @@ public class ComplexBeanImpl implements ComplexBean {
         <property name="simpleBeanMap" ref="simpleMap"/>
     </bean>
 </beans>
+```
+
+### Using Bean Factories
+
+#### factory-method
+
+- To use a singleton class to create a bean, the factory-method attribute is used, and its value will be the static method name that returns the bean instance
+
+```xml
+<beans>
+    <bean id="simpleSingleton" class="com.ps.beans.others.SimpleSingleton"
+          factory-method="getInstance" />
+</beans>
+```
+==>
+```java
+public class SimpleSingleton {
+    private static SimpleSingleton instance = new SimpleSingleton();
+    private SimpleSingleton() { }
+    
+    public static SimpleSingleton getInstance(){
+        return instance;
+    }
+}
+```
+
+#### factory-bean
+
+- To use a factory object to create a bean, the factory-bean and factory-method attributes are used.
+- first one points to the object used to create the bean, and the other specifies the method name that returns the actual result 
+
+```xml
+<beans>
+    <bean id=" simpleBeanFactory" class="com.ps.beans.others.SimpleFactoryBean"/>
+    <bean id="simpleFB" factory-bean=" simpleBeanFactory"
+          factory-method="getSimpleBean" />
+</beans>
+```
+==> 
+```java
+public class SimpleFactoryBean {
+	
+    public SimpleBean getSimpleBean() {
+        return new SimpleBeanImpl();
+    }
+}
+```
+
+#### FactoryBean
+
+By implementing this interface, the factory beans will be automatically picked up by the Spring container, 
+and the desired bean will be created by automatically calling the getObject method
+
+```xml
+<beans>
+    <bean id="smartBean" class=" com.ps.beans.others.SpringFactoryBean"/>
+</beans>
+```
+==> 
+```java
+public class SpringFactoryBean implements FactoryBean<SimpleBean> {
+    
+    private SimpleBean simpleBean = new SimpleBeanImpl();
+    
+    public SimpleBean getObject() {
+        return this.simpleBean;
+    }
+	
+    public Class<?> getObjectType() {
+		return SimpleBean.class;
+	}
+
+	public boolean isSingleton() {
+		return true;
+	}
+}    
 ```
