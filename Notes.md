@@ -36,7 +36,7 @@ public class ComplexBeanImpl implements ComplexBean {
 }
 ```
 
-- The **<constructor-arg />** element defines the constructor argument and does so using a number of attributes, but ref is the most common, and it is used to tell the container that the value of this attribute is a reference to another bean.
+- `ref` is used to tell the container that the value of this attribute is a reference to another bean.
 
 ```xml
 <bean id="..." class="...">
@@ -44,7 +44,7 @@ public class ComplexBeanImpl implements ComplexBean {
 </bean>
 ```
 
-- Another attribute that is commonly used is **value**. This attribute is used when the value to inject is a scalar
+- `value` is used when the value to inject is a primitive types or their wrappers
 
 ```xml
 <beans>
@@ -64,7 +64,7 @@ public class ComplexBeanImpl {
 }
 ```
 
-- And also quite useful is the **index** attribute, which should be used when the constructor has more parameters of the same type.
+- `index` attribute, which should be used when the constructor has more parameters of the same type.
 
 ```xml
 <beans>
@@ -87,7 +87,7 @@ public class ComplexBean2Impl {
  }
 ```
 
-- Another way to handle constructors with more parameters of the same type is to use the **name** attribute
+- Another way to handle constructors with more parameters of the same type is to use the `name` attribute
 
 ```xml
 <beans>
@@ -101,7 +101,7 @@ public class ComplexBean2Impl {
 </beans>
 ```
 
-- If constructor-arg seems to be a long name for a configuration element, do not worry. Spring has introduced a fix for that in version 3.1 the **c-namespace** : xmlns:c="http://www.springframework.org/schema/c"
+- `c-namespace` for reducing parameters injection via constructors
 
 ```xml
 <beans>
@@ -131,8 +131,8 @@ while if you are using indexes, the attribute definition should match c:_{index}
 
 ### Setter Injection
       
-- When creating a bean using setter injection, the bean is first instantiated by calling the constructor and then initialized by injecting the dependencies using setters.
-- The **<property />** element defines the property to be set and the value to be set with and does so using a pair of attributes: **[name, ref]** or **[name,value]**.
+- When creating a bean using setter injection, the bean is first `instantiated` by calling the constructor and then `initialized` by injecting the dependencies using setters.
+- `<property />` element defines the property to be set and the value to be set with and does so using a pair of attributes: **[name, ref]** or **[name,value]**.
 
 ```xml
 <bean id="..." class="...">
@@ -165,7 +165,7 @@ public class ComplexBeanImpl implements ComplexBean {
 }
 ```
 
-- Spring also has a namespace for simplifying XML definition when one is using setter injection. It is called the **p-namespace**: http://www.springframework.org/schema/p
+- `p-namespace` for reducing parameters injection via setters
 
 ```xml
 <beans>
@@ -208,7 +208,7 @@ public class ComplexBeanImpl implements ComplexBean {
 </bean>
 ```
 
-### Set
+#### Set
 
 ```xml
 <bean id="simpleBean" class="com.ps.beans.SimpleBeanImpl"/>
@@ -234,6 +234,8 @@ public class ComplexBeanImpl implements ComplexBean {
 ```
 
 #### util namespace to deal with collections
+
+- util namespace for reducing code working with collections
 
 ```xml
 <beans>
@@ -266,7 +268,7 @@ public class ComplexBeanImpl implements ComplexBean {
 
 #### factory-method
 
-- To use a singleton class to create a bean, the factory-method attribute is used, and its value will be the static method name that returns the bean instance
+- To use a singleton class to create a bean, the `factory-method` attribute is used, and its value will be the static method name that returns the bean instance
 
 ```xml
 <beans>
@@ -288,8 +290,7 @@ public class SimpleSingleton {
 
 #### factory-bean
 
-- To use a factory object to create a bean, the factory-bean and factory-method attributes are used.
-- first one points to the object used to create the bean, and the other specifies the method name that returns the actual result 
+- To use a factory object to create a bean, the `factory-bean` and `factory-method` attributes are used.
 
 ```xml
 <beans>
@@ -311,7 +312,7 @@ public class SimpleFactoryBean {
 #### FactoryBean
 
 By implementing this interface, the factory beans will be automatically picked up by the Spring container, 
-and the desired bean will be created by automatically calling the getObject method
+and the desired bean will be created by automatically calling the `getObject` method
 
 ```xml
 <beans>
@@ -372,6 +373,7 @@ public class SpringFactoryBean implements FactoryBean<SimpleBean> {
 	4. Beans are initialized
 	5. Bean post process beans are invoked after initialization
 	
+	
 - Ways of initializing a bean	
 	- Using the attribute `init-method` on a <bean/> XML definition to define a method to be called for initialization, covered previously.
 	- Implementing the `org.springframework.beans.factory.InitializingBean` interface and providing an implementation for the method `afterPropertiesSet` (not recommended, since it couples the application code with Spring infrastructure).
@@ -383,19 +385,19 @@ public class SpringFactoryBean implements FactoryBean<SimpleBean> {
 ```java
 public class TriangleLifecycle implements InitializingBean {
 
-	//  #1
+	//  Calls #1
 	@PostConstruct
 	public void postConstruct(){
 		System.out.println("TriangleLifecycle postConstruct : " + toString());
 	}
 
-	// #2
+	// Calls #2
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		System.out.println("TriangleLifecycle afterPropertiesSet : " + toString());
 	}
 
-	// #3
+	// Calls #3
 	public void initMethod(){
 		System.out.println("TriangleLifecycle initMethod : " + toString());
 	}
@@ -412,8 +414,7 @@ public class TriangleLifecycle implements InitializingBean {
  	- return void
  	- they can have any access right
 
-
-####  context namespace
+#### context namespace
 
 - `<context:annotation-config />` 
 	- Enables scanning of all the classes in the project for annotations, so using it on large applications might make them slow
@@ -438,19 +439,19 @@ public class TriangleLifecycle implements InitializingBean {
 ```java
 public class TriangleLifecycle implements DisposableBean {
 
-	// #1
+	// Calls #1
 	@PreDestroy
 	public void preDestroy(){
 		System.out.println("TriangleLifecycle preDestroy : " + toString());
 	}
 
-	// #2
+	// Calls #2
 	@Override
 	public void destroy() throws Exception {
 		System.out.println("TriangleLifecycle destroy : " + toString());
 	}
 
-	// #3
+	// Calls #3
 	public void destroyMethod(){
 		System.out.println("TriangleLifecycle destroyMethod : " + toString());
 	}
