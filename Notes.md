@@ -11,7 +11,7 @@ In Spring, there are two types of dependency injection specific to XML: via **co
 
 For XML, the class **org.springframework.context.support.ClassPathXmlApplicationContext** is used.
 
-#### Constructor Injection
+### Constructor Injection
 
 Constructor injection can be used to define beans when the bean type is a class that has a constructor with arguments defined.
 
@@ -129,7 +129,7 @@ then the attribute definition with c: should match the pattern c:nameConstructor
 while if you are using indexes, the attribute definition should match c:_{index}[-ref].
 ```
 
-#### Setter Injection
+### Setter Injection
       
 - When creating a bean using setter injection, the bean is first instantiated by calling the constructor and then initialized by injecting the dependencies using setters.
 - The **<property />** element defines the property to be set and the value to be set with and does so using a pair of attributes: **[name, ref]** or **[name,value]**.
@@ -191,3 +191,73 @@ public class ComplexBeanImpl implements ComplexBean {
 </beans>
 ```
 
+### Collections
+
+#### List
+
+```xml
+<bean id="simpleBean" class="com.ps.beans.SimpleBeanImpl"/>
+<bean id="collectionHolder" class="com.ps.beans.others.CollectionHolder">
+        <property name="simpleBeanList">
+            <list>
+                 <ref bean="simpleBean"/>
+                 <bean class="com.ps.beans.SimpleBeanImpl"/>
+                <null/>
+            </list>
+        </property>
+</bean>
+```
+
+### Set
+
+```xml
+<bean id="simpleBean" class="com.ps.beans.SimpleBeanImpl"/>
+<bean id="collectionHolder" class="com.ps.beans.others.CollectionHolder">
+        <property name="simpleBeanSet">
+            <set>
+                <ref bean="simpleBean"/>
+            </set>
+        </property>
+</bean>
+```
+#### Map
+
+```xml
+<bean id="simpleBean" class="com.ps.beans.SimpleBeanImpl"/>
+<bean id="collectionHolder" class="com.ps.beans.others.CollectionHolder">
+      <property name="simpleBeanMap">
+            <map>
+                 <entry key="one" value-ref="simpleBean"/>
+            </map>
+        </property>
+ </bean>
+```
+
+#### util namespace for deal with collections
+
+```xml
+<beans>
+    <bean id="simpleBean" class="com.ps.beans.SimpleBeanImpl"/>
+
+    <util:list id=" simpleList">
+        <ref bean="simpleBean"/>
+        <bean class="com.ps.beans.SimpleBeanImpl"/>
+        <null/>
+    </util:list>
+    
+    <util:set id=" simpleSet">
+        <ref bean="simpleBean"/>
+    </util:set>
+    
+    <util:map id=" simpleMap">
+        <entry key="one" value-ref="simpleBean"/>
+    </util:map>
+
+	<!--Injection collections-->
+	<bean id="collectionHolder" class="com.ps.beans.others.CollectionHolder">
+        <property name="simpleBeanList" ref="simpleList"/>
+        <property name="simpleBeanSet" ref="simpleSet"/>
+        <property name="simpleBeanMap" ref="simpleMap"/>
+    </bean>
+</beans>
+```

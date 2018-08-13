@@ -49,7 +49,7 @@
 
         <property name="simpleBeanSet">
             <set>
-                <null/>
+                <ref bean="simpleBean"/>
             </set>
         </property>
 

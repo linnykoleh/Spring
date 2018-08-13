@@ -29,10 +29,6 @@ public class CollectionHolder {
         this.simpleBeanMap = simpleBeanMap;
     }
 
-    /**
-     * This method was implemented just to verify the collections injected into beans of this type
-     * @return
-     */
     @Override
     public String toString() {
         return "CollectionHolder{" +
