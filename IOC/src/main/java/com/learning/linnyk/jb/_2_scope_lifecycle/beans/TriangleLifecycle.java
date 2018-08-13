@@ -76,5 +76,4 @@ public class TriangleLifecycle implements InitializingBean, DisposableBean{
 				'}';
 	}
 
-
 }

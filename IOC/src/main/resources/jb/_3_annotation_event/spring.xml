@@ -6,10 +6,12 @@
 
 
 
-	<!--===========================================================================-->
-	<!-- Activates various annotations to be detected in bean classes: Spring's    -->
-	<!-- @Component, @Required, @Autowired, @PostConstruct, @PreDestroy, @Resource -->
-	<!--===========================================================================-->
+	<!--===========================================================================================-->
+	<!-- Activates various annotations to be detected in bean classes: Spring's @Required and      -->
+	<!-- @Autowired, as well as JSR 250's @PostConstruct, @PreDestroy and @Resource (if available),-->
+	<!-- JAX-WS's @WebServiceRef (if available), EJB 3's @EJB (if available), and JPA's            -->
+	<!-- @PersistenceContext and @PersistenceUnit (if available).                                  -->
+	<!--===========================================================================================-->
 	<context:annotation-config/>
 
 

@@ -371,3 +371,95 @@ public class SpringFactoryBean implements FactoryBean<SimpleBean> {
 	3. Bean post process beans are invoked before initialization
 	4. Beans are initialized
 	5. Bean post process beans are invoked after initialization
+	
+- Ways of initializing a bean	
+	- Using the attribute `init-method` on a <bean/> XML definition to define a method to be called for initialization, covered previously.
+	- Implementing the `org.springframework.beans.factory.InitializingBean` interface and providing an implementation for the method `afterPropertiesSet` (not recommended, since it couples the application code with Spring infrastructure).
+	- Annotating with `@PostConstruct` the method that is called right after the bean is instantiated and dependencies injected
+	- The equivalent of the `init-method` attribute when using Java Configuration `@Bean(initMethod="...")`.	
+	
+#### Initializing beans priority	
+
+```java
+public class TriangleLifecycle implements InitializingBean {
+
+	//  #1
+	@PostConstruct
+	public void postConstruct(){
+		System.out.println("TriangleLifecycle postConstruct : " + toString());
+	}
+
+	// #2
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		System.out.println("TriangleLifecycle afterPropertiesSet : " + toString());
+	}
+
+	// #3
+	public void initMethod(){
+		System.out.println("TriangleLifecycle initMethod : " + toString());
+	}
+
+}
+```
+
+#### @PostConstruct
+
+- The `@PostConstruct` annotation is part of the JSR 25013 and is used on a method that needs to be executed after dependency injection is done to perform initialization
+- The bean that registers `@PostConstruct` is `org.springframework.context.annotation.CommonAnnotationBeanPostProcessor`
+- The methods that can be annotated with `@PostConstruct` must respect the rules: 
+ 	- they must have no arguments 
+ 	- return void
+ 	- they can have any access right
+
+
+####  context namespace
+
+- `<context:annotation-config />` 
+	- Enables scanning of all the classes in the project for annotations, so using it on large applications might make them slow
+	- Activates various annotations to be detected in bean classes: Spring's @Required and
+      @Autowired, as well as JSR 250's @PostConstruct, @PreDestroy and @Resource 
+    - JPA's @PersistenceContext and @PersistenceUnit (if available).
+- `<context:component-scan />` 
+	- Scans the classpath for annotated components that will be auto-registered as Spring beans. 
+    - By default, the Spring-provided @Component, @Repository, @Service, @Controller, @RestController, @ControllerAdvice, and @Configuration stereotypes  will be detected.                                                               
+    - Reduce the number of classes to be scanned  
+
+[Context name space configuration example](/IOC/src/main/resources/jb/_3_annotation_event/spring.xml)
+
+#### Destroying beans priority
+
+- Destroying ways
+	- Set a method to be called before destruction using the `destroy-method` attribute of the <bean /> element.
+	- Modify the bean to implement the `org.springframework.beans.factory.DisposableBean` interface and provide an implementation for the `destroy()` method (not recommended, since it couples the application code with Spring infrastructure).
+	- Annotate a method with `@PreDestroy`, also part of JSR 250 and one of the first supported annotations in Spring.
+	- The equivalent of `destroy-method` for Java Configuration `@Bean(destroyMethod="...")`.
+
+```java
+public class TriangleLifecycle implements DisposableBean {
+
+	// #1
+	@PreDestroy
+	public void preDestroy(){
+		System.out.println("TriangleLifecycle preDestroy : " + toString());
+	}
+
+	// #2
+	@Override
+	public void destroy() throws Exception {
+		System.out.println("TriangleLifecycle destroy : " + toString());
+	}
+
+	// #3
+	public void destroyMethod(){
+		System.out.println("TriangleLifecycle destroyMethod : " + toString());
+	}
+	
+}
+```
+
+- Destroy method's rules
+	- The destroy method may be called only once during the bean lifecycle.
+	- The destroy method can have any accessor; some developers even recommend to make it `private`, so that only Spring can call it via reflection.
+	- The destroy method must not have any parameters.
+	- The destroy method must return `void`. 
