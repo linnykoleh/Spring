@@ -1,6 +1,6 @@
 # Spring notes
 
-#### XML Spring Configuration
+### XML Spring Configuration
 
 ```
 In order to tell the Spring Container to create these objects and how to link them together, a configuration must be provided. 
@@ -11,7 +11,7 @@ In Spring, there are two types of dependency injection specific to XML: via **co
 
 For XML, the class **org.springframework.context.support.ClassPathXmlApplicationContext** is used.
 
-##### Constructor Injection
+#### Constructor Injection
 
 Constructor injection can be used to define beans when the bean type is a class that has a constructor with arguments defined.
 
@@ -129,7 +129,7 @@ then the attribute definition with c: should match the pattern c:nameConstructor
 while if you are using indexes, the attribute definition should match c:_{index}[-ref].
 ```
 
-##### Setter Injection
+#### Setter Injection
       
 - When creating a bean using setter injection, the bean is first instantiated by calling the constructor and then initialized by injecting the dependencies using setters.
 - The **<property />** element defines the property to be set and the value to be set with and does so using a pair of attributes: **[name, ref]** or **[name,value]**.
