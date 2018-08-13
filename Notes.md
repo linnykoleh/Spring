@@ -464,3 +464,90 @@ public class TriangleLifecycle implements DisposableBean {
 	- The destroy method can have any accessor; some developers even recommend to make it `private`, so that only Spring can call it via reflection.
 	- The destroy method must not have any parameters.
 	- The destroy method must return `void`. 
+
+### Bean Scopes
+
+- Default scope for a bean is `singleton`
+
+| Scope         | Description |
+| ------------- |-------------|
+| Singleton     | The Spring IoC creates a single instance of this bean, and any request for beans with an id or ids matching this bean definition results in this instance being returned.|
+| Prototype     | Every time a request is made for this specific bean, the Spring IoC creates a new instance.      |
+| Request       | The Spring IoC creates a bean instance for each HTTP request. Only valid in the context of a web-aware Spring ApplicationContext.     |
+| Session       | The Spring IoC creates a bean instance for each HTTP session. Only valid in the context of a web-aware Spring ApplicationContext. |
+| global-session| The Spring IoC creates a bean instance for each global HTTP session. Only valid in the context of a web-aware Spring ApplicationContext.|
+| _Custom_      | Developers are provided the possibility to define their own scopes with their own rules.|
+
+```xml
+<bean id="complexBean" class="com.ps.sample.ComplexBean"
+    scope="prototype"/>
+```
+
+#### Additional ways to create app context
+
+```java
+- new AnnotationConfigApplicationContext(AppConfig.class);
+- new ClassPathXmlApplicationContext(“com/example/app-config.xml”);
+- new FileSystemXmlApplicationContext(“C:/Users/vojtech/app-config.xml”);
+- new FileSystemXmlApplicationContext(“./app-config.xml”);
+```
+
+--- 
+
+### Java Spring Configuration and Annotations
+
+![alt text](images/pet-sitter/Screenshot_4.png "Screenshot_4")
+
+- Spring manages lifecycle of beans, each bean has its scope
+- Default scope is `singleton` - one instance per application context
+- Scope can be defined by `@Scope`(eg. `@Scope(BeanDefinition.SCOPE_SINGLETON)`) annotation on the class-level of bean class
+- Stereotypes annotations are used to mark classes according to their purpose:
+    - `@Component`: template for any Spring-managed component(bean).
+    - `@Repository`: template for a component used to provide data access, specialization of the `@Component` annotation for the the `Dao layer`.
+    - `@Service`: template for a component that provides service execution, specialization of the `@Component` annotation for the `Service layer`.
+    - `@Controller`: template for a web component, specialization of the `@Component` annotation for the `Web layer`.
+    - `@Configuration`: configuration class containing bean definitions (methods annotated with @Bean).
+    
+- Autowiring and initialization annotations are used to define which dependency is injected and what the bean looks like. For example:
+    - `@Autowired`: core annotation for this group; is used on dependencies to instruct Spring IoC to take care of injecting them. Can be used on fields, constructors, and setters. Use with @Qualifier from Spring to specify name of the bean to inject.
+    - `@Inject`: equivalent annotation to `@Autowired` from javax.inject package. Use with `@Qualifier` from javax.inject to specify name of the bean to inject.
+    - `@Resource`: equivalent annotation to `@Autowired` from javax.annotation package. Provides a name attribute to specify name of the bean to inject.
+    - `@Required`: Spring annotation that marks a dependency as mandatory, used on setters.
+    - `@Lazy`: dependency will be injected the first time it is used.    
+    
+- Classes annotated with `@Configuration` contain bean definitions.    
+
+```java
+@Configuration
+@PropertySource("classpath:db/datasource.properties")
+@ImportResource("classpath:spring/user-repo-config.xml")
+@Import({DataSourceConfig.class,  UserRepoDSConfig.class})
+@ComponentScan(basePackages = "com.ps")
+public class DataSourceConfig {
+    
+    @Value("${driverClassName}")
+    private String driverClassName;
+    
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer
+           propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
+    @Bean
+    public DataSource dataSource() throws SQLException {
+        DriverManagerDataSource ds = new DriverManagerDataSource();
+        ds.setDriverClassName(driverClassName);
+        ds.setUrl(url);
+        ds.setUsername(username);
+        ds.setPassword(password);
+        return ds;
+    }
+}
+```
+
+- `@Bean` annotation is used to tell Spring that the result of the annotated method will be a bean that has to be managed by it. 
+- `@Bean` annotation together with the method are treated as a `bean definition`, and the method name becomes the bean `id`.
+- `@PropertySource` annotation will be used to read property values from a property file set as argument
+- `@ImportResource` for importing another configurations
+- `@Import` annotation to import the bean definition in one class into the other.
+- `@ComponentScan` works the same way as <context:component-scan /> for XML

@@ -10,9 +10,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.sql.DataSource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by iuliana.cosmina on 3/23/16.

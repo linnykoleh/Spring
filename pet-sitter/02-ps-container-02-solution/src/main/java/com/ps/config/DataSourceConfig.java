@@ -35,7 +35,7 @@ public class DataSourceConfig {
 
     @Lazy
     @Bean(name = {"one", "two", "dataSource"})
-    public DataSource dataSource() throws SQLException {
+    public DataSource dataSource() {
         DriverManagerDataSource ds = new DriverManagerDataSource();
         ds.setDriverClassName(driverClassName);
         ds.setUrl(url);

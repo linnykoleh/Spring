@@ -1,8 +1,6 @@
 package com.ps;
 
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -16,15 +14,13 @@ import static org.junit.Assert.assertNotNull;
  */
 public class ApplicationContextTest {
 
-    private Logger logger = LoggerFactory.getLogger(ApplicationContextTest.class);
-
     @Test
     public void testDataSource1() {
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("classpath:spring/test-config-01.xml");
-        logger.info(" >> init done.");
+        System.out.println(" >> init done.");
         DataSource dataSource1 = ctx.getBean("dataSource1", DataSource.class);
         assertNotNull(dataSource1);
-        logger.info(" >> usage done.");
+        System.out.println(" >> usage done.");
         ctx.registerShutdownHook();
     }
 
