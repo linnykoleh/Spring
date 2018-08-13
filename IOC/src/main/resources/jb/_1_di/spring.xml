@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+
+
+	<!--======================-->
+	<!-- Properties injection -->
+	<!--======================-->
+	<bean id="triangle1" class="com.learning.linnyk.jb._1_di.beans.Triangle">
+		<property name="color" value="Red"/>
+	</bean>
+
+
+
+	<!--==================================-->
+	<!-- Constructor properties injection -->
+	<!--==================================-->
+	<bean id="triangle2" class="com.learning.linnyk.jb._1_di.beans.Triangle" >
+		<constructor-arg name="type" index="0" value="Equilateral"/>
+		<constructor-arg name="height" index="1" type="int" value="100"/>
+	</bean>
+
+
+
+	<!--=================================-->
+	<!-- References Properties injection -->
+	<!--=================================-->
+	<bean id="point1" class="com.learning.linnyk.jb._1_di.beans.Point">
+		<property name="x" value="0"/>
+		<property name="y" value="0"/>
+	</bean>
+
+	<bean id="point2" class="com.learning.linnyk.jb._1_di.beans.Point">
+		<property name="x" value="-20"/>
+		<property name="y" value="0"/>
+	</bean>
+
+	<bean id="point3" class="com.learning.linnyk.jb._1_di.beans.Point">
+		<property name="x" value="0"/>
+		<property name="y" value="20"/>
+	</bean>
+
+	<bean id="triangle3" class="com.learning.linnyk.jb._1_di.beans.Triangle" >
+		<property name="pointA" ref="point1"/>
+		<property name="pointB" ref="point2"/>
+		<property name="pointC" ref="point3"/>
+	</bean>
+
+
+
+	<!--=============================================-->
+	<!-- Constructor references Properties injection -->
+	<!--=============================================-->
+	<bean id="triangle4" class="com.learning.linnyk.jb._1_di.beans.Triangle" >
+		<constructor-arg name="pointA" ref="point1"/>
+		<constructor-arg name="pointB" ref="point2"/>
+		<constructor-arg name="pointC" ref="point3"/>
+	</bean>
+
+
+
+	<!--======================-->
+	<!-- Inner bean injection -->
+	<!--======================-->
+	<bean id="triangle5" class="com.learning.linnyk.jb._1_di.beans.Triangle" >
+		<property name="pointA">
+			<bean class="com.learning.linnyk.jb._1_di.beans.Point">
+				<property name="x" value="100"/>
+				<property name="y" value="100"/>
+			</bean>
+		</property>
+		<property name="pointB">
+			<bean class="com.learning.linnyk.jb._1_di.beans.Point">
+				<property name="x" value="200"/>
+				<property name="y" value="150"/>
+			</bean>
+		</property>
+		<property name="pointC">
+			<bean class="com.learning.linnyk.jb._1_di.beans.Point">
+				<property name="x" value="320"/>
+				<property name="y" value="120"/>
+			</bean>
+		</property>
+	</bean>
+
+
+
+	<!--================-->
+	<!-- Alias for bean -->
+	<!--================-->
+	<alias name="triangle5" alias="triangle-alias"/>
+
+
+
+	<!--=====================-->
+	<!-- List beans injection-->
+	<!--=====================-->
+	<bean id="triangleList" class="com.learning.linnyk.jb._1_di.TriangleCollections">
+		<property name="pointsList">
+			<list>
+				<ref bean="point1"/>
+				<ref bean="point2"/>
+				<ref bean="point3"/>
+			</list>
+		</property>
+	</bean>
+
+
+
+	<!--=====================-->
+	<!-- Set beans injection-->
+	<!--=====================-->
+	<bean id="triangleSet" class="com.learning.linnyk.jb._1_di.TriangleCollections">
+		<property name="pointsSet">
+			<set>
+				<ref bean="point1"/>
+				<ref bean="point1"/>
+				<ref bean="point3"/>
+			</set>
+		</property>
+	</bean>
+
+
+
+	<!--=====================-->
+	<!-- Map beans injection-->
+	<!--=====================-->
+	<bean id="triangleMap" class="com.learning.linnyk.jb._1_di.TriangleCollections">
+		<property name="pointsMap">
+			<map>
+				<entry key="pointA" value-ref="point1"/>
+				<entry key="pointB" value-ref="point2"/>
+				<entry key="pointC" value-ref="point3"/>
+			</map>
+		</property>
+	</bean>
+
+
+
+	<!--==================-->
+	<!-- Autowire by name -->
+	<!--==================-->
+	<bean id="pointD" class="com.learning.linnyk.jb._1_di.beans.Point">
+		<property name="x" value="0"/>
+		<property name="y" value="0"/>
+	</bean>
+
+	<bean id="pointF" class="com.learning.linnyk.jb._1_di.beans.Point">
+		<property name="x" value="-20"/>
+		<property name="y" value="0"/>
+	</bean>
+
+	<bean id="pointE" class="com.learning.linnyk.jb._1_di.beans.Point">
+		<property name="x" value="0"/>
+		<property name="y" value="20"/>
+	</bean>
+
+	<bean id="triangleAutowiringByName" class="com.learning.linnyk.jb._1_di.TriangleAutowiringByName" autowire="byName"/>
+
+
+
+	<!--==================-->
+	<!-- Autowire by type -->
+	<!--==================-->
+	<bean id="square" class="com.learning.linnyk.jb._1_di.beans.Square">
+		<property name="x" value="0.002"/>
+	</bean>
+
+	<!-- also `byType` this is a default type autowiring-->
+	<bean id="triangleAutowiringByType" class="com.learning.linnyk.jb._1_di.TriangleAutowiringByType" autowire="byType"/>
+
+
+
+	<!--=========================-->
+	<!-- Autowire by constructor -->
+	<!--=========================-->
+	<bean id="triangleAutowiringByConstructor" class="com.learning.linnyk.jb._1_di.TriangleAutowiringByConstructor" autowire="constructor"/>
+
+
+</beans>

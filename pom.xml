@@ -12,5 +12,6 @@
 
     <modules>
         <module>pet-sitter</module>
+        <module>IOC</module>
     </modules>
 </project>

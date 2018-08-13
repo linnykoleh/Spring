@@ -357,3 +357,17 @@ public class SpringFactoryBean implements FactoryBean<SimpleBean> {
 </beans>
 ```
 
+### Application Context and Bean Lifecycle 
+
+![alt text](images/pet-sitter/Screenshot_3.png "Screenshot_3")
+
+- Load Bean Definition step
+	1. The XML files/Configuration classes parse
+	2. The bean definitions load into the application context, indexed by ids
+	3. The bean definitions process by beans called bean definition post processors 
+- Bean creation step	
+	1. The beans are instantiated. This basically means that the bean factory is calling the constructor of each bean
+	2. The dependencies are injected. For beans that are defined having dependencies injected via setter, this stage is separate from the instantiation stage.
+	3. Bean post process beans are invoked before initialization
+	4. Beans are initialized
+	5. Bean post process beans are invoked after initialization

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+
+	<!--===========================================================================-->
+	<!-- Activates various annotations to be detected in bean classes: Spring's    -->
+	<!-- @Component, @Required, @Autowired, @PostConstruct, @PreDestroy, @Resource -->
+	<!--===========================================================================-->
+	<context:annotation-config/>
+
+
+
+	<!--==================================================================================-->
+	<!-- Scans the classpath for annotated components that will be auto-registered as     -->
+	<!-- Spring beans. By default, the Spring-provided @Component, @Repository, @Service, -->
+	<!-- @Controller, @RestController, @ControllerAdvice, and @Configuration stereotypes  -->
+	<!-- will be detected.                                                                -->
+	<!--==================================================================================-->
+	<context:component-scan base-package="com.learning.linnyk.jb._3_annotation_event"/>
+
+
+
+	<!--====================================================-->
+	<!-- Add possibility to read values from resource files -->
+	<!--====================================================-->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>jb._3_annotation_event.config</value>
+			</list>
+		</property>
+	</bean>
+</beans>
