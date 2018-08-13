@@ -24,7 +24,7 @@ Constructor injection can be used to define beans when the bean type is a class 
   <bean id= "simpleBean" class="com.ps.beans.SimpleBeanImpl"/>
 </beans>
 ```
-==>
+
 ```java
 public class ComplexBeanImpl implements ComplexBean {
     private SimpleBean simpleBean;
@@ -54,7 +54,7 @@ public class ComplexBeanImpl implements ComplexBean {
   </bean>
 </beans>
 ```
-==>
+
 ```java
 public class ComplexBeanImpl {
       public ComplexBeanImpl(SimpleBean simpleBean, boolean complex) {
@@ -77,7 +77,7 @@ public class ComplexBeanImpl {
     </bean>
 </beans>
 ```
-==>
+
 ```java
 public class ComplexBean2Impl {
     public ComplexBean2Impl(SimpleBean simpleBean1, SimpleBean simpleBean2) {
@@ -152,7 +152,7 @@ while if you are using indexes, the attribute definition should match c:_{index}
     </bean>
 </beans>
 ```
-==>
+
 ```java
 public class ComplexBeanImpl implements ComplexBean {
     private SimpleBean simpleBean;
@@ -276,7 +276,7 @@ public class ComplexBeanImpl implements ComplexBean {
           factory-method="getInstance" />
 </beans>
 ```
-==>
+
 ```java
 public class SimpleSingleton {
     private static SimpleSingleton instance = new SimpleSingleton();
@@ -299,7 +299,7 @@ public class SimpleSingleton {
           factory-method="getSimpleBean" />
 </beans>
 ```
-==> 
+
 ```java
 public class SimpleFactoryBean {
 	
@@ -319,7 +319,7 @@ and the desired bean will be created by automatically calling the `getObject` me
     <bean id="smartBean" class=" com.ps.beans.others.SpringFactoryBean"/>
 </beans>
 ```
-==> 
+
 ```java
 public class SpringFactoryBean implements FactoryBean<SimpleBean> {
     
