@@ -239,17 +239,17 @@ public class ComplexBeanImpl implements ComplexBean {
 <beans>
     <bean id="simpleBean" class="com.ps.beans.SimpleBeanImpl"/>
 
-    <util:list id=" simpleList">
+    <util:list id=" simpleList" list-class="java.util.LinkedList">
         <ref bean="simpleBean"/>
         <bean class="com.ps.beans.SimpleBeanImpl"/>
         <null/>
     </util:list>
     
-    <util:set id=" simpleSet">
+    <util:set id=" simpleSet" set-class="java.util.TreeSet">
         <ref bean="simpleBean"/>
     </util:set>
     
-    <util:map id=" simpleMap">
+    <util:map id=" simpleMap" map-class="java.util.TreeMap">
         <entry key="one" value-ref="simpleBean"/>
     </util:map>
 
@@ -337,3 +337,23 @@ public class SpringFactoryBean implements FactoryBean<SimpleBean> {
 	}
 }    
 ```
+
+### Import configuration files
+
+![alt text](images/pet-sitter/Screenshot_1.png "Screenshot_1")
+
+```xml
+<beans>
+    <!-- using relative path, no prefix-->
+    <import resource="ctr/sample-config-01.xml"/>
+    <import resource="ctr/sample-config-02.xml"/>
+    
+    <!-- using classpath-->
+    <import resource="classpath: spring/ctr/sample-config-01.xml"/>
+    <import resource="classpath: spring/ctr/sample-config-02.xml"/>
+    
+    <!-- using classpath and wildcards-->
+     <import resource="classpath: spring/others/sample-config-*.xml"/>
+</beans>
+```
+
