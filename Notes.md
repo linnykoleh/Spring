@@ -692,9 +692,16 @@ public class GenericQualifierTest {
 }
 ```
 
-### Injecting Dependencies That Are Not Beans
+### @Value annotation
 
 - `@Value` - can be used to insert scalar values or can be used together with placeholders and `SpEL` in order to provide flexibility in configuring a bean
+- Is used to inject value either from system properties (using ${}) or SpEL (using #{})
+- Can be on fields, constructor parameters or setter parameters
+- On constructors and setters must be combined with @Autowired on method level, for fields @Value alone is enough
+- Can specify default values
+	- `${minAmount:100}"`
+	- `#{environment['minAmount'] ?: 100}`
+
 
 ```java 
 	 @Value("${driverClassName}") private String driverClassName;
@@ -705,6 +712,15 @@ public class GenericQualifierTest {
      @Value("#{dbProps.username}")String username,
      @Value("#{dbProps.password}")String password
 ```
+
+### Spring Expression language
+- Acronym SpEL
+- can be used in @Value annotation values
+- enclosed in #{}
+- ${} is for properties, #{} is for SpEL
+- Access property of bean #{beanName.property}
+- Can reference systemProperties and systemEnvironment
+- Used in other spring projects such as Security, Integration, Batch, WebFlow,...
 
 ### Bean Lifecycle 
 
