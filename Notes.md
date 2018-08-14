@@ -547,7 +547,201 @@ public class DataSourceConfig {
 
 - `@Bean` annotation is used to tell Spring that the result of the annotated method will be a bean that has to be managed by it. 
 - `@Bean` annotation together with the method are treated as a `bean definition`, and the method name becomes the bean `id`.
+- `@Bean ( initMethod = "init", destroyMethod = "destroy")` - for declare init and destroy methods
 - `@PropertySource` annotation will be used to read property values from a property file set as argument
 - `@ImportResource` for importing another configurations
 - `@Import` annotation to import the bean definition in one class into the other.
 - `@ComponentScan` works the same way as <context:component-scan /> for XML
+
+### Bean Naming
+
+- When the name is not defined for a bean declared with `@Bean`, the Spring IoC names the bean with the annotated `method name`.
+
+```java
+// bean name = dataSource
+@Bean
+public DataSource dataSource() throws SQLException {
+
+}
+
+//bean name = one
+@Bean(name="one")
+public DataSource dataSource() throws SQLException {
+
+}
+
+//bean name =  one, alias = two
+@Bean(name={"one", "two"})
+public DataSource dataSource() throws SQLException {
+
+}
+```
+- When the name is not defined for a bean declared with Component, the Spring IoC creates the name of the bean from the name of the bean type, by lowercasing the first letter.
+
+```java
+// bean name = jdbcRequestRepo
+@Repository
+public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements RequestRepo{
+       
+}
+
+// bean name = requestRepo@Description
+@Repository("requestRepo")
+public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements RequestRepo{
+         
+}DsCfg
+// or
+@Repository(value="requestRepo")
+public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements RequestRepo{
+         
+}
+//  or
+// bean name = requestRepo
+@Component("requestRepo")
+public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements RequestRepo{
+         
+}
+```
+
+- `@Description` annotation, which was added in Spring 4.x is used to add a description to a bean
+
+```java
+@Repository
+@Description("This is not the bean you are looking for")
+public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements RequestRepo {
+
+}
+```
+
+### Field Injection
+
+- `@Autowire` can be used on fields, constructors, setters, and even methods.
+- In using `@Autowired` on constructors, it makes not sense to have more than one constructor annotated with it, and Spring will complain about it because it will not know what constructor to use to instantiate the bean.
+- Out of the box, Spring will try to `autowire by type`
+- If Spring cannot decide which bean to autowire based on type (because there are more beans of the same type in the application), it defaults to `autowiring by name`.
+- `@Qualifier` - in case Spring finds more than candidate for autowiring to qualify which bean to inject
+- `@Autowired` annotation by default requires the dependency to be mandatory, but this behavior can be changed, by setting the required attribute to true (`@Autowired(required=false)`)
+
+```java
+   @Qualifier("requestRepo")
+   @Autowired
+   RequestRepo reqRepo;
+```
+### Constructor Injection
+
+```java
+@Repository("requestRepo")
+public class JdbcRequestRepo  extends JdbcAbstractRepo<Request> implements RequestRepo{
+	
+    @Autowired
+    public JdbcRequestRepo(DataSource dataSource) {
+        super(dataSource);
+    }
+ }
+```
+
+### Setter Injection
+
+```java
+public class JdbcUserRepo extends JdbcAbstractRepo<User> implements UserRepo {
+	
+	private DataSource dataSource;
+    
+	@Autowired
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+    
+    //or by name
+     @Autowired
+    public void setDataSource( @Qualifier("oracleDataSource") DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+}
+```
+
+### Method Injection
+
+```java
+@Configuration
+public class MethodSecurityConfig {
+
+  @Autowired
+  public void registerGlobal(AuthenticationManagerBuilder auth) {
+    // some business logic 
+  }
+
+}
+```
+
+### Generic Injection
+
+- This is useful when you have classes that are organized in a hierarchy and they all inherit a certain class that is generic, 
+  like the repositories in the project attached to the book, all of which extend `JdbcAbstractRepo<T>`
+
+```java
+@ContextConfiguration(classes = {AllRepoConfig.class})
+public class GenericQualifierTest {
+	
+    @Autowired
+    JdbcAbstractRepo<Review> reviewRepo;
+    
+    @Autowired
+    JdbcAbstractRepo<Response> responseRepo;
+
+}
+```
+
+### Injecting Dependencies That Are Not Beans
+
+- `@Value` - can be used to insert scalar values or can be used together with placeholders and `SpEL` in order to provide flexibility in configuring a bean
+
+```java 
+	 @Value("${driverClassName}") private String driverClassName;
+     @Value("${url}") private String url;
+    
+     @Value("#{dbProps.driverClassName}") String driverClassName,
+     @Value("#{dbProps.url}")String url,
+     @Value("#{dbProps.username}")String username,
+     @Value("#{dbProps.password}")String password
+```
+
+### Bean Lifecycle 
+
+- For a configuration using Java Configuration annotations, the classpath is scanned by a bean of type `org.springframework.context.annotation.ClassPathBeanDefinitionScanner`, and the bean definitions are registered by a bean of type `org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader`.
+- Java Configuration and all other annotations: a `org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor` bean is used to autowire dependencies
+
+### @Lazy
+
+- This annotation can be used to postpone the creation of a bean until it is first accessed, by adding this annotation to the bean definition
+
+```java
+@Component
+@Lazy
+public class SimpleBean { 
+	
+}
+
+// or on a @Bean
+@Configuration
+public class RequestRepoConfig {
+	
+	@Lazy
+    @Bean
+    public RequestRepo anotherRepo(){
+        return new JdbcRequestRepo();
+    }
+}
+
+// on injection point
+@Repository
+public class JdbcPetRepo extends JdbcAbstractRepo<Pet>
+implements PetRepo {
+    
+    @Lazy
+    @Autowired(required=false)
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+}
+```
