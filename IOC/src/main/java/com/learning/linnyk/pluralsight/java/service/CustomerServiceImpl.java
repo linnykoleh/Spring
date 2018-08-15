@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.learning.linnyk.pluralsight.java.Customer;
+import com.learning.linnyk.pluralsight.java.domain.Customer;
 import com.learning.linnyk.pluralsight.java.repository.CustomRepository;
 
 /**

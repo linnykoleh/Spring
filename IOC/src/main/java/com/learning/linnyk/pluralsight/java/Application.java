@@ -3,6 +3,7 @@ package com.learning.linnyk.pluralsight.java;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import com.learning.linnyk.pluralsight.java.config.AppConfig;
 import com.learning.linnyk.pluralsight.java.repository.CustomRepository;
 import com.learning.linnyk.pluralsight.java.repository.HibernateCustomRepository;
 import com.learning.linnyk.pluralsight.java.service.CustomerService;
@@ -14,6 +15,7 @@ import com.learning.linnyk.pluralsight.java.service.CustomerServiceImpl;
 public class Application {
 
 	public static void main(String[] args) {
+
 		final ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 
 		final CustomerService customerServiceSetterInjection = context.getBean("customerServiceSetterInjection", CustomerService.class);

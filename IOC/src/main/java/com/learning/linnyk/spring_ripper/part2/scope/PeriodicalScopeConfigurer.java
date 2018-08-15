@@ -1,4 +1,4 @@
-package com.learning.linnyk.spring_ripper.part2;
+package com.learning.linnyk.spring_ripper.part2.scope;
 
 import java.time.LocalTime;
 import java.util.HashMap;

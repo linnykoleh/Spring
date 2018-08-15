@@ -2,7 +2,7 @@ package com.learning.linnyk.pluralsight.java.repository;
 
 import java.util.List;
 
-import com.learning.linnyk.pluralsight.java.Customer;
+import com.learning.linnyk.pluralsight.java.domain.Customer;
 
 /**
  * @author LinnykOleh

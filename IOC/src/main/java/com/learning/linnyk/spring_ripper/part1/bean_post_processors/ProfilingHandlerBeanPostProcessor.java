@@ -15,6 +15,13 @@ import com.learning.linnyk.spring_ripper.part1.ProfilingController;
 import com.learning.linnyk.spring_ripper.part1.annotations.Profiling;
 
 /**
+ * Позволяет настраивать бины до того, как они попадают в контейнер.
+ *
+ * Между методами postProcessBeforeInitialization и postProcessAfterInitialization вызывается:
+ *      - @PostConstruct
+ *      - afterPropertiesSet
+ * 		- init-method
+ *
  * @author LinnykOleh
  */
 public class ProfilingHandlerBeanPostProcessor implements BeanPostProcessor {
@@ -27,6 +34,9 @@ public class ProfilingHandlerBeanPostProcessor implements BeanPostProcessor {
 		platformMBeanServer.registerMBean(controller, new ObjectName("profiling", "name", "controller"));
 	}
 
+	/**
+	 * Вызывается ДО init метода
+	 */
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		final Class<?> aClass = bean.getClass();
@@ -36,6 +46,9 @@ public class ProfilingHandlerBeanPostProcessor implements BeanPostProcessor {
 		return bean;
 	}
 
+	/**
+	 * Вызывается ПОСЛЕ init метода
+	 */
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		final Class beanClass = map.get(beanName);

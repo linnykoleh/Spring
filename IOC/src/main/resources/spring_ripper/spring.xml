@@ -15,7 +15,7 @@
 
 	<bean class="com.learning.linnyk.spring_ripper.part1.bean_post_processors.ProfilingHandlerBeanPostProcessor"/>
 
-	<bean class="com.learning.linnyk.spring_ripper.part1.bean_post_processors.PostProxyInvokerContextListener"/>
+	<bean class="com.learning.linnyk.spring_ripper.part1.context_listeners.PostProxyInvokerContextListener"/>
 
 	<bean class="com.learning.linnyk.spring_ripper.part1.bean_factory_post_processors.DeprecationHandlerBeanFactoryPostProcessor"/>
 

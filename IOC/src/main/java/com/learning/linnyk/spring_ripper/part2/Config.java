@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
+import com.learning.linnyk.spring_ripper.part2.bean_post_processors.CustomScopeRegistryBeanFactoryPostProcessor;
 import com.learning.linnyk.spring_ripper.part2.screensaver.ColorFrame;
 
 /**

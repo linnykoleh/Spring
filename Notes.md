@@ -1,5 +1,10 @@
 # Spring notes
 
+
+## Spring Configuration
+
+
+
 ### XML Spring Configuration
 
 ```
@@ -492,6 +497,13 @@ public class TriangleLifecycle implements DisposableBean {
 - new FileSystemXmlApplicationContext(“./app-config.xml”);
 ```
 
+
+#### Depends-on
+
+![alt text](images/pet-sitter/Screenshot_5.png "Screenshot_5")
+
+- Initialization of Bean `monitoring` will be after initialization of bean `app`
+
 --- 
 
 ### Java Spring Configuration and Annotations
@@ -761,3 +773,8 @@ implements PetRepo {
     }
 }
 ```
+
+
+## Testing Spring Applications
+
+- `TDD` - This approach puts the design under question: if tests are difficult to write, the design should be reconsidered

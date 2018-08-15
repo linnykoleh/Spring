@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.learning.linnyk.pluralsight.xml.Customer;
+import com.learning.linnyk.pluralsight.xml.domain.Customer;
 import com.learning.linnyk.pluralsight.xml.repository.CustomRepository;
 
 /**

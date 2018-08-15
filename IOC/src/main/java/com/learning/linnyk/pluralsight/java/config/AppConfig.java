@@ -1,4 +1,4 @@
-package com.learning.linnyk.pluralsight.java;
+package com.learning.linnyk.pluralsight.java.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

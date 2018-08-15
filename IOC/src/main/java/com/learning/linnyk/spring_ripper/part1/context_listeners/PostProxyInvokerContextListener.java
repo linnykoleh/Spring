@@ -1,4 +1,4 @@
-package com.learning.linnyk.spring_ripper.part1.bean_post_processors;
+package com.learning.linnyk.spring_ripper.part1.context_listeners;
 
 import java.lang.reflect.Method;
 

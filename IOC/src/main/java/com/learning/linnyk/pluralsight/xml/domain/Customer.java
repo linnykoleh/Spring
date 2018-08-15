@@ -1,4 +1,4 @@
-package com.learning.linnyk.pluralsight.java;
+package com.learning.linnyk.pluralsight.xml.domain;
 
 /**
  * @author LinnykOleh

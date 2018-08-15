@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.learning.linnyk.pluralsight.xml.Customer;
+import com.learning.linnyk.pluralsight.xml.domain.Customer;
 
 /**
  * @author LinnykOleh
