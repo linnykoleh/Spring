@@ -12,9 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by iuliana.cosmina on 2/22/16.
- */
 public class StubRequestRepo extends StubAbstractRepo<Request> implements RequestRepo {
     @Override
     public Set<Request> findAllForUser(User user) {

@@ -10,9 +10,6 @@ import com.ps.ents.Review;
 import com.ps.ents.User;
 import com.ps.repos.ReviewRepo;
 
-/**
- * Created by iuliana.cosmina on 2/22/16.
- */
 public class StubReviewRepo extends StubAbstractRepo<Review> implements ReviewRepo {
 
     @Override

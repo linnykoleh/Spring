@@ -6,9 +6,6 @@ import com.ps.repos.AbstractRepo;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by iuliana.cosmina on 3/9/16.
- */
 public abstract class StubAbstractRepo<T extends AbstractEntity> implements AbstractRepo<T> {
 
     protected Map<Long, T> records = new HashMap<>();

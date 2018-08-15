@@ -778,3 +778,4 @@ implements PetRepo {
 ## Testing Spring Applications
 
 - `TDD` - This approach puts the design under question: if tests are difficult to write, the design should be reconsidered
+- Trying to write at least two tests for each method: one positive and one negative, for methods that can be tested
