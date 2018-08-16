@@ -6,9 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.mockito.Mockito.mock;
 
-/**
- * Created by iuliana.cosmina on 4/17/16.
- */
 @Configuration
 public class MockTemplateConfig {
 
