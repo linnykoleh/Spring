@@ -6,8 +6,6 @@ import com.ps.quiz.QuizBean;
 import com.ps.sample.ComplexBean;
 import com.ps.sample.SimpleBean;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

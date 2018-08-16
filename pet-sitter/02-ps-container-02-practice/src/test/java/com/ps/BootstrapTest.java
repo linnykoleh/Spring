@@ -3,7 +3,6 @@ package com.ps;
 import com.ps.config.*;
 import com.ps.repos.PetRepo;
 import com.ps.repos.RequestRepo;
-import com.ps.repos.UserRepo;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -11,7 +10,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.sql.DataSource;
 
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class BootstrapTest {

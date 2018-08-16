@@ -779,3 +779,50 @@ implements PetRepo {
 
 - `TDD` - This approach puts the design under question: if tests are difficult to write, the design should be reconsidered
 - Trying to write at least two tests for each method: one positive and one negative, for methods that can be tested
+
+- Distributed as separate artifact - `spring-test.jar`
+- Test class needs to be annotated with `@RunWith(SpringJUnit4ClassRunner.class)`
+- Spring configuration classes to be loaded are specified in `@ContextConfiguration` annotation
+  - If no value is provided `@ContextConfiguration`, config file `${classname}-context.xml` in the same package is imported
+  - XML config files are loaded by providing string value to annotation - `@ContextConfiguration("classpath:com/example/test-config.xml")`
+  - Java @Configuration files are loaded from classes attribute - `@ContextConfiguration(classes={TestConfig.class, OtherConfig.class})`
+  
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes={TestConfig.class, OtherConfig.class})
+public final class FooTest  {
+ 
+    @Autowired
+    private MyService myService;
+    
+    //...
+}
+```
+
+- `@Configuration` inner classes (must be static) are automatically detected and loaded in tests
+  with help of `AnnotationConfigContextLoader`
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
+public class SpringPetServiceTest3 {
+
+     @Configuration
+     public static class TestCtxConfig {
+        @Bean
+        StubPetRepo petRepo(){
+            return new StubPetRepo();
+        }
+        @Bean
+        PetService simplePetService(){
+            SimplePetService petService = new SimplePetService();
+            petService.setRepo(petRepo());
+            return petService;
+        }
+    }
+}
+```
+
+#### Testing with spring profiles
+- `@ActiveProfiles` annotation of test class activates profiles listed
+- `@ActiveProfiles( { "foo", "bar" } )`
