@@ -783,7 +783,7 @@ implements PetRepo {
 - In order to define a test class for running in a Spring context, the following have to be done:
     - annotate the test class with `@RunWith(SpringJUnit4ClassRunner.class)`
     - annotate the class with `@ContextConfiguration` in order to tell the runner class where the bean definitions come from
-    - use `@Autowired to inject beans to be tested.
+    - use `@Autowired` to inject beans to be tested.
   
 - Distributed as separate artifact - `spring-test.jar`
 - Test class needs to be annotated with `@RunWith(SpringJUnit4ClassRunner.class)`
