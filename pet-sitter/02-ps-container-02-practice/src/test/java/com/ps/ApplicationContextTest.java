@@ -9,9 +9,6 @@ import java.util.Properties;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by iuliana.cosmina on 3/30/16.
- */
 public class ApplicationContextTest {
 
     @Test

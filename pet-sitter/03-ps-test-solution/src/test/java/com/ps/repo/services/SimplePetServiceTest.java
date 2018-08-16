@@ -14,12 +14,10 @@ import java.util.Set;
 import static com.ps.util.TestObjectsBuilder.buildUser;
 import static org.junit.Assert.*;
 
-/**
- * Created by iuliana.cosmina on 4/15/16.
- */
 public class SimplePetServiceTest {
-    public static final Long PET_ID = 1L;
-    public static final User owner = buildUser("test@gmail.com", "a!2#tre", UserType.OWNER);
+
+    private static final Long PET_ID = 1L;
+    private static final User owner = buildUser("test@gmail.com", "a!2#tre", UserType.OWNER);
 
     private StubPetRepo stubPetRepo = new StubPetRepo();
 
@@ -56,6 +54,7 @@ public class SimplePetServiceTest {
         Pet pet = simplePetService.findById(PET_ID);
         assertNull(pet);
     }
+
     @Test(expected = NotFoundException.class)
     public void deleteByIdNegative() {
         simplePetService.deleteById(99L);
@@ -64,7 +63,7 @@ public class SimplePetServiceTest {
     //positive test, we know that pets for this owner exist and how many
     @Test
     public void findByOwnerPositive() {
-        Set<Pet> result =  simplePetService.findAllByOwner(owner);
+        Set<Pet> result = simplePetService.findAllByOwner(owner);
         assertEquals(result.size(), 2);
     }
 
@@ -72,7 +71,7 @@ public class SimplePetServiceTest {
     @Test
     public void findByOwnerNegative() {
         User newOwner = buildUser("gigi@gmail.com", "1!2#tre", UserType.OWNER);
-        Set<Pet> result =  simplePetService.findAllByOwner(newOwner);
+        Set<Pet> result = simplePetService.findAllByOwner(newOwner);
         assertEquals(result.size(), 0);
     }
 }

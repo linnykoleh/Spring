@@ -14,9 +14,6 @@ import javax.sql.DataSource;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by iuliana.cosmina on 3/31/16.
- */
 public class BootstrapTest {
 
     /**

@@ -45,6 +45,16 @@ public class SimpleReviewServiceTest {
     @Test
     public void findByUserPositive() {
         final User user = buildUser("gigi@gmail.com", "1!2#tre", UserType.OWNER);
+        final Set<Review> reviewSet = prepareReview(user);
+
+        when(reviewMockRepo.findAllForUser(anyObject())).thenReturn(reviewSet);
+
+        Set<Review> result = simpleReviewService.findAllByUser(user);
+        verify(reviewMockRepo, times(1)).findAllForUser(user);
+        assertEquals(result.size(), 1);
+    }
+
+    private Set<Review> prepareReview(User user) {
         final Request req = new Request();
         req.setUser(user);
 
@@ -53,10 +63,6 @@ public class SimpleReviewServiceTest {
 
         final Set<Review> reviewSet = new HashSet<>();
         reviewSet.add(review);
-
-        //TODO 17. Define the mock behavoiur using Mockito methods
-        Set<Review> result = simpleReviewService.findAllByUser(user);
-        verify(reviewMockRepo, times(1)).findAllForUser(user);
-        assertEquals(result.size(), 1);
+        return reviewSet;
     }
 }

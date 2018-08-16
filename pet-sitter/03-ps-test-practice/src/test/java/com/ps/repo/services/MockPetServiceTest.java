@@ -6,8 +6,12 @@ import com.ps.ents.User;
 import com.ps.repos.PetRepo;
 import com.ps.services.impl.SimplePetService;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,14 +20,16 @@ import static com.ps.util.TestObjectsBuilder.buildUser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-//TODO 16. Add all necessary annotations for the tests to pass
+@RunWith(MockitoJUnitRunner.class)
 public class MockPetServiceTest {
 
     private static final Long PET_ID = 1L;
     private static final User owner = buildUser("test@gmail.com", "a!2#tre", UserType.OWNER);
 
+    @InjectMocks
     private SimplePetService simplePetService;
 
+    @Mock
     private PetRepo petRepo;
 
     public void initMocks() {

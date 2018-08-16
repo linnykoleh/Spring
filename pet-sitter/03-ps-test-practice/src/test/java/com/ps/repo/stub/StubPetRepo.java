@@ -67,7 +67,7 @@ public class StubPetRepo extends StubAbstractRepo<Pet> implements PetRepo {
     public Set<Pet> findAllByOwner(User owner) {
         Set<Pet> petSet = records2.get(owner);
         // we never return null when returning collections to avoid NullPointerException
-        return petSet != null? petSet : new HashSet<>();
+        return petSet != null ? petSet : new HashSet<>();
     }
 
     @Override

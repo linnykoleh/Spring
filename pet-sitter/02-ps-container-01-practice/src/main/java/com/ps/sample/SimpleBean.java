@@ -1,8 +1,5 @@
 package com.ps.sample;
 
-/**
- * Created by iuliana.cosmina on 3/28/16.
- */
 public class SimpleBean {
     public static final SimpleBean DEFAULT_SIMPLE_BEAN= new SimpleBean("DEFAULT");
 

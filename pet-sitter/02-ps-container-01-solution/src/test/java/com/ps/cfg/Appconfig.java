@@ -1,10 +1,20 @@
 package com.ps.cfg;
 
+import com.ps.another.quiz.AnotherQuizBean;
+import com.ps.quiz.QuizBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Created by iuliana.cosmina on 11/18/16.
- */
 @Configuration
 public class Appconfig {
+
+    @Bean
+    public QuizBean quizBean(){
+        return new QuizBean();
+    }
+
+    @Bean
+    public AnotherQuizBean anotherQuizBean(){
+        return new AnotherQuizBean();
+    }
 }

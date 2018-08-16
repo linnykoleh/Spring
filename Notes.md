@@ -601,7 +601,7 @@ public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements Reques
 @Repository("requestRepo")
 public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements RequestRepo{
          
-}DsCfg
+}
 // or
 @Repository(value="requestRepo")
 public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements RequestRepo{

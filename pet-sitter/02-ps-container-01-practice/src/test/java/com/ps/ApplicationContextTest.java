@@ -12,9 +12,6 @@ import javax.sql.DataSource;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by iuliana.cosmina on 3/23/16.
- */
 public class ApplicationContextTest {
 
     private Logger logger = LoggerFactory.getLogger(ApplicationContextTest.class);

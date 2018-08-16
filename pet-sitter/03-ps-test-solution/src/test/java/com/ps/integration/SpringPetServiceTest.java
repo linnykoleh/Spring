@@ -16,9 +16,6 @@ import static com.ps.util.TestObjectsBuilder.buildUser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by iuliana.cosmina on 4/17/16.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/test-cfg.xml",
         "classpath:spring/pet-cfg.xml"})
@@ -28,7 +25,7 @@ public class SpringPetServiceTest {
     public static final User owner = buildUser("test@gmail.com", "a!2#tre", UserType.OWNER);
 
     @Autowired
-    PetService simplePetService;
+    private PetService simplePetService;
 
     //positive test, we know that a Pet with ID=1 exists
     @Test

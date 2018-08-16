@@ -17,20 +17,15 @@ import javax.sql.DataSource;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by iuliana.cosmina on 3/23/16.
- */
 public class ApplicationContextTest {
-
-    private Logger logger = LoggerFactory.getLogger(ApplicationContextTest.class);
 
     @Test
     public void testDataSource1() {
         ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext("classpath:spring/application-config.xml");
-        logger.info(" >> init done.");
+        System.out.println(" >> init done.");
         DataSource dataSource1 = ctx.getBean("dataSource1", DataSource.class);
         assertNotNull(dataSource1);
-        logger.info(" >> usage done.");
+        System.out.println(" >> usage done.");
         ctx.close();
     }
 

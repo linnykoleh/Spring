@@ -14,9 +14,6 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.util.Set;
 
-/**
- * Created by iuliana.cosmina on 3/21/16.
- */
 @Repository("requestRepo")
 @Description("This is not the bean you are looking for")
 public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements RequestRepo {

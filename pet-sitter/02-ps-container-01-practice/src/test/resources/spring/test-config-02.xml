@@ -18,7 +18,6 @@
 
     <!-- TODO 11. Add the context element used to register JSR 250 annotations -->
 
-    <!-- TODO 12. Change the scope of simpleBean3 so that the ApplicationContextTest#testBeanScope test passes -->
-    <bean id="simpleBean3" class="com.ps.sample.SimpleBean"/>
+    <bean id="simpleBean3" class="com.ps.sample.SimpleBean" scope="prototype"/>
 
 </beans>
