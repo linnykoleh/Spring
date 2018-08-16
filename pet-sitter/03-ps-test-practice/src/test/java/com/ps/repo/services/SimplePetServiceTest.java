@@ -28,8 +28,7 @@ public class SimplePetServiceTest {
         stubPetRepo.init();
 
         // create object to be tested
-        simplePetService = new SimplePetService();
-        simplePetService.setRepo(stubPetRepo);
+        simplePetService = new SimplePetService(stubPetRepo);
     }
 
     //positive test, we know that a Pet with ID=1 exists

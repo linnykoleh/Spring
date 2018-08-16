@@ -34,8 +34,7 @@ public class SpringPetServiceTest {
 
         @Bean
         public PetService simplePetService(){
-            final SimplePetService simplePetService = new SimplePetService();
-            simplePetService.setRepo(stubPetRepo());
+            final SimplePetService simplePetService = new SimplePetService(stubPetRepo());
             return simplePetService;
         }
 

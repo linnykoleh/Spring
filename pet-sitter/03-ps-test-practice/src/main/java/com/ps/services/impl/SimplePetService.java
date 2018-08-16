@@ -15,6 +15,10 @@ public class SimplePetService extends SimpleAbstractService<Pet> implements PetS
 
     private PetRepo repo;
 
+    public SimplePetService(PetRepo repo) {
+        this.repo = repo;
+    }
+
     @Override
     public Pet createPet(User user, String name, int age, PetType petType, String rfid) {
         Pet pet = new Pet();
@@ -35,11 +39,6 @@ public class SimplePetService extends SimpleAbstractService<Pet> implements PetS
     @Override
     public Pet findByOwner(User user, String name) {
         return repo.findByOwner(user, name);
-    }
-
-    @Autowired
-    public void setRepo(PetRepo petRepo) {
-        this.repo = petRepo;
     }
 
     public PetRepo getRepo() {

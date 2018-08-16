@@ -780,6 +780,11 @@ implements PetRepo {
 - `TDD` - This approach puts the design under question: if tests are difficult to write, the design should be reconsidered
 - Trying to write at least two tests for each method: one positive and one negative, for methods that can be tested
 
+- In order to define a test class for running in a Spring context, the following have to be done:
+    - annotate the test class with `@RunWith(SpringJUnit4ClassRunner.class)`
+    - annotate the class with `@ContextConfiguration` in order to tell the runner class where the bean definitions come from
+    - use `@Autowired to inject beans to be tested.
+  
 - Distributed as separate artifact - `spring-test.jar`
 - Test class needs to be annotated with `@RunWith(SpringJUnit4ClassRunner.class)`
 - Spring configuration classes to be loaded are specified in `@ContextConfiguration` annotation
@@ -798,6 +803,8 @@ public final class FooTest  {
     //...
 }
 ```
+
+#### AnnotationConfigContextLoader
 
 - `@Configuration` inner classes (must be static) are automatically detected and loaded in tests
   with help of `AnnotationConfigContextLoader`
@@ -826,3 +833,46 @@ public class SpringPetServiceTest3 {
 #### Testing with spring profiles
 - `@ActiveProfiles` annotation of test class activates profiles listed
 - `@ActiveProfiles( { "foo", "bar" } )`
+
+#### Inject mocks using Mockito
+
+- The `@InjectMock` has a behavior similar to the Spring IoC, because its role is to instantiate testing object instances and 
+  to try to inject fields annotated with `@Mock` or `@Spy` into private fields of the testing object.
+
+```java
+public class MockPetServiceTest {
+    
+    @InjectMocks
+    private SimplePetService simplePetService;
+    
+    @Mock
+    private PetRepo petRepo;
+    
+    @Before
+    public void initMocks() {
+        MockitoAnnotations.initMocks(this);
+    }
+}
+```
+
+- With `@RunWith(MockitoJUnitRunner.class)` no need to `MockitoAnnotations.initMocks(this)`
+
+```java
+@RunWith(MockitoJUnitRunner.class)
+public class MockPetServiceTest {
+
+
+    @InjectMocks
+    private SimplePetService simplePetService;
+
+    @Mock
+    private PetRepo petRepo;
+
+}
+```
+
+- `PowerMock` was born because sometimes code is not testable, perhaps because of bad design or because of some necessity. Below you can find a list of untestable elements:
+    - static methods
+    - classes with static initializers
+    - final classes and final methods; sometimes there is need for an insurance that the code will not be misused or to make sure that an object is constructed correctly
+    - private methods and fields

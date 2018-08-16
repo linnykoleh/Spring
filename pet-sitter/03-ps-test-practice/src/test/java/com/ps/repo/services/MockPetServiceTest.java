@@ -32,10 +32,6 @@ public class MockPetServiceTest {
     @Mock
     private PetRepo petRepo;
 
-    public void initMocks() {
-        MockitoAnnotations.initMocks(this);
-    }
-
     //positive test, we know that a Pet with ID=1 exists
     @Test
     public void findByIdPositive() {
