@@ -15,16 +15,13 @@ import org.junit.Test;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.ps.util.TestObjectsBuilder.buildUser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static com.ps.util.TestObjectsBuilder.*;
 
-/**
- * Created by iuliana.cosmina on 4/17/16.
- */
 public class SimpleRequestServiceTest {
 
-    public static final Long REQUEST_ID = 1L;
+    private static final Long REQUEST_ID = 1L;
 
     private RequestRepo requestMockRepo;
 
@@ -42,7 +39,7 @@ public class SimpleRequestServiceTest {
 
     @Test
     public void findByIdPositive() {
-        Request req = new Request();
+        final Request req = new Request();
         req.setId(REQUEST_ID);
         req.setStartAt(DateTime.parse("2016-09-06").toDate());
         req.setEndAt(DateTime.parse("2016-09-18").toDate());
@@ -53,17 +50,16 @@ public class SimpleRequestServiceTest {
             will(returnValue(req));
         }});
 
-        Request result = simpleRequestService.findById(REQUEST_ID);
+        final Request result = simpleRequestService.findById(REQUEST_ID);
         mockery.assertIsSatisfied();
         assertNotNull(result);
         assertEquals(req.getId(), result.getId());
     }
 
-
     @Test
     public void findByUserPositive() {
-        User user = buildUser("gigi@gmail.com", "1!2#tre", UserType.OWNER);
-        Request req = new Request();
+        final User user = buildUser("gigi@gmail.com", "1!2#tre", UserType.OWNER);
+        final Request req = new Request();
         req.setUser(user);
         req.setStartAt(DateTime.parse("2016-09-06").toDate());
         req.setEndAt(DateTime.parse("2016-09-18").toDate());

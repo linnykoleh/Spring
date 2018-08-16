@@ -16,18 +16,15 @@ import static com.ps.util.TestObjectsBuilder.buildUser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by iuliana.cosmina on 4/17/16.
- */
 //TODO 16. Add all necessary annotations for the tests to pass
 public class MockPetServiceTest {
 
-    public static final Long PET_ID = 1L;
-    public static final User owner = buildUser("test@gmail.com", "a!2#tre", UserType.OWNER);
+    private static final Long PET_ID = 1L;
+    private static final User owner = buildUser("test@gmail.com", "a!2#tre", UserType.OWNER);
 
-    SimplePetService simplePetService;
+    private SimplePetService simplePetService;
 
-    PetRepo petRepo;
+    private PetRepo petRepo;
 
     public void initMocks() {
         MockitoAnnotations.initMocks(this);

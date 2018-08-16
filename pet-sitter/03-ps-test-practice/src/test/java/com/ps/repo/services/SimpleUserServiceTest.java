@@ -10,16 +10,13 @@ import org.junit.Test;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.ps.util.TestObjectsBuilder.buildUser;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
-import static com.ps.util.TestObjectsBuilder.*;
 
-/**
- * Created by iuliana.cosmina on 4/17/16.
- */
 public class SimpleUserServiceTest {
 
-    public static final Long USER_ID = 1L;
+    private static final Long USER_ID = 1L;
 
     private UserRepo userMockRepo;
     private SimpleUserService simpleUserService;

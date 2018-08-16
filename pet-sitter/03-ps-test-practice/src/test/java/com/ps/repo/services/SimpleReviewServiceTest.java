@@ -17,43 +17,41 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
-/**
- * Created by iuliana.cosmina on 4/17/16.
- */
 public class SimpleReviewServiceTest {
-    public static final Long REVIEW_ID = 1L;
+
+    private static final Long REVIEW_ID = 1L;
 
     private ReviewRepo reviewMockRepo = mock(ReviewRepo.class);
 
-    private SimpleReviewService  simpleReviewService;
-
+    private SimpleReviewService simpleReviewService;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         simpleReviewService = new SimpleReviewService();
         simpleReviewService.setRepo(reviewMockRepo);
     }
 
     @Test
     public void findByIdPositive() {
-        Review review = new Review();
+        final Review review = new Review();
         review.setId(REVIEW_ID);
         when(reviewMockRepo.findById(REVIEW_ID)).thenReturn(review);
 
-        Review result = simpleReviewService.findById(REVIEW_ID);
+        final Review result = simpleReviewService.findById(REVIEW_ID);
         assertNotNull(result);
         assertEquals(review.getId(), result.getId());
     }
 
     @Test
     public void findByUserPositive() {
-        User user = buildUser("gigi@gmail.com", "1!2#tre", UserType.OWNER);
-        Request req = new Request();
+        final User user = buildUser("gigi@gmail.com", "1!2#tre", UserType.OWNER);
+        final Request req = new Request();
         req.setUser(user);
-        Review review = new Review();
+
+        final Review review = new Review();
         review.setRequest(req);
 
-        Set<Review> reviewSet = new HashSet<>();
+        final Set<Review> reviewSet = new HashSet<>();
         reviewSet.add(review);
 
         //TODO 17. Define the mock behavoiur using Mockito methods
