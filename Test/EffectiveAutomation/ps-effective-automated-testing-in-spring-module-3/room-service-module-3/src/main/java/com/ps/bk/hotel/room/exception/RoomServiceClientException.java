@@ -2,7 +2,8 @@ package com.ps.bk.hotel.room.exception;
 
 /**
  * Exception thrown when client request has an invalid format or contains
- * invalid data.
+ * invalid data
+ *
  */
 public class RoomServiceClientException extends RuntimeException {
 

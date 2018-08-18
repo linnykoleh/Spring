@@ -16,10 +16,5 @@
 
     <modules>
         <module>room-service-module-3</module>
-        <module>booking-service-module-3</module>
-        <module>customer-service-module-3</module>
     </modules>
-
-
-
 </project>

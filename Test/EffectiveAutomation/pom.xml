@@ -15,8 +15,9 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-        <module>ps-effective-automated-testing-in-spring-module-2</module>
         <module>ps-effective-automated-testing-in-spring-module-3</module>
+        <module>ps-effective-automated-testing-in-spring-module-4</module>
+        <module>ps-effective-automated-testing-in-spring-module-5</module>
     </modules>
 
 

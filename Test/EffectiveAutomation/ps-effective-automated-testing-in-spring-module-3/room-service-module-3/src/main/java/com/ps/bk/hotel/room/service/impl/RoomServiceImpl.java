@@ -8,9 +8,10 @@ import com.ps.bk.hotel.room.repo.RoomRepo;
 import com.ps.bk.hotel.room.service.RoomService;
 
 public class RoomServiceImpl implements RoomService {
+	
 	private RoomRepo repo;
 
-	public RoomServiceImpl(RoomRepo repo) {
+	RoomServiceImpl(RoomRepo repo) {
 		this.repo = repo;
 	}
 

@@ -876,3 +876,90 @@ public class MockPetServiceTest {
     - classes with static initializers
     - final classes and final methods; sometimes there is need for an insurance that the code will not be misused or to make sure that an object is constructed correctly
     - private methods and fields
+    
+### Testing Rest with Spring boot
+
+```java
+@RunWith(SpringRunner.class)
+@WebMvcTest(controllers = CustomerController.class, secure=false)
+public class TestCustomerController {
+
+	@MockBean
+	private CustomerService service;
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Test
+	public void testSuccessfulFindAllCustomers() throws Exception {
+		when(service.findAllCustomers()).thenReturn(Arrays.asList(new Customer(), new Customer()));
+
+		mockMvc.perform(get("/customers")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(jsonPath("$", hasSize(2)));
+	}
+	//..
+}	
+```
+
+```java
+@RestController
+@RequestMapping("/customers")
+public class CustomerController {
+
+	private CustomerService service;
+
+	public CustomerController(CustomerService service) {
+		this.service = service;
+	}
+	
+	@GetMapping
+	public ResponseEntity<Iterable<Customer>> findAllCustomers(){
+		return ResponseEntity.ok(service.findAllCustomers());
+	}
+    //..
+ }   
+		
+```
+    
+### Testing JPA with Spring boot    
+
+```java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class TestCustomerRepo {
+
+	@Autowired
+	private TestEntityManager entityManager;
+
+	@Autowired
+	private CustomerRepo repo;
+	
+	private Customer bojack;
+
+	public TestCustomerRepo() {
+		bojack = new Customer.CustomerBuilder().firstName("BoJack").middleName("Horse").lastName("Horseman")
+				.suffix("Sr.").build();
+	}
+
+	@Test
+	public void testFindAllCustomers() {
+		this.entityManager.persist(bojack);
+		Iterable<Customer> customers = repo.findAll();
+
+		int count = 0;
+		for (Customer repoCustomer : customers) {
+			assertEquals("BoJack", repoCustomer.getFirstName());
+			assertEquals("Horseman", repoCustomer.getLastName());
+			assertEquals("Horse", repoCustomer.getMiddleName());
+			assertEquals("Sr.", repoCustomer.getSuffix());
+			assertTrue(repoCustomer.getId() > 0L);
+			assertNull(repoCustomer.getDateOfLastStay());
+			count++;
+		}
+		assertEquals(1, count);
+	}
+	//..
+}	
+```
+    
