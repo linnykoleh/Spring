@@ -1,0 +1,7 @@
+<configuration>
+	<appender name="TESTAPPENDER" class="com.ps.bk.hotel.customer.config.TestAppender"/>
+
+	<root level="debug">
+		<appender-ref ref="TESTAPPENDER" />
+	</root>
+</configuration>

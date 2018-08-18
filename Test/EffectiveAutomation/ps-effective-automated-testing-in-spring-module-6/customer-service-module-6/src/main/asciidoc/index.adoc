@@ -1,0 +1,21 @@
+= Customer Service
+
+Example request and responses for the Customer Service
+
+./customers fields
+include::{snippets}/customers/response-fields.adoc[]
+
+.sample request
+include::{snippets}/customers/http-request.adoc[]
+
+.sample response
+include::{snippets}/customers/http-response.adoc[]
+
+./customers/search/byFNameLName fields
+include::{snippets}/customers-search-by-fname-lname/response-fields.adoc[]
+
+.sample request
+include::{snippets}/customers-search-by-fname-lname/http-request.adoc[]
+
+.sample response
+include::{snippets}/customers-search-by-fname-lname/http-response.adoc[]

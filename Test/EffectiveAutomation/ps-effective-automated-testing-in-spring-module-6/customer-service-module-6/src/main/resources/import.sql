@@ -1,0 +1,2 @@
+INSERT INTO customers (first_name, last_name, middle_name, suffix, date_of_last_stay) VALUES ( 'Joe', 'User', 'Middle', '', '2017-10-30');	
+INSERT INTO customers (first_name, last_name, middle_name, suffix, date_of_last_stay) VALUES ( 'Jane', 'Doesf', 'Middleth', '', '2017-10-15');

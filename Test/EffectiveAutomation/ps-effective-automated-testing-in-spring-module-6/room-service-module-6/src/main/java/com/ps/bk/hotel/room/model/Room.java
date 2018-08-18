@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Java class representation of a record in the Rooms table.
+ * Java class representation of a record in the Rooms table. 
  */
 @Entity
 @Table(name="rooms")

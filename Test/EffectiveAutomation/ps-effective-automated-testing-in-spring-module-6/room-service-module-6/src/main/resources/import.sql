@@ -1,0 +1,9 @@
+INSERT INTO rooms (id, room_number, weekday_price, weekend_price, room_type, floor) values (1, '100', 55.00, 75.00, 'Single',  '1');
+INSERT INTO rooms (id, room_number, weekday_price, weekend_price, room_type, floor) values (2, '101', 55.00, 75.00, 'Single',  '1');
+INSERT INTO rooms (id, room_number, weekday_price, weekend_price, room_type, floor) values (3, '102', 85.00, 105.00, 'Double', '1');
+INSERT INTO rooms (id, room_number, weekday_price, weekend_price, room_type, floor) values (4, '103', 55.00, 75.00, 'Single',  '1');
+INSERT INTO rooms (id, room_number, weekday_price, weekend_price, room_type, floor) values (5, '104', 150.00, 175.00, 'Suite', '1');
+INSERT INTO rooms (id, room_number, weekday_price, weekend_price, room_type, floor) values (6, '105', 85.00, 105.00, 'Double', '1');
+INSERT INTO rooms (id, room_number, weekday_price, weekend_price, room_type, floor) values (7, '106', 55.00, 75.00, 'Single',  '1');
+INSERT INTO rooms (id, room_number, weekday_price, weekend_price, room_type, floor) values (8, '107', 85.00, 105.00, 'Double', '1');
+INSERT INTO rooms (id, room_number, weekday_price, weekend_price, room_type, floor) values (9, '123', 85.00, 105.00, 'Double', '1');

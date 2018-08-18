@@ -7,19 +7,18 @@
 
     <parent>
         <groupId>com.learning.linnyk</groupId>
-        <artifactId>Test</artifactId>
+        <artifactId>EffectiveAutomation</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>EffectiveAutomation</artifactId>
+    <artifactId>ps-effective-automated-testing-in-spring-module-6</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-        <module>ps-effective-automated-testing-in-spring-module-3</module>
-        <module>ps-effective-automated-testing-in-spring-module-4</module>
-        <module>ps-effective-automated-testing-in-spring-module-5</module>
-        <module>ps-effective-automated-testing-in-spring-module-6</module>
+        <module>acceptance-tests</module>
+        <module>booking-service-module-6</module>
+        <module>customer-service-module-6</module>
+        <module>room-service-module-6</module>
     </modules>
-
 
 </project>
