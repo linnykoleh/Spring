@@ -38,8 +38,8 @@ public class ITCustomerRepo {
 	}
 
 	@ClassRule
-	@SuppressWarnings("rawtypes")
-	public static PostgreSQLContainer postgres = (PostgreSQLContainer) new PostgreSQLContainer();
+	public static PostgreSQLContainer postgres = new PostgreSQLContainer();
+
 	@Autowired
 	private CustomerRepo repo;
 

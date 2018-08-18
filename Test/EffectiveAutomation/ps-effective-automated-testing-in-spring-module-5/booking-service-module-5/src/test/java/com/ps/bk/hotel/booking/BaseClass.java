@@ -14,22 +14,22 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
 import com.ps.bk.hotel.booking.controller.BookingController;
-import com.ps.bk.hotel.booking.model.Booking;
 import com.ps.bk.hotel.booking.service.BookingService;
 
-@SpringBootTest (classes = BookingServiceApplication.class)
-@RunWith(SpringRunner.class )
+@SpringBootTest(classes = BookingServiceApplication.class)
+@RunWith(SpringRunner.class)
 @AutoConfigureMessageVerifier
 public class BaseClass {
-	@Autowired
+
+    @Autowired
     private BookingController bookingController;
 
-	@MockBean
-	private BookingService bookingService;
-	
+    @MockBean
+    private BookingService bookingService;
+
     @Before
-    public void before() throws Throwable {
-    		Mockito.when(bookingService.addBooking(any())).thenReturn(1L);
+    public void before() {
+        Mockito.when(bookingService.addBooking(any())).thenReturn(1L);
         RestAssuredMockMvc.standaloneSetup(this.bookingController);
     }
 
