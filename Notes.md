@@ -962,4 +962,128 @@ public class TestCustomerRepo {
 	//..
 }	
 ```
+
+## Aspect Oriented Programming
     
+```
+AOP is a type of programming that aims to help with separation of cross-cutting concerns to increase modularity; 
+it implies declaring an aspect class that will alter the behavior of base code, 
+by applying advices to specific join points, specified by pointcuts.
+```    
+
+- Examples of cross-cutting concerns:
+	- Caching
+	- Internationalization
+	- Error detection and correction
+	- Memory management
+	- Performance monitoring
+	- Synchronization
+
+- The original library that provided components for creating aspects is named **AspectJ.**
+
+### AOP Terminology
+    
+- **Aspect** - a class containing code specific to a cross-cutting concern. 
+   A class declaration is recognized in Spring as an aspect if it is annotated with the `@Aspect` annotation.
+-  **Weaving** - a synonym for this word is interlacing, but in software, the synonym is linking, <br/> 
+   and it refers to aspects being combined with other types of objects to create an advised object.  
+- **Join point** - a point during the execution of a program. In Spring AOP, a joint point is always a method execution.   
+- **Target object** - object to which the aspect applies.
+- **Target method** - the advised method.
+- **Advice** - action taken by an aspect at a join point. In Spring AOP there are multiple advice types:
+	- **Before advice** - methods annotated with @Before that will execute before the join point
+	- **After returning advice** - methods annotated with `@AfterReturning` that will execute after a join point completes normally, <br/> 
+	  meaning that the target method returns normally without throwing an exception.
+	- **After throwing advice** - methods annotated with `@AfterThrowing` that will execute after a join point execution ends by throwing an exception.  
+	- **After (finally) advice** - methods annotated with `@After` that will execute after a join point execution, no matter how the execution ended.
+	- **Around advice** - methods annotated with `@Around` intercept the target method and surround the join point. 
+	  This is the most powerful type of advice, since it can perform custom behavior before and after the invocation
+- **Pointcut** - a predicate used to identify join points.  Advice definitions are associated with a pointcut expression and the advice will execute on any join point matching the pointcut expression. <br/> 	  
+   Pointcut expressions can be defined as arguments for Advice annotations or as arguments for the `@Pointcut` annotation. 
+- **Introduction** - declaring additional methods, fields, interfaces being implemented, annotations on behalf of another type.
+- **AOP proxy** - the object created by AOP to implement the aspect contracts. In SprJdbcTemplateUserRepoing, proxy objects can be `JDK dynamic proxies` or `CGLIB proxies`    
+
+```java
+@Aspect
+@Component
+public class UserRepoMonitor {
+    
+     @Before("execution(public com.ps.repos.˙JdbcTemplateUserRepo+.findById(..))")
+    public void beforeFindById(JoinPoint joinPoint) {
+        String methodName = joinPoint.getSigTestJdbcTemplateUserReponature().getName();
+        System.out.println(" ---> Method " + methodName + " is about to be called");
+    }
+}
+```
+
+- The `@Before` annotation is used with a parameter that is called a pointcut expression. <br/> 
+  This is used to identify the method execution on which the behavior will be applied.
+  
+```java
+@Configuration
+@ComponentScan(basePackages = {"com.ps.repos.impl","com.ps.aspects"})
+@EnableAspectJAutoProxy
+public class AppConfig {
+	
+}
+```  
+
+- `@EnableAspectJAutoProxy`- to enable aspect support, the configuration class must be annotated, default **JDK dynamic proxy**.
+- `@EnableAspectJAutoProxy(proxyTargetClass = true)` - if the **CGLIB** library is to be added to the application classpath, Spring must be told that we want subclass-based proxies by modifying the aspect enabling annotation
+	- This approach is suitable when the target class does not implement any interface, so Spring will create a new class on the fly that is a subclass of the target class
+	- CGLIB is suitable for that because it is a bytecode generation library.
+
+- It is obvious that the before advice was executed, but how does it actually work? Spring IoC creates the userTemplateRepo bean. 
+  Then the aspect definition with an advice that has to be executed before the findById method tells Spring that this bean has to be wrapped up in a proxy object that will add additional behavior, 
+  and this object will be injected instead of the original everywhere needed. 
+  And because we are using JDK dynamic proxies, the proxy will implement the UserRepo interface
+
+
+![alt text](images/pet-sitter/Screenshot_6.png "Screenshot_6")
+
+![alt text](images/pet-sitter/Screenshot_7.png "Screenshot_7")
+
+- In order to use aspects in a Spring application you need the following:
+	- spring-aop as a dependency
+	- declare an `@Aspect` class and declare it as a bean as well (using `@Component` or `@Bean` or XML typical bean declaration element)
+	- declare an advice method annotated with a typical advice annotation (`@Before`, `@After`, etc.) and associate it to a pointcut expression
+	- enable aspects support by annotating a configuration class with `@EnableAspectJAutoProxy`
+	- (optional) add CGLIB as a dependency and enable aspects support using subclassed proxies by annotating a configuration class with `@EnableAspectJAutoProxy(proxyTargetClass = true)`
+	
+### Defining Pointcuts	
+
+- The template that a pointcut expression follows can be defined as follows:
+
+```java
+execution( [Modifiers] [ReturnType] [FullClassName].[MethodName] ([Arguments]) throws [ExceptionType])
+```  
+
+- The expression can contain wildcards like + and * and can be made of multiple expressions concatenated by boolean operators such as &&, ||, etc. 
+	- The * wildcard replaces any group of characters
+	- The + wildcard is used to specify that the method to advise can also be found in subclasses identified by [FullClassName] criteria. 
+
+- There is also a list of designators that can be used to define the reach of the pointcut; for example, the `within(...)` designator can be used to limit the pointcut to a package	
+
+```java
+public * com.ps.repos.*.JdbcTemplateUserRepo+.findById(..)) && +underlinewithin(com.ps.*)
+```
+
+- Pointcut expression can identify only methods defined in a class annotated with a specific annotation:
+
+```java
+execution(@org.springframework.transaction.annotation.Transactional
+    public * com.ps.repos.*.*Repo+.findById(..)))
+```
+
+- Pointcut expression can even identify methods that return values with a specific annotation:
+	
+```java
+execution(public (@org.springframework.stereotype.Service *) *(..)) 
+```
+
+- by using the `@annotation()` designator, only methods annotated with a specific annotation can be taken into consideration:
+
+```java
+execution(public (public * com.ps.service.*.*Service+.*(..)
+      && @annotation(org.springframework.security.access.annotation.Secured))
+```

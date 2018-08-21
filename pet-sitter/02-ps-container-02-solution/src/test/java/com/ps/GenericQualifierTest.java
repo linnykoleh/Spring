@@ -13,9 +13,6 @@ import com.ps.ents.Response;
 import com.ps.ents.Review;
 import com.ps.repos.impl.JdbcAbstractRepo;
 
-/**
- * Created by iuliana.cosmina on 3/31/16.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {AllRepoConfig.class})
 public class GenericQualifierTest {

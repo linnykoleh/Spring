@@ -11,10 +11,6 @@ import javax.sql.DataSource;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by iuliana.cosmina on 5/2/16.
- * Description: Bootstrap Configuration class using context class
- */
 public class XmlToCfgTest {
 
     private ApplicationContext ctx;

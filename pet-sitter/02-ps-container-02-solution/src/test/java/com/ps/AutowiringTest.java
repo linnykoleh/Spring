@@ -11,9 +11,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by iuliana.cosmina on 3/31/16.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {RequestRepoConfig.class})
 public class AutowiringTest {
