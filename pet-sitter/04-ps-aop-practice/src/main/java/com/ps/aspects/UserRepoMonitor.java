@@ -9,13 +9,12 @@ import org.aspectj.lang.annotation.*;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
-//TODO 21. Declare this class as an aspect
+@Aspect
+@Component
 public class UserRepoMonitor {
 
-
-    /*TODO 26. Declare this method as a Before advice and use as pointcut expression the expression
-     associated with the "repoUpdate" from the "PointcutContainer" class */
-    public void beforeServiceUpdate(UserService service, Long id, String pass) throws Throwable {
+    @Before("execution (* com.ps.services.UserService.update*(..)) && args(id,pass) && target (service)")
+    public void beforeServiceUpdate(UserService service, Long id, String pass) {
         System.out.println(" ---> Target object " + service.getClass());
 
         if (StringUtils.indexOfAny(pass, new String[]{"$", "#", "$", "%"}) != -1) {
@@ -23,9 +22,8 @@ public class UserRepoMonitor {
         }
     }
 
-    /*TODO 22. Declare this method as a AfterReturning advice and create a pointcut expression that matches any method
-     with the name starting with "update" that is defined in a class with the name containing "Service" */
-    public void afterServiceUpdate(JoinPoint joinPoint, int result) throws Throwable {
+    @AfterReturning(value="execution (* com.ps.services.UserService.update*(..))", returning = "result")
+    public void afterServiceUpdate(JoinPoint joinPoint, int result) {
         String className = joinPoint.getSignature().getDeclaringTypeName();
         String methodName = joinPoint.getSignature().getName();
         if(result == 0) {
@@ -33,9 +31,8 @@ public class UserRepoMonitor {
         }
     }
 
-    /*TODO 23. Declare this method as a AfterThrowing advice and create a pointcut expression that matches any method
-     named updateUsername that is defined in a class with the name containing "Service" */
-    public void afterBadUpdate(JoinPoint joinPoint, Exception e) throws Throwable {
+    @AfterThrowing(value="execution ( * com.ps.services.UserService.updateUsername(..))", throwing = "e")
+    public void afterBadUpdate(JoinPoint joinPoint, Exception e) {
         String className = joinPoint.getSignature().getDeclaringTypeName();
         String methodName = joinPoint.getSignature().getName();
         if(e instanceof DuplicateKeyException) {
@@ -46,20 +43,19 @@ public class UserRepoMonitor {
     }
 
     @Before("com.ps.aspects.PointcutContainer.repoUpdate()")
-    public void beforeRepoUpdate(JoinPoint joinPoint) throws Throwable {
+    public void beforeRepoUpdate(JoinPoint joinPoint) {
         String className = joinPoint.getSignature().getDeclaringTypeName();
         String methodName = joinPoint.getSignature().getName();
         System.out.println(" ---> Method " + className + "." + methodName + " is about to be called");
     }
 
-    /*TODO 24. Declare this method as an Around advice and create a pointcut expression that matches any method
-     with the name starting with "find" that is defined in a class with the name containing "Repo" */
+    @Around("execution(public * com.ps.repos.*.*Repo+.find*(..))")
     public Object monitorFind(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().getName();
         System.out.println(" ---> Intercepting call of: " + methodName);
         long t1 = System.currentTimeMillis();
         try {
-            return null; //TODO 25. Call the target method
+            return joinPoint.proceed();
         } finally {
             long t2 = System.currentTimeMillis();
             System.out.println(" ---> Execution of " + methodName + " took: " + (t2 - t1) / 1000 + " ms.");
@@ -69,7 +65,7 @@ public class UserRepoMonitor {
     private static long findByIdCount = 0;
 
     @After("execution(public * com.ps.repos.*.JdbcTemplateUserRepo+.updateUsername(..))")
-    public void afterFindById(JoinPoint joinPoint) throws Throwable {
+    public void afterFindById(JoinPoint joinPoint) {
         ++findByIdCount;
         String methodName = joinPoint.getSignature().getName();
         System.out.println(" ---> Method " + methodName + " was called " + findByIdCount + " times.");
