@@ -1087,3 +1087,84 @@ execution(public (@org.springframework.stereotype.Service *) *(..))
 execution(public (public * com.ps.service.*.*Service+.*(..)
       && @annotation(org.springframework.security.access.annotation.Secured))
 ```
+
+### Implementing Advice
+
+#### Before
+
+```java
+@Before("com.ps.aspects.PointcutContainer.serviceUpdate(id, pass)")
+   public void beforeServiceUpdate (Long id, String pass) throws Throwable {
+	//..
+   }
+```
+
+![alt text](images/pet-sitter/Screenshot_8.png "Screenshot_8")
+
+1. The proxy object receives the call destined for the target bean and calls first the advice method
+2. If the advice method returns successfully, it then forwards the initial call to the target bean and forwards the result back to the caller.
+3. If the advice method throws an exception, the exception gets propagated to the caller, and the target method is no longer executed
+
+#### After Returning
+
+This type of advice is executed only if the target method executed successfully and does not end by throwing an exception.
+
+```java
+@AfterReturning(value="execution (* com.ps.services.*Service+.update*(..))",
+      returning = "result")
+public void afterServiceUpdate(JoinPoint joinPoint, int result) throws Throwable {
+	//..
+}
+```
+
+![alt text](images/pet-sitter/Screenshot_9.png "Screenshot_9")
+
+
+#### After Throwing
+
+The after throwing advice is similar to the after returning. The only difference is that its criterion of execution is exactly the opposite. </br> 
+That is, this advice is executed only when when the target method ends by throwing an exception
+
+```java
+@AfterThrowing(value="execution
+      (* com.ps.services.*Service+.updateUsername(..))", throwing = "e")
+public void afterBadUpdate(JoinPoint joinPoint, Exception e) throws Throwable {
+	//..
+}
+```
+
+![alt text](images/pet-sitter/Screenshot_10.png "Screenshot_10")
+
+#### After
+
+The after advice is executed after the target method regardless of how its execution ended, whether successfully or with an exception, and because of this, </br> 
+it is most suitable to use for auditing or logging.
+
+```java
+ 	@After("execution(public * com.ps.repos.*.JdbcTemplateUserRepo+.updateUsername(..))")
+    public void afterFindById(JoinPoint joinPoint) throws Throwable {
+		//..
+    }
+```
+
+![alt text](images/pet-sitter/Screenshot_11.png "Screenshot_11")
+
+
+#### Around
+
+- The around advice is the most powerful type of advice, because it encapsulates the target method and has control over its execution, </br>
+meaning that the advice decides whether the target method is called, and if so, when.
+- The type `ProceedingJoinPoint` inherits from JoinPoint and adds the `proceed()` method that is used to call the target method
+
+```java
+@Around("execution(public * com.ps.repos.*.*Repo+.find*(..))")
+    public Object monitorFind( ProceedingJoinPoint joinPoint) throws Throwable {
+        long t1 = System.currentTimeMillis();
+		Thread.sleep(1000L);
+		return joinPoint.proceed();
+		long t2 = System.currentTimeMillis();
+		logger.info(" ---> Execution of " + methodName + " took: "   + (t2 - t1) / 1000 + " ms.");
+}
+```
+
+![alt text](images/pet-sitter/Screenshot_12.png "Screenshot_12")
