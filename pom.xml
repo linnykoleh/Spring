@@ -25,5 +25,6 @@
         <module>Test</module>
         <module>AOP</module>
         <module>LMI</module>
+        <module>SpringMVC</module>
     </modules>
 </project>
