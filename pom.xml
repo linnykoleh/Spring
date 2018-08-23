@@ -24,5 +24,6 @@
         <module>IOC</module>
         <module>Test</module>
         <module>AOP</module>
+        <module>LMI</module>
     </modules>
 </project>
