@@ -1168,3 +1168,6 @@ meaning that the advice decides whether the target method is called, and if so, 
 ```
 
 ![alt text](images/pet-sitter/Screenshot_12.png "Screenshot_12")
+
+
+**Aspect** = **PointCut**(Where the Aspect is applied) + **Advice**(What code is executed)

@@ -23,5 +23,6 @@
         <module>pet-sitter</module>
         <module>IOC</module>
         <module>Test</module>
+        <module>AOP</module>
     </modules>
 </project>
