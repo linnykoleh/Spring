@@ -10,6 +10,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-        <module>m04-your-first-aspect</module>
+        <module>m05-advice-deep-dive</module>
+        <module>m06-pointcut-deep-dive</module>
     </modules>
 </project>

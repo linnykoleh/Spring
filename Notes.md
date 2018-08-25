@@ -1170,4 +1170,63 @@ meaning that the advice decides whether the target method is called, and if so, 
 ![alt text](images/pet-sitter/Screenshot_12.png "Screenshot_12")
 
 
+### Advices 
+
 **Aspect** = **PointCut**(Where the Aspect is applied) + **Advice**(What code is executed)
+
+![alt text](images/aop/Screenshot.png "Screenshot")
+
+![alt text](images/aop/Screenshot_1.png "Screenshot_1")
+
+![alt text](images/aop/Screenshot_2.png "Screenshot_2")
+
+![alt text](images/aop/Screenshot_3.png "Screenshot_3")
+
+![alt text](images/aop/Screenshot_4.png "Screenshot_4")
+
+![alt text](images/aop/Screenshot_5.png "Screenshot_5")
+
+![alt text](images/aop/Screenshot_6.png "Screenshot_6")
+
+
+### PointCuts 
+
+![alt text](images/aop/Screenshot_12.png "Screenshot_12")
+
+#### Wildcards
+
+![alt text](images/aop/Screenshot_7.png "Screenshot_7")
+
+#### Parameter Wildcards
+
+![alt text](images/aop/Screenshot_8.png "Screenshot_8")
+
+#### Packages and Classes
+
+![alt text](images/aop/Screenshot_9.png "Screenshot_9")
+
+![alt text](images/aop/Screenshot_10.png "Screenshot_10")
+
+![alt text](images/aop/Screenshot_11.png "Screenshot_11")
+
+#### Annotation
+
+![alt text](images/aop/Screenshot_13.png "Screenshot_13")
+
+#### Spring beans names as PointCut
+
+![alt text](images/aop/Screenshot_14.png "Screenshot_14")
+
+#### Boolean expressions in PointCut
+
+![alt text](images/aop/Screenshot_15.png "Screenshot_15")
+
+#### @PointCut
+
+![alt text](images/aop/Screenshot_16.png "Screenshot_16")
+
+
+
+
+
+
