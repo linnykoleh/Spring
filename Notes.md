@@ -1209,9 +1209,13 @@ meaning that the advice decides whether the target method is called, and if so, 
 
 ![alt text](images/aop/Screenshot_11.png "Screenshot_11")
 
+![alt text](images/aop/Screenshot_18.png "Screenshot_18")
+
 #### Annotation
 
 ![alt text](images/aop/Screenshot_13.png "Screenshot_13")
+
+![alt text](images/aop/Screenshot_17.png "Screenshot_17")
 
 #### Spring beans names as PointCut
 

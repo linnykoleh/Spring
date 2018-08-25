@@ -12,5 +12,7 @@
     <modules>
         <module>m05-advice-deep-dive</module>
         <module>m06-pointcut-deep-dive</module>
+        <module>m07-expressing-architecture-using-pointcut-annotations</module>
+        <module>m07-expressing-architecture-using-pointcut-packages</module>
     </modules>
 </project>
