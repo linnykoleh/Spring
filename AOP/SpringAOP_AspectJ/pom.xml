@@ -14,5 +14,15 @@
         <module>m06-pointcut-deep-dive</module>
         <module>m07-expressing-architecture-using-pointcut-annotations</module>
         <module>m07-expressing-architecture-using-pointcut-packages</module>
+        <module>m08-how-aspects-are-added-to-objects</module>
+        <module>m09-spring-aop-vs-aspectj-load-time-weaving</module>
+        <module>m10-spring-aspect-library-tracing</module>
+        <module>m10-spring-aspect-library-transactions</module>
+        <module>m11-real-life-aspects-circuitbreaker</module>
+        <module>m11-real-life-aspects-datacapture</module>
+        <module>m11-real-life-aspects-exceptions</module>
+        <module>m11-real-life-aspects-filter</module>
+        <module>m11-real-life-aspects-jpa</module>
+        <module>m11-real-life-aspects-retry</module>
     </modules>
 </project>

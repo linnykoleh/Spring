@@ -9,6 +9,14 @@
     <artifactId>Spring</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <modules>
+        <module>pet-sitter</module>
+        <module>IOC</module>
+        <module>Testing</module>
+        <module>AOP</module>
+        <module>SpringMVC</module>
+    </modules>
+
     <dependencies>
         <!-- Lombok -->
         <dependency>
@@ -17,15 +25,6 @@
             <version>1.16.4</version>
         </dependency>
     </dependencies>
-
-    <modules>
-        <module>pet-sitter</module>
-        <module>IOC</module>
-        <module>Test</module>
-        <module>AOP</module>
-        <module>LMI</module>
-        <module>SpringMVC</module>
-    </modules>
 
     <build>
         <plugins>
