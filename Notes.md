@@ -1267,7 +1267,123 @@ public void setters() {
     tables, views, cursors, etc. The commands `CREATE`, `ALTER`, `DROP`
 
 
+### Java Config of DataSource and populating db
+
+```java
+@Configuration
+@Profile("dev")
+@PropertySource("classpath:db/db.properties")
+public class TestDataConfig {
+	
+    @Value("${driverClassName}")
+    private String driverClassName;
+    
+    @Value("${url}")
+    private String url;
+    
+    @Value("${username}")
+    private String username;
+    
+    @Value("${password}")
+    private String password;
+    
+    @Value("classpath:db/schema.sql")
+	private Resource schemaScript;
+    
+	@Value("classpath:db/test-data.sql")
+	private Resource dataScript;
+        
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer
+        propertySourcesPlaceholderConfigurer() {
+      return new PropertySourcesPlaceholderConfigurer();
+    }
+    
+    @Lazy
+    @Bean
+    public DataSource dataSource() {
+        try {
+            SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+            Class<? extends Driver> driver = (Class<? extends Driver>) Class.forName(driverClassName);
+            dataSource.setDriverClass(driver);
+            dataSource.setUrl(url);
+            dataSource.setUsername(username);
+            dataSource.setPassword(password);
+            DatabasePopulatorUtils.execute(databasePopulator(), dataSource);
+            return dataSource;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    @Bean
+    public DataSourceInitializer dataSourceInitializer
+              (final DataSource dataSource) {
+        final DataSourceInitializer initializer = new DataSourceInitializer();
+        initializer.setDataSource(dataSource);
+        initializer.setDatabasePopulator(databasePopulator());
+        return initializer;
+    }
+    
+    private DatabasePopulator databasePopulator() {
+        final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScript(schemaScript);
+        populator.addScript(dataScript);
+        return populator;
+    }
+    
+    @Bean
+    public JdbcTemplate userJdbcTemplate() {
+        return new JdbcTemplate(dataSource());
+    }
+}
+```
+
+#### Embedded DataSource Java Configuration
+
+```java
+
+@Configuration
+@Profile("dev")
+public class TestDataConfig {
+
+    @Bean
+    public DataSource dataSource() {
+        return new EmbeddedDatabaseBuilder()
+                .setType(EmbeddedDatabaseType.H2)
+                .addScript("classpath:db/schema.sql")
+                .addScript("classpath:db/test-data.sql")
+                .build();
+    }
+
+}
+```
+
+#### Embedded DataSource XML Configuration
+
+```xml
+<jdbc:embedded-database id="dataSource">
+	 <jdbc:script location="classpath:db/schema.sql"/>
+	 <jdbc:script location="classpath:db/test-data.sql"/>
+</jdbc:embedded-database>
+```
+
+#### ACID
+
+- **Atomicity** is the main attribute of a transaction and is the characteristic mentioned earlier, that if an operation in a transaction fails, the entire transaction fails, and the database is left unchanged. When all operations in a transaction succeed, all changes are saved into the database when the transaction is committed. Basically it is “all or nothing.”
+- **Consistency** implies that every transaction should bring the database from one valid state to another.
+- **Isolation** implies that when multiple transactions are executed in parallel, they won’t hinder one another or affect each other in any way. The state of the database after a group of transactions is executed in parallel should be the same as if the transactions in the group had been executed sequentially.
+- **Durability** is the property of a transaction that should persist even in cases of power off, crashes, and other errors on the underlying system
 
 
+#### Transactional Environment
 
+- In a transactional environment, transactions have to be managed. 
+  In Spring, this is done by an infrastructure bean called the `transaction manager`.
+  
+- Configuring transactional behavior is done declaratively by annotating methods with `@Transactional` 
+- It is mandatory to use `@Transactional`  on repository classes, too, in order to ensure transactional behavior
+- Methods that need to be executed in a transactional context are annotated with `@Transactional` Spring annotation
+- This annotation must be used only on public methods; otherwise, the transactional proxy won’t be able to apply the transactional behavior
 
+![alt text](images/pet-sitter/Screenshot_13.png "Screenshot_13")

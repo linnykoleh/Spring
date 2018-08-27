@@ -8,9 +8,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import javax.sql.DataSource;
 
-/**
- * Created by iuliana.cosmina on 5/6/16.
- */
 @Configuration
 @Profile("dev")
 public class TestDataConfig {
