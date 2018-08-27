@@ -2,9 +2,6 @@ package com.ps;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
-/**
- * Created by iuliana.cosmina on 4/15/17.
- */
 public class CleanUp {
 
     private JdbcTemplate jdbcTemplate;

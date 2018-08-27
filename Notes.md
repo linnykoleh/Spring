@@ -145,9 +145,9 @@ while if you are using indexes, the attribute definition should match c:_{index}
 </bean>
 ```
 
-- The `name` attribute is mandatory, because its value is the `name of the bean property` to be set.
-- The `ref` attribute is used to tell the container that the value of this attribute is a `reference to another bean`.
-- The `value`, as you probably suspect, is used to tell the container `that the value is not a bean`, but a scalar value.
+- The `name` is mandatory, because its value is the `name of the bean property` to be set.
+- The `ref` is used to tell the container that the value of this attribute is a `reference to another bean`.
+- The `value`, is used to tell the container `that the value is not a bean`, but a scalar value.
 
 ```xml
 <beans>
@@ -385,7 +385,7 @@ public class SpringFactoryBean implements FactoryBean<SimpleBean> {
 	- Annotating with `@PostConstruct` the method that is called right after the bean is instantiated and dependencies injected
 	- The equivalent of the `init-method` attribute when using Java Configuration `@Bean(initMethod="...")`.	
 	
-#### Initializing beans priority	
+### Initializing beans priority	
 
 ```java
 public class TriangleLifecycle implements InitializingBean {
@@ -410,7 +410,7 @@ public class TriangleLifecycle implements InitializingBean {
 }
 ```
 
-#### @PostConstruct
+### @PostConstruct
 
 - The `@PostConstruct` annotation is part of the JSR 25013 and is used on a method that needs to be executed after dependency injection is done to perform initialization
 - The bean that registers `@PostConstruct` is `org.springframework.context.annotation.CommonAnnotationBeanPostProcessor`
@@ -419,21 +419,21 @@ public class TriangleLifecycle implements InitializingBean {
  	- return void
  	- they can have any access right
 
-#### context namespace
+### context namespace
 
 - `<context:annotation-config />` 
 	- Enables scanning of all the classes in the project for annotations, so using it on large applications might make them slow
 	- Activates various annotations to be detected in bean classes: Spring's @Required and
-      @Autowired, as well as JSR 250's @PostConstruct, @PreDestroy and @Resource 
-    - JPA's @PersistenceContext and @PersistenceUnit (if available).
+      @Autowired, as well as JSR 250's `@PostConstruct`, `@PreDestroy` and `@Resource`
+    - JPA's `@PersistenceContext` and `@PersistenceUnit` (if available).
 - `<context:component-scan />` 
 	- Scans the classpath for annotated components that will be auto-registered as Spring beans. 
-    - By default, the Spring-provided @Component, @Repository, @Service, @Controller, @RestController, @ControllerAdvice, and @Configuration stereotypes  will be detected.                                                               
+    - By default, the Spring-provided `@Component`, `@Repository`, `@Service`, `@Controller`, `@RestController`, `@ControllerAdvice`, and `@Configuration` stereotypes  will be detected.                                                               
     - Reduce the number of classes to be scanned  
 
 [Context name space configuration example](/IOC/src/main/resources/jb/_3_annotation_event/spring.xml)
 
-#### Destroying beans priority
+### Destroying beans priority
 
 - Destroying ways
 	- Set a method to be called before destruction using the `destroy-method` attribute of the <bean /> element.
@@ -476,16 +476,15 @@ public class TriangleLifecycle implements DisposableBean {
 
 | Scope         | Description |
 | ------------- |-------------|
-| Singleton     | The Spring IoC creates a single instance of this bean, and any request for beans with an id or ids matching this bean definition results in this instance being returned.|
-| Prototype     | Every time a request is made for this specific bean, the Spring IoC creates a new instance.      |
-| Request       | The Spring IoC creates a bean instance for each HTTP request. Only valid in the context of a web-aware Spring ApplicationContext.     |
-| Session       | The Spring IoC creates a bean instance for each HTTP session. Only valid in the context of a web-aware Spring ApplicationContext. |
-| global-session| The Spring IoC creates a bean instance for each global HTTP session. Only valid in the context of a web-aware Spring ApplicationContext.|
+| **Singleton** | The Spring IoC creates a single instance of this bean, and any request for beans with an id or ids matching this bean definition results in this instance being returned.|
+| **Prototype** | Every time a request is made for this specific bean, the Spring IoC creates a new instance.      |
+| **Request**   | The Spring IoC creates a bean instance for each HTTP request. Only valid in the context of a web-aware Spring ApplicationContext.     |
+| **Session**   | The Spring IoC creates a bean instance for each HTTP session. Only valid in the context of a web-aware Spring ApplicationContext. |
+| **global-session**| The Spring IoC creates a bean instance for each global HTTP session. Only valid in the context of a web-aware Spring ApplicationContext.|
 | _Custom_      | Developers are provided the possibility to define their own scopes with their own rules.|
 
 ```xml
-<bean id="complexBean" class="com.ps.sample.ComplexBean"
-    scope="prototype"/>
+<bean id="complexBean" class="com.ps.sample.ComplexBean" scope="prototype"/>
 ```
 
 #### Additional ways to create app context
@@ -660,9 +659,9 @@ public class JdbcUserRepo extends JdbcAbstractRepo<User> implements UserRepo {
 	private DataSource dataSource;
     
 	@Autowired
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
     
     //or by name
      @Autowired
@@ -717,12 +716,12 @@ public class GenericQualifierTest {
 
 ```java 
 	 @Value("${driverClassName}") private String driverClassName;
-     @Value("${url}") private String url;
-    
-     @Value("#{dbProps.driverClassName}") String driverClassName,
-     @Value("#{dbProps.url}")String url,
-     @Value("#{dbProps.username}")String username,
-     @Value("#{dbProps.password}")String password
+	 @Value("${url}") private String url;
+	
+	 @Value("#{dbProps.driverClassName}") String driverClassName,
+	 @Value("#{dbProps.url}")String url,
+	 @Value("#{dbProps.username}")String username,
+	 @Value("#{dbProps.password}")String password
 ```
 
 ### Spring Expression language
@@ -755,10 +754,10 @@ public class SimpleBean {
 public class RequestRepoConfig {
 	
 	@Lazy
-    @Bean
-    public RequestRepo anotherRepo(){
-        return new JdbcRequestRepo();
-    }
+	@Bean
+	public RequestRepo anotherRepo(){
+		return new JdbcRequestRepo();
+}
 }
 
 // on injection point
@@ -1228,6 +1227,44 @@ meaning that the advice decides whether the target method is called, and if so, 
 #### @PointCut
 
 ![alt text](images/aop/Screenshot_16.png "Screenshot_16")
+
+#### PointCuts XML
+
+```xml
+<aop:config>
+    <aop:pointcut id="pointcut" expression="execution(void set*(*))"/> 
+    
+    <aop:aspect ref="myAspect">
+        <aop:after-returning pointcut-ref="pointcut" method="logChange"/> 
+    </aop:aspect> 
+    
+    <bean id="myAspect" class="com.example.MyAspect" />
+</aop:config>
+```
+
+#### PointCuts Java
+
+```java
+//Pointcut is referenced here by its ID
+@Before("setters()") 
+public void logChange() {
+    //...
+}
+
+//Method name is pointcut id, it is not executed
+@Pointcut("execution(void set*(*))") 
+public void setters() {
+    //...
+}
+```
+
+### Data Access
+
+ - **DML** stands for `Data Manipulation Language`, and the database operations presented so far are part of it, 
+    the commands `SELECT`, `INSERT`, `UPDATE`, and `DELETE` are database statements used to create, update, or delete data from existing tables.
+    
+ - **DDL** stands for `Data Definition Language`, and database operations that are part of it are used to manipulate database objects: 
+    tables, views, cursors, etc. The commands `CREATE`, `ALTER`, `DROP`
 
 
 

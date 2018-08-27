@@ -5,11 +5,8 @@ import com.ps.ents.Pet;
 import com.ps.ents.User;
 import com.ps.repos.PetRepo;
 import com.ps.services.PetService;
-import org.springframework.beans.factory.annotation.Required;
 
-/**
- * Created by iuliana.cosmina on 2/23/16.
- */
+
 public class SimplePetService extends SimpleAbstractService<Pet> implements PetService {
 
 

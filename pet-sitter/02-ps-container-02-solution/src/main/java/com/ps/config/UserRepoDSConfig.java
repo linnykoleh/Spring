@@ -11,7 +11,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import javax.sql.DataSource;
 
 /**
- * Created by iuliana.cosmina on 3/21/16.
  * Sample class to depict how @ImportResource can be used
  */
 @Configuration

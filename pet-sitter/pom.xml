@@ -33,6 +33,8 @@
         <module>03-ps-test-solution</module>
         <module>04-ps-aop-practice</module>
         <module>04-ps-aop-solution</module>
+        <module>05-ps-jdbc-practice</module>
+        <module>05-ps-jdbc-solution</module>
     </modules>
 
     <build>

@@ -1,5 +1,7 @@
 package com.ps.services.impl;
 
+import org.joda.time.DateTime;
+
 import com.ps.base.RequestStatus;
 import com.ps.ents.Pet;
 import com.ps.ents.Request;
@@ -7,11 +9,7 @@ import com.ps.ents.User;
 import com.ps.repos.RequestRepo;
 import com.ps.services.RequestService;
 import com.ps.util.Pair;
-import org.joda.time.DateTime;
 
-/**
- * Created by iuliana.cosmina on 2/22/16.
- */
 public class SimpleRequestService extends SimpleAbstractService<Request> implements RequestService {
 
     private RequestRepo repo;

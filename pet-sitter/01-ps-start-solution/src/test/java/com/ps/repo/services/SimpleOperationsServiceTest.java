@@ -1,20 +1,25 @@
 package com.ps.repo.services;
 
-import com.ps.base.*;
-import com.ps.ents.*;
-import com.ps.services.OperationsService;
-import com.ps.services.impl.SimpleOperationsService;
-import com.ps.util.Pair;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.ps.base.PetType;
+import com.ps.base.RequestStatus;
+import com.ps.base.ResponseStatus;
+import com.ps.base.ReviewGrade;
+import com.ps.base.UserType;
+import com.ps.ents.Pet;
+import com.ps.ents.Request;
+import com.ps.ents.Response;
+import com.ps.ents.Review;
+import com.ps.ents.User;
+import com.ps.util.Pair;
 
-/**
- * Created by iuliana.cosmina on 3/1/16.
- */
+
 public class SimpleOperationsServiceTest extends SimpleServiceTestBase {
 
     public static final Long OWNER_ID=1L;

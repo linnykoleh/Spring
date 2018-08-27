@@ -11,9 +11,6 @@ import javax.sql.DataSource;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by iuliana.cosmina on 3/31/16.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {DataSourceConfig.class})
 public class CfgToXmlTest {

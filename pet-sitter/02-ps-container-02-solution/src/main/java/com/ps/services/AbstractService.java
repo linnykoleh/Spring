@@ -1,8 +1,5 @@
 package com.ps.services;
 
-/**
- * Created by iuliana.cosmina on 3/8/16.
- */
 public interface AbstractService<T> {
     void save(T entity);
 
