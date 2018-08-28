@@ -1387,3 +1387,119 @@ public class TestDataConfig {
 - This annotation must be used only on public methods; otherwise, the transactional proxy won’t be able to apply the transactional behavior
 
 ![alt text](images/pet-sitter/Screenshot_13.png "Screenshot_13")
+
+### Configure Transactions Support
+
+- Configure transaction management support
+	- add a declaration of a bean of type `org.springframework.jdbc.datasource.DataSourceTransactionManager`
+	- `<tx:annotation-driven ../>`
+
+```xml
+<bean id="transactionManager"
+         class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+         <property name="dataSource" ref="dataSource"/>
+</bean>
+
+<tx:annotation-driven transaction-manager="transactionManager"/>
+```
+
+```java
+public class TestDataConfig {
+
+    @Bean
+    public PlatformTransactionManager txManager(){
+        return new DataSourceTransactionManager(dataSource());
+    }
+}
+```
+
+```java
+@Configuration
+@EnableTransactionManagement
+@ComponentScan(basePackages = {"com.ps.repos.impl", "com.ps.services.impl"})
+public class AppConfig {
+}
+
+```
+
+- Declare transactional methods
+	- Method that is to be executed in a transaction must be annotated with the Spring `@Transaction` annotation.
+
+```java
+	@Transactional
+	@Override
+	public User findById(Long id) {
+		return userRepo.findById(id);
+	}
+```
+
+- The `@Transactional` annotation can be used at the class level too. 
+  In this case, all the methods in the class become transactional, and all properties defined for the transaction are inherited from the @Transactional class level definition,
+
+```
+Both @EnableTransactionManagement and <tx:annotation-driven ../> enable all infrastructure beans necessary for supporting transactional execution. 
+But there is a minor difference between them. The XML configuration element can be used like this: <tx:annotation-driven /> without the transaction-manager attribute. 
+In this case, Spring will look for a bean named transactionManager by default, and if it is not found, the application won’t start. 
+The @EnableTransactionManagement is more flexible; it looks for a bean of any type that implements the org.springframework.transaction.PlatformTransactionManager, so the name is not important.
+```
+
+### @Transactional
+- `transactionManager` - the transaction manager used to manage the transaction in the context of which the annotated method is executed.
+- `readOnly` - should be used for transactions that involve operations that do not modify the database (example: searching, counting records)
+- `propagation` - org.springframework.transaction.annotation.Propagation
+- `isolation` - org.springframework.transaction.annotation.Isolation
+- `timeout` - value represents the number of milliseconds after which a transaction is considered failed,
+- `rollbackFor` - when this type of exception is thrown during the execution of a transactional method, the transaction is rolled back
+
+### org.springframework.transaction.annotation.Propagation
+
+- **REQUIRED**: an existing transaction will be used or a new one will be created to execute the method annotated with `@Transactional(propagation = Propagation.REQUIRED)`.
+- **REQUIRES_NEW**: a new transaction is created to execute the method annotated with `@Transactional(propagation = Propagation.REQUIRES_NEW)`. If a current transaction exists, it will be suspended.
+- **NESTED**: an existing nested transaction will be used to execute the method annotated with `@Transactional(propagation = Propagation.NESTED)`. If no such transaction exists, it will be created.
+- **MANDATORY**: an existing transaction must be used to execute the method annotated with `@Transactional(propagation = MANDATORY)`. If there is no transaction to be used, an exception will be thrown.
+- **NEVER**: methods annotated with `@Transactional(propagation = Propagation.NEVER)` must not be executed within a transaction. If a transaction exists, an exception will be thrown.
+- **NOT_SUPPORTED**: no transaction is used to execute the method annotated with `@Transactional(propagation = Propagation.NOT_SUPPORTED)`. If a transaction exists, it will be suspended.
+- **SUPPORTS**: an existing transaction will be used to execute the method annotated with `@Transactional(propagation = Propagation.SUPPORTS)`. If no transaction exists, the method will be executed anyway, without a transactional context.
+
+### org.springframework.transaction.annotation.Isolation
+
+- **DEFAULT**: the default isolation level of the DBMS.
+- **READ_UNCOMMITED**: data changed by a transaction can be read by a different transaction while the first one is not yet committed, also known as dirty reads.
+- **READ_COMMITTED**: dirty reads are not possible when a transaction is used with this isolation level. This is the default strategy for most databases. But a different phenomenon could happen here: repeatable read: when the same query is executed multiple times, different results might be obtained. (Example: a user is extracted repeatedly within the same transaction. In parallel, a different transaction edits the user and commits. If the first transaction has this isolation level, it will return the user with the new properties after the second transaction is committed.)
+- **REPEATABLE_READ**: this level of isolation does not allow dirty reads, and repeatedly querying a table row in the same transaction will always return the same result, even if a different transaction has changed the data while the reading is being done. The process of reading the same row multiple times in the context of a transaction and always getting the same result is called repeatable read.
+- **SERIALIZABLE**: this is the most restrictive isolation level, since transaction are executed in a serialized way. So no dirty reads, no repeatable reads, and no phantom reads are possible. A phantom read happens when in the course of a transaction, execution of identical queries can lead to different result sets being returned.
+
+### Testing transactional methods
+
+- The `@Sql` annotation can be used to specify SQL scripts to be executed against a given database during integration tests.
+- The `@SqlGroup` annotation can be used on classes and methods to group together `@Sql` annotations.
+- The `@SqlConfig` is used to specify the configuration of the SQL script.
+
+```java
+	@Test
+	@Sql(statements = {"drop table NEW_P_USER if exists;"})
+	 public void testCreateTable(){
+		 int result = userRepo.createTable("new_p_user");
+		 assertEquals(0, result);
+	 }
+```
+
+```java
+	@Test
+    @SqlGroup({
+            @Sql(
+                    value = "classpath:db/extra-data.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--")
+            ),
+            @Sql(
+                    scripts = "classpath:db/delete-test-data.sql",
+                    config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED),
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            )
+    })
+    public void testCount() {
+        int count = userService.countUsers();
+        assertEquals(8, count);
+    }   
+```
+

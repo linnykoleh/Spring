@@ -5,9 +5,6 @@ import com.ps.ents.Review;
 import com.ps.repos.ReviewRepo;
 import com.ps.services.ReviewService;
 
-/**
- * Created by iuliana.cosmina on 2/22/16.
- */
 public class SimpleReviewService extends SimpleAbstractService<Review> implements ReviewService {
 
     private ReviewRepo repo;

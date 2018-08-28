@@ -8,9 +8,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by iuliana.cosmina on 3/26/16.
- */
 public class CollectionBeansTest {
 
     private Logger logger = LoggerFactory.getLogger(MtBeanTest.class);

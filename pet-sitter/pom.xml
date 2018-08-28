@@ -35,6 +35,8 @@
         <module>04-ps-aop-solution</module>
         <module>05-ps-jdbc-practice</module>
         <module>05-ps-jdbc-solution</module>
+        <module>06-ps-tx-practice</module>
+        <module>06-ps-tx-solution</module>
     </modules>
 
     <build>

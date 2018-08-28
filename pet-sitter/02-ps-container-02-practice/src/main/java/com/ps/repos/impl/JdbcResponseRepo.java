@@ -8,9 +8,6 @@ import com.ps.repos.ResponseRepo;
 import javax.sql.DataSource;
 import java.util.Set;
 
-/**
- * Created by iuliana.cosmina on 3/21/16.
- */
 public class JdbcResponseRepo extends JdbcAbstractRepo<Response>  implements ResponseRepo{
 
     public JdbcResponseRepo(){
