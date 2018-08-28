@@ -8,12 +8,12 @@ import com.ps.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.PrintStream;
 import java.sql.ResultSet;
@@ -25,10 +25,9 @@ import java.util.*;
 public class JdbcTemplateUserRepo implements UserRepo {
     private Logger logger = LoggerFactory.getLogger(JdbcTemplateUserRepo.class);
 
-
     private RowMapper<User> rowMapper = new UserRowMapper();
 
-    protected JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     public JdbcTemplateUserRepo(JdbcTemplate jdbcTemplate) {

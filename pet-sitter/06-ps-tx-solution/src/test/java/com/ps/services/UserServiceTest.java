@@ -20,9 +20,6 @@ import org.springframework.test.context.transaction.BeforeTransaction;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by iuliana.cosmina on 7/15/16.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestDataConfig.class, AppConfig.class})
 @ActiveProfiles("dev")
@@ -33,7 +30,6 @@ public class UserServiceTest {
     UserService userService;
 
     @Before
-
     public void setUp() {
         assertNotNull(userService);
     }

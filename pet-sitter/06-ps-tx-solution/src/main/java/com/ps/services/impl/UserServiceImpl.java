@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class UserServiceImpl implements UserService {
+
     private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private UserRepo userRepo;
@@ -23,7 +24,7 @@ public class UserServiceImpl implements UserService {
         this.userRepo = userRepo;
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+//    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public User findById(Long id) {
         logger.debug(">>> Preparing to execute SERVICE.findById");
