@@ -13,17 +13,19 @@ import org.junit.Test;
 
 public class RestControllerTest {
 
-	@Test(timeout = 3000)
+	@Test(timeout = 10000)
 	public void testCreateRide() {
 		final RestTemplate restTemplate = new RestTemplate();
-		final Ride ride = new Ride();
+
+		Ride ride = new Ride();
 		ride.setName("Bobsled Trail Ride");
 		ride.setDuration(35);
 
-		restTemplate.put("http://localhost:8090/jdbc/ride", ride);
+		ride = restTemplate.postForObject("http://localhost:8090/jdbc/ride", ride, Ride.class);
+		System.out.println(ride);
 	}
 
-	@Test(timeout=3000)
+	@Test(timeout = 10000)
 	public void testGetRides() {
 		final RestTemplate restTemplate = new RestTemplate();
 		final ResponseEntity<List<Ride>> ridesResponse = restTemplate.exchange(
@@ -33,7 +35,7 @@ public class RestControllerTest {
 		List<Ride> rides = ridesResponse.getBody();
 
 		for (Ride ride : rides) {
-			System.out.println("Ride name: " + ride.getName());
+			System.out.println(ride);
 		}
 	}
 }
