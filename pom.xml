@@ -15,6 +15,7 @@
         <module>Testing</module>
         <module>AOP</module>
         <module>SpringMVC</module>
+        <module>DB</module>
     </modules>
 
     <dependencies>
