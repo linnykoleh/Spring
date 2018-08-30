@@ -1556,3 +1556,62 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 ```java
 	jdbcTemplate.update("delete from MY_TABLE where id = ?", id);
 ```
+
+#### Query for domain object
+
+- May consider ORM for this
+- Must implement `RowMapper` interface, which maps row of ResultSet to a domain object
+
+```java
+public interface RowMapper<T> {
+    T mapRow(ResultSet resultSet, int rowNum) throws SQLException; 
+}
+```
+
+### In-Memory Database
+
+```java
+@Bean
+public DataSource dataSource() {
+    EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
+    builder.setName("inmemorydb")
+           .setType(EmbeddedDatabaseType.HSQL) 
+           .addScript("classpath:/inmemorydb/schema.db") 
+           .addScript("classpath:/inmemorydb/data.db");
+    
+           return builder.build();
+}
+```
+
+The same in XML
+
+```xml
+<jdbc:embedded-database id="dataSource" type="HSQL"> 
+    <jdbc:script location="classpath:schema.sql" /> 
+    <jdbc:script location="classpath:data.sql" />
+</jdbc:embedded-database>
+```
+
+Initialise db
+
+```xml
+<jdbc:initialize-database data-source="dataSource"> 
+    <jdbc:script location="classpath:schema.sql" /> 
+    <jdbc:script location="classpath:data.sql" />
+</jdbc:initialize-database>
+```
+
+### Spring and Hibernate
+
+- `org.springframework.orm.hibernate5.LocalSessionFactoryBuilder`
+- `org.hibernate.SessionFactory`
+- `org.hibernate.Session`
+- `org.springframework.orm.hibernate4.HibernateTransactionManager`
+
+### Hibernate proper
+
+- `hibernate.dialect` - the value is a dialect class matching the database used in the application
+- `hibernate.hbm2ddl.auto` - the value represents what Hibernate should do when the application starts
+- `hibernate.format_sql` - the generated SQL statements are printed to the console in a pretty and readable way.
+- `hibernate.show_sql` - if true, all the generated SQL statements are printed to the console.
+- `hibernate.use_sql_comments` - if true, Hibernate will put a comment inside the SQL statement to tell the developer what that statement is trying to do.
