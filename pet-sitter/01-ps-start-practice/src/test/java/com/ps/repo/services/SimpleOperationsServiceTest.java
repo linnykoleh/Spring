@@ -12,9 +12,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by iuliana.cosmina on 3/1/16.
- */
 public class SimpleOperationsServiceTest extends SimpleServiceTestBase {
 
     private static final Long OWNER_ID=1L;

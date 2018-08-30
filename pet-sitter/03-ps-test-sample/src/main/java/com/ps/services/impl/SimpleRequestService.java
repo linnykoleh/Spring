@@ -12,9 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
-/**
- * Created by iuliana.cosmina on 2/22/16.
- */
 @Service
 public class SimpleRequestService extends SimpleAbstractService<Request> implements RequestService {
 

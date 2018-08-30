@@ -9,9 +9,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by iuliana.cosmina on 3/26/16.
- */
 public class SIBeansTest {
     private Logger logger = LoggerFactory.getLogger(SIBeansTest.class);
 

@@ -7,9 +7,6 @@ import com.ps.ents.User;
 
 import java.util.Set;
 
-/**
- * Created by iuliana.cosmina on 2/22/16.
- */
 public interface ReviewRepo extends AbstractRepo<Review> {
 
     Set<Review> findAllForUser(User user);

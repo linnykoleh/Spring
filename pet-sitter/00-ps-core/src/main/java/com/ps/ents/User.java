@@ -11,9 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Created by iuliana.cosmina on 2/7/16.
- */
 @Entity
 @Table(name="P_USER")
 @SequenceGenerator(name = "seqGen", allocationSize = 1)
@@ -26,7 +23,6 @@ public class User extends AbstractEntity {
     public static final String FIND_BY_USERNAME_EXACT = "findByUsernameExact";
     public static final String FIND_BY_USERNAME_LIKE = "findByUsernameLike";
 
-
     /**
      * username = email
      */
@@ -35,10 +31,10 @@ public class User extends AbstractEntity {
     private String username;
 
     @Column(name="first_name")
-    public String firstName;
+    private String firstName;
 
     @Column(name="last_name")
-    public String lastName;
+    private String lastName;
 
     @NotEmpty
     public String password;

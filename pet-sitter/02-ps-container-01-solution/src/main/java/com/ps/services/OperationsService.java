@@ -7,9 +7,6 @@ import com.ps.repos.ResponseRepo;
 import com.ps.repos.ReviewRepo;
 import com.ps.repos.UserRepo;
 
-/**
- * Created by iuliana.cosmina on 3/7/16.
- */
 public interface OperationsService {
 
     Response createResponse(Long sitterId, Long RequestId);
@@ -20,7 +17,6 @@ public interface OperationsService {
 
     User rateOwner(Long requestId, Long reviewId);
 
-    //           setter skeletons
     void setRequestRepo(RequestRepo requestRepo);
 
     void setUserRepo(UserRepo userRepo);

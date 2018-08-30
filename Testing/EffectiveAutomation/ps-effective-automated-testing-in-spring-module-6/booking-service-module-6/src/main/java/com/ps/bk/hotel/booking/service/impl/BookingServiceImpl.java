@@ -39,7 +39,6 @@ public class BookingServiceImpl implements BookingService {
 
 	@Override
 	public void updateBooking(Booking booking) {
-		// TODO Auto-generated method stub
 
 	}
 
