@@ -1503,5 +1503,51 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
     }   
 ```
 
+### jdbcTemplate
+
+1. Declare in spring-context.xml
+
+```xml
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+		  p:driverClassName="${driverClassName}"
+		  p:url="${url}"
+		  p:username="${username}"
+		  p:password="${password}"
+	/>
+
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" p:dataSource-ref="dataSource"/>
+```
+
+2. Inject into repository
+
+```java
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
+```
+
+3. Use for select
+
+```java
+	jdbcTemplate.query("SELECT * FROM MY_TABLE", new RowMapper());
+
+	jdbcTemplate.queryForObject("SELECT * FROM MY_TABLE WHERE ID = id", new RowMapper());
+```
+
+4. Use for insert
+
+```java
+	jdbcTemplate.update(
+				"insert INTO MY_TABLE(NAME, DURATION) values (?, ?)",
+				obj.getName(), obj.getDuration());
+```
+
+5. Use for update
+
+```java
+	jdbcTemplate.update("UPDATE MY_TABLE set NAME = ?, DURATION = ? where id = ?",
+				obj.getName(), obj.getDuration(), obj.getId());
+```
+
 
 

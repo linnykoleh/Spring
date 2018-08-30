@@ -38,4 +38,32 @@ public class RestControllerTest {
 			System.out.println(ride);
 		}
 	}
+
+	@Test(timeout = 10000)
+	public void testGetRide(){
+		final RestTemplate restTemplate = new RestTemplate();
+
+		final Ride ride = restTemplate.getForObject("http://localhost:8090/jdbc/ride/1", Ride.class);
+		System.out.println(ride);
+	}
+
+	@Test(timeout = 10000)
+	public void testUpdateRide(){
+		final RestTemplate restTemplate = new RestTemplate();
+
+		final Ride ride = restTemplate.getForObject("http://localhost:8090/jdbc/ride/1", Ride.class);
+
+		ride.setDuration(ride.getDuration() + 1);
+
+		restTemplate.put("http://localhost:8090/jdbc/ride", ride);
+
+		System.out.println(ride);
+	}
+
+	@Test(timeout = 10000)
+	public void testBatchUpdate(){
+		final RestTemplate restTemplate = new RestTemplate();
+
+		restTemplate.getForObject("http://localhost:8090/jdbc/batch/", Object.class);
+	}
 }

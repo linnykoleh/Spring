@@ -1,22 +1,20 @@
 package com.pluralsight.repository;
 
-import com.pluralsight.model.Ride;
-import com.pluralsight.util.RideRowMapper;
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.pluralsight.model.Ride;
+import com.pluralsight.util.RideRowMapper;
 
 @Repository("rideRepository")
 public class RideRepositoryImpl implements RideRepository {
@@ -43,6 +41,23 @@ public class RideRepositoryImpl implements RideRepository {
 				ride.getName(), ride.getDuration());
 
 		return ride;
+	}
+
+	@Override
+	public Ride getRide(Integer id) {
+		return jdbcTemplate.queryForObject("SELECT * FROM RIDE WHERE ID = id", new RideRowMapper());
+	}
+
+	@Override
+	public Ride updateRide(Ride ride) {
+		jdbcTemplate.update("UPDATE RIDE set NAME = ?, DURATION = ? where id = ?",
+				ride.getName(), ride.getDuration(), ride.getId());
+		return ride;
+	}
+
+	@Override
+	public void updateRides(List<Object[]> pairs) {
+		jdbcTemplate.batchUpdate("UPDATE RIDE set RIDE_DATE = ? where id = ?", pairs);
 	}
 
 	/**
