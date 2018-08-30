@@ -1505,7 +1505,9 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 
 ### jdbcTemplate
 
-1. Declare in spring-context.xml
+- `jdbcTemplate.update` uses for `insert` `update` `delete`
+
+- Declare in spring-context.xml
 
 ```xml
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"
@@ -1518,7 +1520,7 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" p:dataSource-ref="dataSource"/>
 ```
 
-2. Inject into repository
+- Inject into repository
 
 ```java
 	@Autowired
@@ -1526,7 +1528,7 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 
 ```
 
-3. Use for select
+- Select
 
 ```java
 	jdbcTemplate.query("SELECT * FROM MY_TABLE", new RowMapper());
@@ -1534,7 +1536,7 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 	jdbcTemplate.queryForObject("SELECT * FROM MY_TABLE WHERE ID = id", new RowMapper());
 ```
 
-4. Use for insert
+- Insert
 
 ```java
 	jdbcTemplate.update(
@@ -1542,12 +1544,15 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 				obj.getName(), obj.getDuration());
 ```
 
-5. Use for update
+- Update
 
 ```java
 	jdbcTemplate.update("UPDATE MY_TABLE set NAME = ?, DURATION = ? where id = ?",
 				obj.getName(), obj.getDuration(), obj.getId());
 ```
 
+- Delete
 
-
+```java
+	jdbcTemplate.update("delete from MY_TABLE where id = ?", id);
+```

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Repository;
 import com.pluralsight.model.Ride;
 import com.pluralsight.util.RideRowMapper;
 
-@Repository("rideRepository")
+@Repository
 public class RideRepositoryImpl implements RideRepository {
 
 	@Autowired
@@ -56,8 +57,14 @@ public class RideRepositoryImpl implements RideRepository {
 	}
 
 	@Override
-	public void updateRides(List<Object[]> pairs) {
+	public List<Ride> updateRides(List<Object[]> pairs) {
 		jdbcTemplate.batchUpdate("UPDATE RIDE set RIDE_DATE = ? where id = ?", pairs);
+		return getRides();
+	}
+
+	@Override
+	public void deleteRide(Integer id) {
+		jdbcTemplate.update("delete from RIDE where id = ?", id);
 	}
 
 	/**
@@ -98,6 +105,18 @@ public class RideRepositoryImpl implements RideRepository {
 		}, keyHolder);
 
 		return getRide(keyHolder.getKey());
+	}
+
+	/**
+	 * Alternative to RideRepositoryImpl#deleteRide(java.lang.Integer)
+	 */
+	public void deleteRideNamedParameter(Integer id) {
+		final NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+
+		final Map<String, Object> paramsMap = new HashMap<>();
+		paramsMap.put("id", id);
+
+		namedTemplate.update("delete from RIDE where id = :id", paramsMap);
 	}
 
 	private Ride getRide(Number key) {

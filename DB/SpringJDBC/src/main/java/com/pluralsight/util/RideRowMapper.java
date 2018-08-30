@@ -13,7 +13,8 @@ public class RideRowMapper implements RowMapper<Ride> {
         return new Ride(
                 resultSet.getInt("id"),
                 resultSet.getString("name"),
-                resultSet.getInt("duration")
+                resultSet.getInt("duration"),
+                resultSet.getDate("ride_date")
         );
     }
 }
