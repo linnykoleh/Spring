@@ -1,7 +1,9 @@
 package com.ps.config;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,18 +12,18 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateExceptionTranslator;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBuilder;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
-import java.util.Properties;
-
 @Profile("dev")
 @PropertySource({"classpath:db/db.properties"})
 @Configuration
 public class TestDataConfig {
+
+    /** https://www.baeldung.com/hibernate-4-spring **/
 
     @Value("${driverClassName}")
     private String driverClassName;
@@ -37,34 +39,19 @@ public class TestDataConfig {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-    @Bean(destroyMethod = "close")
+    @Bean
     public DataSource dataSource() {
-        try {
-            final HikariConfig hikariConfig = new HikariConfig();
-            hikariConfig.setDriverClassName(driverClassName);
-            hikariConfig.setJdbcUrl(url);
-            hikariConfig.setUsername(username);
-            hikariConfig.setPassword(password);
-
-            hikariConfig.setMaximumPoolSize(5);
-            hikariConfig.setConnectionTestQuery("SELECT 1");
-            hikariConfig.setPoolName("springHikariCP");
-
-            hikariConfig.addDataSourceProperty("dataSource.cachePrepStmts", "true");
-            hikariConfig.addDataSourceProperty("dataSource.prepStmtCacheSize", "250");
-            hikariConfig.addDataSourceProperty("dataSource.prepStmtCacheSqlLimit", "2048");
-            hikariConfig.addDataSourceProperty("dataSource.useServerPrepStmts", "true");
-
-            final HikariDataSource dataSource = new HikariDataSource(hikariConfig);
-            return dataSource;
-        } catch (Exception e) {
-            return null;
-        }
+        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(driverClassName);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        return dataSource;
     }
 
     @Bean
     public Properties hibernateProperties() {
-        Properties hibernateProp = new Properties();
+        final Properties hibernateProp = new Properties();
         hibernateProp.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         hibernateProp.put("hibernate.hbm2ddl.auto", "create-drop");
         hibernateProp.put("hibernate.format_sql", true);
@@ -72,7 +59,6 @@ public class TestDataConfig {
         hibernateProp.put("hibernate.show_sql", true);
         return hibernateProp;
     }
-
 
     @Bean
     public SessionFactory sessionFactory() {

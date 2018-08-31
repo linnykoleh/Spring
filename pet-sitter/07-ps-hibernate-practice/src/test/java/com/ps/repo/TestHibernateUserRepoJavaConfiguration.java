@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestDataConfig.class, AppConfig.class})
 @ActiveProfiles("dev")
-public class TestHibernateUserRepo {
+public class TestHibernateUserRepoJavaConfiguration {
 
     @Autowired
     private UserRepo userRepo;

@@ -1002,6 +1002,21 @@ by applying advices to specific join points, specified by pointcuts.
 - **Introduction** - declaring additional methods, fields, interfaces being implemented, annotations on behalf of another type.
 - **AOP proxy** - the object created by AOP to implement the aspect contracts. In SprJdbcTemplateUserRepoing, proxy objects can be `JDK dynamic proxies` or `CGLIB proxies`    
 
+#### Spring Proxies
+- Two types of proxies
+- `JDK dynamic` proxies
+	- Can only proxy by interface
+	- Proxied bean must implement java interface
+	- Part of JDK
+	- All interfaces implemented by the class are proxied
+	- Based on proxy implementing interfaces
+- `CGLib` proxies
+	- Can create a proxy by subclassing. In this scenario the proxy becomes a subclass of the target class. No need for interfaces.
+	- Is not part of JDK, included in spring
+	- Used when class implements no interface
+	- Cannot be applied to final classes or methods
+	- Based on proxy inheriting the base class
+
 ```java
 @Aspect
 @Component
@@ -1615,3 +1630,125 @@ Initialise db
 - `hibernate.format_sql` - the generated SQL statements are printed to the console in a pretty and readable way.
 - `hibernate.show_sql` - if true, all the generated SQL statements are printed to the console.
 - `hibernate.use_sql_comments` - if true, Hibernate will put a comment inside the SQL statement to tell the developer what that statement is trying to do.
+
+### Spring + Hibernate Java configuration
+
+- Inject database params and use them when create beans
+
+```java
+    @Value("${driverClassName}")
+    private String driverClassName;
+    @Value("${url}")
+    private String url;
+    @Value("${login}")
+    private String username;
+    @Value("${password}")
+    private String password;
+```
+
+- Create `dataSource`
+
+```java
+	@Bean
+    public DataSource dataSource() {
+        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(driverClassName);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        return dataSource;
+    }
+```
+
+- Create `sessionFactory`
+
+```java
+	@Bean
+    public Properties hibernateProperties() {
+        final Properties hibernateProp = new Properties();
+        hibernateProp.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+        hibernateProp.put("hibernate.hbm2ddl.auto", "create-drop");
+        hibernateProp.put("hibernate.format_sql", true);
+        hibernateProp.put("hibernate.use_sql_comments", true);
+        hibernateProp.put("hibernate.show_sql", true);
+        return hibernateProp;
+    }
+
+    @Bean
+    public SessionFactory sessionFactory() {
+        return new LocalSessionFactoryBuilder(dataSource())
+                .scanPackages("com.ps.ents")
+                .addProperties(hibernateProperties())
+                .buildSessionFactory();
+    }
+```
+
+- Create `transactionManager`
+
+```java
+	@Bean
+    public PlatformTransactionManager transactionManager() {
+        return new HibernateTransactionManager(sessionFactory());
+    }
+```
+
+- Create `@Repository` bean
+
+```java
+	@Repository
+	@Transactional
+	public class HibernateUserRepo implements UserRepo {
+		
+	}
+```
+
+- Inject `sessionFactory` into `@Repository` beans and use session to deal with database
+
+```java
+	@Repository
+	@Transactional
+	public class HibernateUserRepo implements UserRepo {
+	
+		@Autowired
+		private SessionFactory sessionFactory;
+		
+		public Session session() {
+			return sessionFactory.getCurrentSession();
+		}
+	}
+```
+
+### Spring + Hibernate XML configuration
+
+- Create `dataSource`
+
+```xml
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${driverClassName}" />
+		<property name="url" value="${url}" />
+		<property name="username" value="${login}" />
+		<property name="password" value="${password}" />
+	</bean>
+```
+- Create `sessionFactory`
+
+```xml
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="com.ps" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+			</props>
+		</property>
+	</bean>
+```
+
+- Create `transactionManager`
+
+```xml
+	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+```
