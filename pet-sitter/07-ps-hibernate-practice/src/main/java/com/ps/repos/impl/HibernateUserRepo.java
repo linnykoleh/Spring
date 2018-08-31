@@ -17,6 +17,7 @@ import static com.ps.ents.User.FIND_BY_USERNAME_LIKE;
 @Repository
 @Transactional
 public class HibernateUserRepo implements UserRepo {
+
     private SessionFactory sessionFactory;
 
     @Autowired
@@ -67,7 +68,7 @@ public class HibernateUserRepo implements UserRepo {
 
     @Override
     public void updatePassword(Long userId, String newPass) {
-        User user = (User) session().createQuery("from User u where u.id= :id").
+        final User user = (User) session().createQuery("from User u where u.id= :id").
                 setParameter("id", userId).uniqueResult();
         user.setPassword(newPass);
         session().update(user);
@@ -75,7 +76,7 @@ public class HibernateUserRepo implements UserRepo {
 
     @Override
     public void updateUsername(Long userId, String username) {
-        User user = (User) session().createQuery("from User u where u.id= :id").
+        final User user = (User) session().createQuery("from User u where u.id= :id").
                 setParameter("id", userId).uniqueResult();
         user.setUsername(username);
         session().update(user);
@@ -83,7 +84,7 @@ public class HibernateUserRepo implements UserRepo {
 
     @Override
     public void deleteById(Long userId) {
-        User user = (User) session().createQuery("from User u where u.id= :id").
+        final User user = (User) session().createQuery("from User u where u.id= :id").
                 setParameter("id", userId).uniqueResult();
         session().delete(user);
     }

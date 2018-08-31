@@ -2,9 +2,6 @@ package com.ps.util;
 
 import com.ps.ents.User;
 
-/**
- * Created by iuliana.cosmina on 2/23/16.
- */
 public class RecordBuilder {
 
     /**
@@ -13,7 +10,7 @@ public class RecordBuilder {
      * @return user some desc
      */
     public static User buildUser(String email){
-        User user = new User();
+        final User user = new User();
         user.setEmail(email);
         String[] namePieces = email.split("@");
         user.setUsername(namePieces[0].replace(".","").toLowerCase());

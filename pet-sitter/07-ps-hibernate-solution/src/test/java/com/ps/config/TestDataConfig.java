@@ -40,7 +40,7 @@ public class TestDataConfig {
     @Bean(destroyMethod = "close")
     public DataSource dataSource() {
         try {
-            HikariConfig hikariConfig = new HikariConfig();
+            final HikariConfig hikariConfig = new HikariConfig();
             hikariConfig.setDriverClassName(driverClassName);
             hikariConfig.setJdbcUrl(url);
             hikariConfig.setUsername(username);
@@ -55,7 +55,7 @@ public class TestDataConfig {
             hikariConfig.addDataSourceProperty("dataSource.prepStmtCacheSqlLimit", "2048");
             hikariConfig.addDataSourceProperty("dataSource.useServerPrepStmts", "true");
 
-            HikariDataSource dataSource = new HikariDataSource(hikariConfig);
+            final HikariDataSource dataSource = new HikariDataSource(hikariConfig);
             return dataSource;
         } catch (Exception e) {
             return null;

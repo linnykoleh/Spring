@@ -41,7 +41,7 @@ public class TestHibernateUserRepo {
 
     @Test
     public void testFindById() {
-        List<User> johns = userRepo.findAllByUserName("john.cusack", true);
+        final List<User> johns = userRepo.findAllByUserName("johncusack", true);
         assertTrue(johns.size() == 1);
     }
 
@@ -53,29 +53,26 @@ public class TestHibernateUserRepo {
 
     @Test
     public void testCreate() {
-        User diana = buildUser("diana.ross@pet.com");
+        final User diana = buildUser("diana.ross@pet.com");
         diana.setPassword("test");
         diana.setUserType(UserType.SITTER);
-        userRepo.save(diana);
-        List<User> dianas = userRepo.findAllByUserName("diana.ross", true);
-        assertTrue(dianas.size() == 1);
 
-        diana = buildUser("diana.ross@pet.com");
-        diana.setPassword("test");
-        diana.setUserType(UserType.SITTER);
         userRepo.save(diana);
+
+        final List<User> dianas = userRepo.findAllByUserName("dianaross", true);
+        assertTrue(dianas.size() == 1);
     }
 
     @Test
     public void testUpdate() {
-        List<User> johns = userRepo.findAllByUserName("john.cusack", true);
+        List<User> johns = userRepo.findAllByUserName("johncusack", true);
         User john = johns.get(0);
         userRepo.updatePassword(john.getId(), "newpass");
     }
 
     @Test
     public void testDelete() {
-        List<User> gigis = userRepo.findAllByUserName("gigi.pedala", true);
+        List<User> gigis = userRepo.findAllByUserName("gigipedala", true);
         User gigi = gigis.get(0);
 
         userRepo.deleteById(gigi.getId());
@@ -83,25 +80,25 @@ public class TestHibernateUserRepo {
 
     @After
     public void cleanUp() {
-        List<User> users = userRepo.findAll();
+        final List<User> users = userRepo.findAll();
         for (User u : users) {
             userRepo.deleteById(u.getId());
         }
     }
 
     private void create() {
-        User john = buildUser("john.cusack@pet.com");
+        final User john = buildUser("john.cusack@pet.com");
         john.setPassword("test");
         john.setUserType(UserType.OWNER);
 
-        Pet max = new Pet();
+        final Pet max = new Pet();
         max.setName("Max");
         max.setAge(10);
         max.setPetType(PetType.DOG);
         max.setRfid("1122334455");
         john.addPet(max);
 
-        Pet mona = new Pet();
+        final Pet mona = new Pet();
         mona.setName("Mona");
         mona.setAge(2);
         mona.setPetType(PetType.CAT);
@@ -109,7 +106,7 @@ public class TestHibernateUserRepo {
         john.addPet(mona);
         userRepo.save(john);
 
-        User gigi = buildUser("gigi.pedala@pet.com");
+        final User gigi = buildUser("gigi.pedala@pet.com");
         gigi.setPassword("test");
         gigi.setUserType(UserType.SITTER);
         userRepo.save(gigi);

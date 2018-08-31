@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 public class TestHibernateUserRepo {
 
     @Autowired
-    UserRepo userRepo;
+    private UserRepo userRepo;
 
     @Before
     public void setUp() {
@@ -37,7 +37,7 @@ public class TestHibernateUserRepo {
 
     @Test
     public void testFindById() {
-        List<User> johns = userRepo.findAllByUserName("john.cusack", true);
+        List<User> johns = userRepo.findAllByUserName("johncusack", true);
         assertTrue(johns.size() == 1);
     }
 
@@ -55,20 +55,20 @@ public class TestHibernateUserRepo {
 
         userRepo.save(diana);
 
-        final List<User> dianas = userRepo.findAllByUserName("diana.ross", true);
+        final List<User> dianas = userRepo.findAllByUserName("dianaross", true);
         assertTrue(dianas.size() == 1);
     }
 
     @Test
     public void testUpdate() {
-        List<User> johns = userRepo.findAllByUserName("john.cusack", true);
+        List<User> johns = userRepo.findAllByUserName("johncusack", true);
         User john = johns.get(0);
         userRepo.updatePassword(john.getId(), "newpass");
     }
 
     @Test
     public void testDelete() {
-        List<User> gigis = userRepo.findAllByUserName("gigi.pedala", true);
+        List<User> gigis = userRepo.findAllByUserName("gigipedala", true);
         User gigi = gigis.get(0);
 
         userRepo.deleteById(gigi.getId());
@@ -76,7 +76,7 @@ public class TestHibernateUserRepo {
 
     @After
     public void cleanUp() {
-        List<User> users = userRepo.findAll();
+        final List<User> users = userRepo.findAll();
         for (User u : users) {
             userRepo.deleteById(u.getId());
         }
