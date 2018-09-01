@@ -14,9 +14,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Created by iuliana.cosmina on 2/7/16.
- */
 @Entity
 @Table(name="P_REQUEST")
 public class Request extends AbstractEntity {

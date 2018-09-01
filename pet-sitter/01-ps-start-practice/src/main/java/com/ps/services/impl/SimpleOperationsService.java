@@ -12,9 +12,6 @@ import com.ps.repos.ReviewRepo;
 import com.ps.repos.UserRepo;
 import com.ps.services.OperationsService;
 
-/**
- * Created by iuliana.cosmina on 3/7/16.
- */
 public class SimpleOperationsService implements OperationsService {
 
     private RequestRepo requestRepo;

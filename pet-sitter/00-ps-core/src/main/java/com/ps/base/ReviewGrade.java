@@ -1,8 +1,5 @@
 package com.ps.base;
 
-/**
- * Created by iuliana.cosmina on 2/7/16.
- */
 public enum ReviewGrade {
     WORST(0),
     BAD(1),

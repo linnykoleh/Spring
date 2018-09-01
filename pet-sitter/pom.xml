@@ -39,6 +39,8 @@
         <module>06-ps-tx-solution</module>
         <module>07-ps-hibernate-practice</module>
         <module>07-ps-hibernate-solution</module>
+        <module>08-ps-jpa-practice</module>
+        <module>08-ps-jpa-solution</module>
     </modules>
 
     <build>
@@ -84,12 +86,6 @@
             <artifactId>hibernate-entitymanager</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>org.hibernate</groupId>-->
-            <!--<artifactId>hibernate-annotations</artifactId>-->
-            <!--<version>3.5.6-Final</version>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>org.hibernate</groupId>

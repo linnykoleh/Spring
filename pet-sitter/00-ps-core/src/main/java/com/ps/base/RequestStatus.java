@@ -1,8 +1,5 @@
 package com.ps.base;
 
-/**
- * Created by iuliana.cosmina on 2/7/16.
- */
 public enum RequestStatus {
     NEW(1),
     SOLVED(2),

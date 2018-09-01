@@ -1,11 +1,9 @@
 package com.ps.util;
 
-/**
- * Created by iuliana.cosmina on 2/22/16.
- */
 public class Pair<X, Y> {
-    protected X x;
-    protected Y y;
+
+    private X x;
+    private Y y;
 
     private Pair(X x, Y y) {
         this.x = x;
@@ -36,9 +34,7 @@ public class Pair<X, Y> {
         Pair pair = (Pair) o;
 
         if (x != null ? !x.equals(pair.x) : pair.x != null) return false;
-        if (y != null ? !y.equals(pair.y) : pair.y != null) return false;
-
-        return true;
+        return y != null ? y.equals(pair.y) : pair.y == null;
     }
 
     @Override

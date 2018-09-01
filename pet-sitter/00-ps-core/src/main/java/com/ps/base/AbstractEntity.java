@@ -9,10 +9,6 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by iuliana.cosmina on 2/7/16.
- * Description:A template class which defines the common template for all entities in the project.
- */
 @MappedSuperclass
 public abstract class AbstractEntity implements Serializable {
 

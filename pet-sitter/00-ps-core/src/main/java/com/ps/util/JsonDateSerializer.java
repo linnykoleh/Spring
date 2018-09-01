@@ -8,9 +8,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by iuliana.cosmina on 2/7/16.
- */
 public class JsonDateSerializer extends JsonSerializer<Date> {
 
     @Override

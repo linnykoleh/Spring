@@ -1,9 +1,5 @@
 package com.ps.base;
 
-/**
- * Created by iuliana.cosmina on 2/7/16.
- * Description: Type of users using the site
- */
 public enum UserType {
     OWNER(1),
     SITTER(2),

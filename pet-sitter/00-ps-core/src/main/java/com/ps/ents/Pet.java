@@ -8,9 +8,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- * Created by iuliana.cosmina on 2/7/16.
- */
 @Entity
 @Table(name = "P_PET")
 public class Pet extends AbstractEntity {

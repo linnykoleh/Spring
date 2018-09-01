@@ -1,8 +1,5 @@
 package com.ps.base;
 
-/**
- * Created by iuliana.cosmina on 2/7/16.
- */
 public enum PetType {
     CAT(1),
     DOG(2),
