@@ -25,7 +25,6 @@ public class TestUserService {
     UserService userService;
 
     @Before
-
     public void setUp() {
         assertNotNull(userService);
         userService.create("john.cusack@pet.com", "test", UserType.OWNER);
