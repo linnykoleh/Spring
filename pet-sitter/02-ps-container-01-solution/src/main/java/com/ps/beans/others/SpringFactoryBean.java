@@ -6,9 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 
-/**
- * Created by iuliana.cosmina on 3/26/16.
- */
 public class SpringFactoryBean implements FactoryBean<SimpleBean> {
     private Logger logger = LoggerFactory.getLogger(SpringFactoryBean.class);
 

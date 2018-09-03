@@ -10,7 +10,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.orm.hibernate5.HibernateExceptionTranslator;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
@@ -36,7 +38,7 @@ public class TestDataConfig {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-    @Bean(destroyMethod = "close")
+    @Bean
     public DataSource dataSource() {
         try {
             final HikariConfig hikariConfig = new HikariConfig();
@@ -54,7 +56,7 @@ public class TestDataConfig {
             hikariConfig.addDataSourceProperty("dataSource.prepStmtCacheSqlLimit", "2048");
             hikariConfig.addDataSourceProperty("dataSource.useServerPrepStmts", "true");
 
-            HikariDataSource dataSource = new HikariDataSource(hikariConfig);
+            final HikariDataSource dataSource = new HikariDataSource(hikariConfig);
             return dataSource;
         } catch (Exception e) {
             return null;
@@ -63,7 +65,7 @@ public class TestDataConfig {
 
     @Bean
     public Properties hibernateProperties() {
-        Properties hibernateProp = new Properties();
+        final Properties hibernateProp = new Properties();
         hibernateProp.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         hibernateProp.put("hibernate.hbm2ddl.auto", "create-drop");
         hibernateProp.put("hibernate.format_sql", true);
@@ -74,14 +76,18 @@ public class TestDataConfig {
 
     @Bean
     public EntityManagerFactory entityManagerFactory(){
-        LocalContainerEntityManagerFactoryBean factoryBean = null;
-        //TODO 40. Set all the properties necessary to successfully create an entityManagerFactory bean
+        final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
+        factoryBean.setPackagesToScan("com.ps.ents");
+        factoryBean.setDataSource(dataSource());
+        factoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        factoryBean.setJpaProperties(hibernateProperties());
+        factoryBean.afterPropertiesSet();
         return factoryBean.getNativeEntityManagerFactory();
     }
 
     @Bean
     public PlatformTransactionManager transactionManager() {
-        return null; //TODO 41. Create an appropriate transaction manager bean
+        return new JpaTransactionManager(entityManagerFactory());
     }
 
     @Bean

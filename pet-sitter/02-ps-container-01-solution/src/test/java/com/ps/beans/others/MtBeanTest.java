@@ -7,9 +7,6 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * Created by iuliana.cosmina on 3/26/16.
- */
 public class MtBeanTest {
 
     @Test

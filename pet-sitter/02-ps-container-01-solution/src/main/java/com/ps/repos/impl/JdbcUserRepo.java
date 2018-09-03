@@ -6,9 +6,6 @@ import com.ps.repos.UserRepo;
 import javax.sql.DataSource;
 import java.util.Set;
 
-/**User
- * Created by iuliana.cosmina on 3/21/16.
- */
 public class JdbcUserRepo extends JdbcAbstractRepo<User> implements UserRepo {
 
     public JdbcUserRepo(){

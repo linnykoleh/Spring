@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by iuliana.cosmina on 3/26/16.
- */
 public class CollectionHolder {
 
     private List<SimpleBean> simpleBeanList;

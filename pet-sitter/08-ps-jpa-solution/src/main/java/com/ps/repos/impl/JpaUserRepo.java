@@ -19,12 +19,8 @@ public class JpaUserRepo implements UserRepo {
 
     private static String BY_ID = "from User u where u.id= :id";
 
-    private EntityManager entityManager;
-
     @PersistenceContext
-    void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    private EntityManager entityManager;
 
     @Override
     public List<User> findAll() {

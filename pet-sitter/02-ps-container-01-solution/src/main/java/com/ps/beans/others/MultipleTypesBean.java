@@ -4,9 +4,6 @@ import com.ps.beans.SimpleBean;
 
 import java.util.Date;
 
-/**
- * Created by iuliana.cosmina on 3/26/16.
- */
 public class MultipleTypesBean implements SimpleBean {
 
     private int noOne;

@@ -1,13 +1,12 @@
 package com.ps.repo;
 
-import com.ps.base.PetType;
-import com.ps.base.UserType;
-import com.ps.config.AppConfig;
-import com.ps.config.TestDataConfig;
-import com.ps.ents.Pet;
-import com.ps.ents.User;
-import com.ps.init.DBInitializer;
-import com.ps.repos.UserRepo;
+import static com.ps.util.RecordBuilder.buildUser;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,10 +18,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static com.ps.util.RecordBuilder.buildUser;
-import static org.junit.Assert.*;
+import com.ps.base.UserType;
+import com.ps.config.AppConfig;
+import com.ps.config.TestDataConfig;
+import com.ps.ents.User;
+import com.ps.init.DBInitializer;
+import com.ps.repos.UserRepo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestDataConfig.class, AppConfig.class})
@@ -45,7 +46,8 @@ public class TestJpaUserRepo {
 
     @Test
     public void testFindById() {
-        List<User> johns = userRepo.findAllByUserName("john.cusack", true);
+        final List<User> johns = userRepo.findAllByUserName("johncusack", true);
+
         assertTrue(johns.size() == 1);
     }
 
@@ -57,38 +59,47 @@ public class TestJpaUserRepo {
 
     @Test
     public void testCreate() {
-        User diana = buildUser("diana.ross@pet.com");
+        final User diana = buildUser("diana.ross@pet.com");
+
         diana.setPassword("test");
         diana.setUserType(UserType.SITTER);
+
         userRepo.save(diana);
-        List<User> dianas = userRepo.findAllByUserName("diana.ross", true);
+
+        final List<User> dianas = userRepo.findAllByUserName("dianaross", true);
+
         assertTrue(dianas.size() == 1);
     }
 
     @Test
     public void testUpdate() {
-        List<User> johns = userRepo.findAllByUserName("john.cusack", true);
-        User john = johns.get(0);
+        final List<User> johns = userRepo.findAllByUserName("johncusack", true);
+
+        final User john = johns.get(0);
+
         userRepo.updatePassword(john.getId(), "newpass");
     }
 
     @Test
     public void testDelete() {
-        List<User> gigis = userRepo.findAllByUserName("gigi.pedala", true);
-        User gigi = gigis.get(0);
+        final List<User> johns = userRepo.findAllByUserName("johncusack", true);
 
-        userRepo.deleteById(gigi.getId());
+        final User john = johns.get(0);
+
+        userRepo.deleteById(john.getId());
     }
 
     @Test
     public void testCriteriaBuilder(){
-        List<User>  cusacks = userRepo.findAllByLastName("cusack");
+        final List<User> cusacks = userRepo.findAllByLastName("cusack");
+
         assertTrue(cusacks.size() == 1);
     }
 
     @After
     public void cleanUp() {
-        List<User> users = userRepo.findAll();
+        final List<User> users = userRepo.findAll();
+        
         for (User u : users) {
             userRepo.deleteById(u.getId());
         }

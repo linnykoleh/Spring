@@ -9,9 +9,6 @@ import com.ps.repos.ReviewRepo;
 import javax.sql.DataSource;
 import java.util.Set;
 
-/**
- * Created by iuliana.cosmina on 3/21/16.
- */
 public class JdbcReviewRepo extends JdbcAbstractRepo<Review> implements ReviewRepo {
 
     public JdbcReviewRepo(){

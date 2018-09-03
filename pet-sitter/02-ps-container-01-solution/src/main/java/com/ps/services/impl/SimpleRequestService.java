@@ -9,9 +9,6 @@ import com.ps.services.RequestService;
 import com.ps.util.Pair;
 import org.joda.time.DateTime;
 
-/**
- * Created by iuliana.cosmina on 2/22/16.
- */
 public class SimpleRequestService extends SimpleAbstractService<Request> implements RequestService {
 
     private RequestRepo repo;

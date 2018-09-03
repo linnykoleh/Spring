@@ -1,26 +1,24 @@
 package com.ps.repos.impl;
 
-import com.ps.ents.User;
-import com.ps.repos.UserRepo;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
-import java.util.Set;
+
+import org.springframework.stereotype.Repository;
+
+import com.ps.ents.User;
+import com.ps.repos.UserRepo;
 
 @Repository("userJpaRepo")
 public class JpaUserRepo implements UserRepo {
 
     private static String BY_ID = "from User u where u.id= :id";
 
+    @PersistenceContext
     private EntityManager entityManager;
 
-    //TODO 42. Annotate this method with the proper annotation to make the repository class pass tests in TestJpaUserRepo
-    void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
     @Override
     public List<User> findAll() {
         return entityManager.createQuery("select u from User u").getResultList();
@@ -39,10 +37,10 @@ public class JpaUserRepo implements UserRepo {
     @Override
     public List<User> findAllByUserName(String username, boolean exactMatch) {
         if (exactMatch) {
-            return entityManager.createQuery("select u from User u where username= ?")
+            return entityManager.createQuery("select u from User u where username= ?", User.class)
                     .setParameter(0, username).getResultList();
         } else {
-            return entityManager.createQuery("select u from User u where username like ?")
+            return entityManager.createQuery("select u from User u where username like ?", User.class)
                     .setParameter(0, "%" + username + "%").getResultList();
         }
     }
@@ -60,24 +58,24 @@ public class JpaUserRepo implements UserRepo {
 
     @Override
     public void updatePassword(Long userId, String newPass) {
-        User user = (User) entityManager.createQuery(BY_ID).
-                setParameter("id", userId).getSingleResult();
+        final User user = (User) entityManager.createQuery(BY_ID).setParameter("id", userId).getSingleResult();
         user.setPassword(newPass);
+
         entityManager.merge(user);
     }
 
     @Override
     public void updateUsername(Long userId, String username) {
-        User user = (User) entityManager.createQuery(BY_ID).
-                setParameter("id", userId).getSingleResult();
+        final User user = (User) entityManager.createQuery(BY_ID).setParameter("id", userId).getSingleResult();
         user.setUsername(username);
+
         entityManager.merge(user);
     }
 
     @Override
     public void deleteById(Long userId) {
-        User user = (User) entityManager.createQuery(BY_ID).
-                setParameter("id", userId).getSingleResult();
+        final User user = (User) entityManager.createQuery(BY_ID).setParameter("id", userId).getSingleResult();
+
         entityManager.remove(user);
     }
 
@@ -90,7 +88,8 @@ public class JpaUserRepo implements UserRepo {
 
     @Override
     public void deleteAll() {
-        List<User> users = findAll();
+        final List<User> users = findAll();
+
         for (User user : users) {
             entityManager.remove(user);
         }
