@@ -18,14 +18,11 @@ import static com.ps.util.TestObjectsBuilder.buildUser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by iuliana.cosmina on 4/17/16.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestAppConfig.class, PetConfigClass.class})
 public class AnnPetServiceTest {
 
-    public static final Long PET_ID = 1L;
+    private static final Long PET_ID = 1L;
     public static final User owner = buildUser("test@gmail.com", "a!2#tre", UserType.OWNER);
 
     @Autowired

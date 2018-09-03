@@ -23,7 +23,7 @@ import com.ps.ents.User;
 import com.ps.repos.UserRepo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath*:test-date-config.xml")
+@ContextConfiguration(locations = "classpath*:hibernate-test-data-config.xml")
 @ActiveProfiles("dev")
 public class TestHibernateUserRepoXMLConfiguration {
 

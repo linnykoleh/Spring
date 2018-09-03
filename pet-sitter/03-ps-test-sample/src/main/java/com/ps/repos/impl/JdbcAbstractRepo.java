@@ -5,13 +5,11 @@ import com.ps.repos.AbstractRepo;
 
 import javax.sql.DataSource;
 
-/**
- * Created by iuliana.cosmina on 3/21/16.
- */
 public class JdbcAbstractRepo<T extends AbstractEntity> implements AbstractRepo<T> {
-    protected DataSource dataSource;
 
-    public JdbcAbstractRepo(){
+    private DataSource dataSource;
+
+    JdbcAbstractRepo(){
     }
 
     public JdbcAbstractRepo(DataSource dataSource) {

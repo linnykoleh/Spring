@@ -1,8 +1,5 @@
 package com.ps.repos;
 
-/**
- * Created by iuliana.cosmina on 4/17/16.
- */
 public class NotFoundException extends  RuntimeException {
 
     public NotFoundException(String message) {

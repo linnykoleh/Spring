@@ -1,19 +1,16 @@
 package com.ps.repos.impl;
 
-import com.ps.base.ResponseStatus;
-import com.ps.ents.Response;
-import com.ps.ents.User;
-import com.ps.repos.ResponseRepo;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
-import java.util.Set;
+import com.ps.base.ResponseStatus;
+import com.ps.ents.Response;
+import com.ps.ents.User;
+import com.ps.repos.ResponseRepo;
 
-/**
- * Created by iuliana.cosmina on 3/21/16.
- */
 @Repository("responseRepo")
 public class JdbcResponseRepo extends JdbcAbstractRepo<Response>  implements ResponseRepo{
 

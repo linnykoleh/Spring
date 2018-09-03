@@ -1,11 +1,12 @@
 package com.ps.repo;
 
-import com.ps.base.UserType;
-import com.ps.config.AppConfig;
-import com.ps.config.TestDataConfig;
-import com.ps.ents.User;
-import com.ps.init.DBInitializer;
-import com.ps.repos.UserRepo;
+import static com.ps.util.RecordBuilder.buildUser;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,16 +18,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static com.ps.util.RecordBuilder.buildUser;
-import static org.junit.Assert.*;
+import com.ps.base.UserType;
+import com.ps.ents.User;
+import com.ps.init.DBInitializer;
+import com.ps.repos.UserRepo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {TestDataConfig.class, AppConfig.class})
+@ContextConfiguration(locations = "classpath*:jpa-test-data-config.xml")
 @ActiveProfiles("dev")
 @Transactional
-public class TestJpaUserRepo {
+public class TestJpaUserRepoXMLConfiguration {
 
     @Autowired
     @Qualifier("userJpaRepo")

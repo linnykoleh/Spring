@@ -6,9 +6,6 @@ import com.ps.ents.User;
 
 import java.util.Set;
 
-/**
- * Created by iuliana.cosmina on 2/22/16.
- */
 public interface RequestRepo extends AbstractRepo<Request>{
 
     Set<Request> findAllForUser(User user);

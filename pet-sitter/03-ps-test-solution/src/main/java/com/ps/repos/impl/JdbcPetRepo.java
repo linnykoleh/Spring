@@ -13,9 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Set;
 
-/**
- * Created by iuliana.cosmina on 3/21/16.
- */
 @Repository("petRepo")
 public class JdbcPetRepo extends JdbcAbstractRepo<Pet> implements PetRepo {
 

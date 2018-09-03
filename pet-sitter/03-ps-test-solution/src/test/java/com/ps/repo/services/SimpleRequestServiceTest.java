@@ -19,12 +19,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static com.ps.util.TestObjectsBuilder.*;
 
-/**
- * Created by iuliana.cosmina on 4/17/16.
- */
 public class SimpleRequestServiceTest {
 
-    public static final Long REQUEST_ID = 1L;
+    private static final Long REQUEST_ID = 1L;
 
     private RequestRepo requestMockRepo;
 

@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by iuliana.cosmina on 2/23/16.
- */
 public interface UserRepo  {
 
     Set<User> findAll();

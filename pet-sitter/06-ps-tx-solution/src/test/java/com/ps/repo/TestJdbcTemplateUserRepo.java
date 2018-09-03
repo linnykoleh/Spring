@@ -19,9 +19,6 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by iuliana.cosmina on 6/4/16.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestDataConfig.class, AppConfig.class})
 @ActiveProfiles("dev")

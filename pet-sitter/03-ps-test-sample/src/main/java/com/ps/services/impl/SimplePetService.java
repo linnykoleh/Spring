@@ -10,9 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
-/**
- * Created by iuliana.cosmina on 2/23/16.
- */
 @Service
 public class SimplePetService extends SimpleAbstractService<Pet> implements PetService {
 

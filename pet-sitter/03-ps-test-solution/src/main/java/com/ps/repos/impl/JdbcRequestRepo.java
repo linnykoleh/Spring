@@ -1,19 +1,16 @@
 package com.ps.repos.impl;
 
-import com.ps.base.RequestStatus;
-import com.ps.ents.Request;
-import com.ps.ents.User;
-import com.ps.repos.RequestRepo;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
-import java.util.Set;
+import com.ps.base.RequestStatus;
+import com.ps.ents.Request;
+import com.ps.ents.User;
+import com.ps.repos.RequestRepo;
 
-/**
- * Created by iuliana.cosmina on 3/21/16.
- */
 @Repository("requestRepo")
 public class JdbcRequestRepo  extends JdbcAbstractRepo<Request> implements RequestRepo{
 

@@ -13,9 +13,6 @@ import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by iuliana.cosmina on 3/27/16.
- */
 public class BeanNamingTest {
     private Logger logger = LoggerFactory.getLogger(BeanNamingTest.class);
 

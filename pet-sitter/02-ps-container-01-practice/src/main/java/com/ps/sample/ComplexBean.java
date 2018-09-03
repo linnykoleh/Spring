@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
- * Created by iuliana.cosmina on 3/28/16.
  * Sample class used to make bean creation staged understanding easy.
  * This class contains all the methods used to initialize and detroy a bean altogether, so you can the
  * order they are called in.

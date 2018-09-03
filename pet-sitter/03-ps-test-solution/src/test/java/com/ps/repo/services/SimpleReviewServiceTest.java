@@ -17,19 +17,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
-/**
- * Created by iuliana.cosmina on 4/17/16.
- */
 public class SimpleReviewServiceTest {
-    public static final Long REVIEW_ID = 1L;
+
+    private static final Long REVIEW_ID = 1L;
 
     private ReviewRepo reviewMockRepo = mock(ReviewRepo.class);
 
-    private SimpleReviewService  simpleReviewService;
-
+    private SimpleReviewService simpleReviewService;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         simpleReviewService = new SimpleReviewService();
         simpleReviewService.setRepo(reviewMockRepo);
     }

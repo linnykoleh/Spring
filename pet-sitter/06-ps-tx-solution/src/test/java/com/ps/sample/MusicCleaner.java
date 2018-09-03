@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-/**
- * Created by iuliana.cosmina on 11/29/16.
- */
 public class MusicCleaner {
 
     public static void main(String[] args) throws IOException {

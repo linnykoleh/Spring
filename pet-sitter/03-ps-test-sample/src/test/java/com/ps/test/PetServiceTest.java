@@ -1,23 +1,18 @@
 package com.ps.test;
 
-import com.ps.config.PetConfigClass;
-import com.ps.ents.Pet;
-import com.ps.services.PetService;
+import static org.junit.Assert.assertNull;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import com.ps.config.PetConfigClass;
+import com.ps.ents.Pet;
+import com.ps.services.PetService;
 
-/**
- * Created by iuliana.cosmina on 5/6/16.
- */
-//complete this implementation at some point
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {PetConfigClass.class})
 @ActiveProfiles("dev")

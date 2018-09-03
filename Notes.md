@@ -1752,3 +1752,158 @@ Initialise db
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 ```
+
+- Create `@Repository` bean
+
+```java
+	@Repository
+	@Transactional
+	public class HibernateUserRepo implements UserRepo {
+		
+	}
+```
+
+- Inject `sessionFactory` into `@Repository` beans and use session to deal with database
+
+```java
+	@Repository
+	@Transactional
+	public class HibernateUserRepo implements UserRepo {
+	
+		@Autowired
+		private SessionFactory sessionFactory;
+		
+		public Session session() {
+			return sessionFactory.getCurrentSession();
+		}
+	}
+```
+
+### Spring + JPA Java configuration
+
+- Create `dataSource`
+
+```java
+    @Bean
+    public DataSource dataSource() {
+        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(driverClassName);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+
+        return dataSource;
+    }
+```
+
+- Create `hibernateProperties`
+
+```java
+ 	@Bean
+    public Properties hibernateProperties() {
+        final Properties hibernateProp = new Properties();
+        hibernateProp.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+        hibernateProp.put("hibernate.hbm2ddl.auto", "create-drop");
+        hibernateProp.put("hibernate.format_sql", true);
+        hibernateProp.put("hibernate.use_sql_comments", true);
+        hibernateProp.put("hibernate.show_sql", true);
+        return hibernateProp;
+    }
+```
+
+- Create `entityManagerFactory`
+
+```java
+	@Bean
+    public EntityManagerFactory entityManagerFactory() {
+        final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
+        factoryBean.setPackagesToScan("com.ps.ents");
+        factoryBean.setDataSource(dataSource());
+        factoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        factoryBean.setJpaProperties(hibernateProperties());
+        factoryBean.afterPropertiesSet();
+        return factoryBean.getNativeEntityManagerFactory();
+    }
+```
+
+- Create `transactionManager`
+
+```java
+	@Bean
+    public PlatformTransactionManager transactionManager() {
+        return new JpaTransactionManager(entityManagerFactory());
+    }
+```
+
+- Create `@Repository` Bean
+
+```java
+	@Repository("userJpaRepo")
+	public class JpaUserRepo implements UserRepo {
+		
+}
+```
+
+- Inject `entityManager` into `@Repository` beans and use session to deal with database
+
+```java
+ 	@PersistenceContext
+    private EntityManager entityManager;
+```
+
+### Spring + JPA XML configuration
+
+- Add transaction management
+
+```xml
+	<tx:annotation-driven />
+	
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+    		<property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+```
+
+- Add `dataSource` bean
+
+```xml
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${driverClassName}" />
+		<property name="url" value="${url}" />
+		<property name="username" value="${username}" />
+		<property name="password" value="${password}" />
+	</bean>
+```
+
+- Add `entityManagerFactory` bean
+
+```xml
+	<bean id="entityManagerFactory"
+		  class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="com.ps" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+			</props>
+		</property>
+	</bean>
+```
+
+- Create `@Repository` Bean
+
+```java
+	@Repository("userJpaRepo")
+	public class JpaUserRepo implements UserRepo {
+		
+}
+```
+
+- Inject `entityManager` into `@Repository` beans and use session to deal with database
+
+```java
+ 	@PersistenceContext
+    private EntityManager entityManager;

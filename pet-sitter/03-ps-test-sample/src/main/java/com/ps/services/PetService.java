@@ -6,9 +6,6 @@ import com.ps.ents.User;
 
 import java.util.Set;
 
-/**
- * Created by iuliana.cosmina on 3/4/16.
- */
 public interface PetService extends AbstractService<Pet> {
 
     Pet createPet(User user, String name, int age, PetType petType, String rfid);

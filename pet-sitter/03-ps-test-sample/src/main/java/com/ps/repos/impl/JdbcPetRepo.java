@@ -9,9 +9,6 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.util.Set;
 
-/**
- * Created by iuliana.cosmina on 3/21/16.
- */
 @Repository
 public class JdbcPetRepo  extends  JdbcAbstractRepo<Pet> implements PetRepo {
 

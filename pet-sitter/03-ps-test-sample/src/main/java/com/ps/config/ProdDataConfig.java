@@ -8,9 +8,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
-/**
- * Created by iuliana.cosmina on 5/6/16.
- */
 @Configuration
 @PropertySource("classpath:db/datasource.properties")
 @Profile("prod")

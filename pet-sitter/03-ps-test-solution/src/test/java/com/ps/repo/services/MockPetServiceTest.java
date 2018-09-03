@@ -22,13 +22,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyLong;
 
-/**
- * Created by iuliana.cosmina on 4/17/16.
- */
+
 @RunWith(MockitoJUnitRunner.class)
 public class MockPetServiceTest {
 
-    public static final Long PET_ID = 1L;
+    private static final Long PET_ID = 1L;
     public static final User owner = buildUser("test@gmail.com", "a!2#tre", UserType.OWNER);
 
     @InjectMocks     // Instantiates testing object instance and tries to inject fields annotated with @Mock or @Spy into private

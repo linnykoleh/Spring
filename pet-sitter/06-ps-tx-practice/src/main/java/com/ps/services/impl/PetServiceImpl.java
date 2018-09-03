@@ -1,20 +1,17 @@
 package com.ps.services.impl;
 
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.ps.ents.Pet;
 import com.ps.ents.User;
 import com.ps.repos.PetRepo;
 import com.ps.services.PetService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
-
-/**
- * Created by iuliana.cosmina on 7/16/16.
- */
 @Service
 public class PetServiceImpl implements PetService {
 

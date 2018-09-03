@@ -17,9 +17,6 @@ import java.util.Set;
 import static com.ps.util.TestObjectsBuilder.buildPet;
 import static com.ps.util.TestObjectsBuilder.buildUser;
 
-/**
- * Created by iuliana.cosmina on 3/4/16.
- */
 @Component
 public class StubPetRepo extends StubAbstractRepo<Pet> implements PetRepo {
 

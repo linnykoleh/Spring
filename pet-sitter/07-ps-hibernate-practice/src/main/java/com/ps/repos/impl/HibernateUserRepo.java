@@ -18,12 +18,8 @@ import static com.ps.ents.User.FIND_BY_USERNAME_LIKE;
 @Transactional
 public class HibernateUserRepo implements UserRepo {
 
-    private SessionFactory sessionFactory;
-
     @Autowired
-    public HibernateUserRepo(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
 
     public Session session() {
         return sessionFactory.getCurrentSession();

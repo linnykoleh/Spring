@@ -1,7 +1,10 @@
 package com.ps.config;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+import java.util.Properties;
+
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,20 +12,19 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateExceptionTranslator;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import java.util.Properties;
-
 @Profile("dev")
 @PropertySource({"classpath:db/db.properties"})
 @Configuration
 public class TestDataConfig {
+
+    /* https://www.baeldung.com/the-persistence-layer-with-spring-and-jpa */
 
     @Value("${driverClassName}")
     private String driverClassName;
@@ -40,27 +42,13 @@ public class TestDataConfig {
 
     @Bean
     public DataSource dataSource() {
-        try {
-            final HikariConfig hikariConfig = new HikariConfig();
-            hikariConfig.setDriverClassName(driverClassName);
-            hikariConfig.setJdbcUrl(url);
-            hikariConfig.setUsername(username);
-            hikariConfig.setPassword(password);
+        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(driverClassName);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
 
-            hikariConfig.setMaximumPoolSize(5);
-            hikariConfig.setConnectionTestQuery("SELECT 1");
-            hikariConfig.setPoolName("springHikariCP");
-
-            hikariConfig.addDataSourceProperty("dataSource.cachePrepStmts", "true");
-            hikariConfig.addDataSourceProperty("dataSource.prepStmtCacheSize", "250");
-            hikariConfig.addDataSourceProperty("dataSource.prepStmtCacheSqlLimit", "2048");
-            hikariConfig.addDataSourceProperty("dataSource.useServerPrepStmts", "true");
-
-            final HikariDataSource dataSource = new HikariDataSource(hikariConfig);
-            return dataSource;
-        } catch (Exception e) {
-            return null;
-        }
+        return dataSource;
     }
 
     @Bean
@@ -75,7 +63,7 @@ public class TestDataConfig {
     }
 
     @Bean
-    public EntityManagerFactory entityManagerFactory(){
+    public EntityManagerFactory entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
         factoryBean.setPackagesToScan("com.ps.ents");
         factoryBean.setDataSource(dataSource());
@@ -91,7 +79,7 @@ public class TestDataConfig {
     }
 
     @Bean
-    public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
+    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
 

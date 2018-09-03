@@ -5,9 +5,6 @@ import com.ps.base.UserType;
 import com.ps.ents.Pet;
 import com.ps.ents.User;
 
-/**
- * Created by iuliana.cosmina on 4/17/16.
- */
 public class TestObjectsBuilder {
     public static User buildUser(String email, String password, UserType userType){
         User user = RecordBuilder.buildUser(email);

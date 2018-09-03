@@ -1,10 +1,11 @@
 package com.ps.repo;
 
-import com.ps.base.UserType;
-import com.ps.config.AppConfig;
-import com.ps.config.TestDataConfig;
-import com.ps.ents.User;
-import com.ps.repos.UserRepo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,18 +15,14 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
+import com.ps.base.UserType;
+import com.ps.config.AppConfig;
+import com.ps.config.TestDataConfig;
+import com.ps.ents.User;
+import com.ps.repos.UserRepo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-/**
- * Created by iuliana.cosmina on 7/17/16.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestDataConfig.class, AppConfig.class})
 @ActiveProfiles("dev")

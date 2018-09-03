@@ -5,9 +5,6 @@ import com.ps.repos.ResponseRepo;
 import com.ps.services.ResponseService;
 import org.springframework.stereotype.Service;
 
-/**
- * Created by iuliana.cosmina on 2/22/16.
- */
 @Service
 public class SimpleResponseService extends SimpleAbstractService<Response> implements ResponseService {
 
