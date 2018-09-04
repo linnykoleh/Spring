@@ -21,8 +21,6 @@ public class UserServiceTest {
     @Autowired
     UserService userService;
 
-    @Before
-
     @Test
     public void testFindById() {
         User user = userService.findById(1L);
