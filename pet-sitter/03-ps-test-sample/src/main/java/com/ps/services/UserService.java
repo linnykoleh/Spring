@@ -5,9 +5,6 @@ import com.ps.ents.User;
 
 import java.util.Set;
 
-/**
- * Created by iuliana.cosmina on 2/23/16.
- */
 public interface UserService extends AbstractService<User> {
 
     User createUser(String email, String password, UserType userType);

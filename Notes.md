@@ -1907,3 +1907,8 @@ Initialise db
 ```java
  	@PersistenceContext
     private EntityManager entityManager;
+```
+
+### Spring Data JPA
+
+- The central interface of Spring Data is `Repository< T, ID extends Serializable>`

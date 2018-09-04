@@ -13,6 +13,8 @@
         <hibernate.version>5.2.10.Final</hibernate.version>
         <javaee.version>7.0</javaee.version>
         <spring.version>4.3.6.RELEASE</spring.version>
+        <spring.data.version>1.10.3.RELEASE</spring.data.version>
+        <spring.mongodb.version>1.9.2.RELEASE</spring.mongodb.version>
         <jackson.version>2.8.3</jackson.version>
         <joda.version>2.9.9</joda.version>
         <junit.version>4.12</junit.version>
@@ -41,6 +43,9 @@
         <module>07-ps-hibernate-solution</module>
         <module>08-ps-jpa-practice</module>
         <module>08-ps-jpa-solution</module>
+        <module>09-ps-data-jpa</module>
+        <module>09-ps-data-jpa-practice</module>
+        <module>09-ps-data-jpa-solution</module>
     </modules>
 
     <build>
@@ -136,6 +141,19 @@
             <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>${spring.data.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+            <version>${spring.mongodb.version}</version>
+        </dependency>
+
 
         <!--Jackson-->
         <dependency>
