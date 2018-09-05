@@ -1476,6 +1476,13 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 - **NOT_SUPPORTED**: no transaction is used to execute the method annotated with `@Transactional(propagation = Propagation.NOT_SUPPORTED)`. If a transaction exists, it will be suspended.
 - **SUPPORTS**: an existing transaction will be used to execute the method annotated with `@Transactional(propagation = Propagation.SUPPORTS)`. If no transaction exists, the method will be executed anyway, without a transactional context.
 
+#### Transaction Propagation
+
+ - Happens when code from one transaction calls another transaction
+ - Transaction propagation says whether everything should be run in single transaction or nested transactions should be used
+ - There are 7 levels of propagation
+ - 2 Basic ones - REQUIRED and REQUIRES_NEW
+
 ### org.springframework.transaction.annotation.Isolation
 
 - **DEFAULT**: the default isolation level of the DBMS.
@@ -1483,6 +1490,36 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 - **READ_COMMITTED**: dirty reads are not possible when a transaction is used with this isolation level. This is the default strategy for most databases. But a different phenomenon could happen here: repeatable read: when the same query is executed multiple times, different results might be obtained. (Example: a user is extracted repeatedly within the same transaction. In parallel, a different transaction edits the user and commits. If the first transaction has this isolation level, it will return the user with the new properties after the second transaction is committed.)
 - **REPEATABLE_READ**: this level of isolation does not allow dirty reads, and repeatedly querying a table row in the same transaction will always return the same result, even if a different transaction has changed the data while the reading is being done. The process of reading the same row multiple times in the context of a transaction and always getting the same result is called repeatable read.
 - **SERIALIZABLE**: this is the most restrictive isolation level, since transaction are executed in a serialized way. So no dirty reads, no repeatable reads, and no phantom reads are possible. A phantom read happens when in the course of a transaction, execution of identical queries can lead to different result sets being returned.
+
+### Isolation Levels
+
+- 4 isolation levels available (from least strict to the most strict)
+	- READ_UNCOMMITTED
+	- READ_COMMITTED
+	- REPEATABLE_READ
+	- SERIALIZABLE
+- Not all isolation levels may be supported in all databases
+- Different databases may implement isolation is slightly different ways
+
+#### READ_UNCOMMITTED
+ - `@Transactional (isolation=Isolation.READ_UNCOMMITTED)`
+ - The lowest isolation level
+ - Dirty reads can occur - one transaction may be able to see uncommitted data of other transaction
+ - May be viable for large transactions or frequently changing data
+
+#### READ_COMMITTED
+ - `@Transactional (isolation=Isolation.READ_COMMITTED)`
+ - Default isolation strategy for many databases
+ - Other transactions can see data only after it is properly committed
+ - Prevents dirty reads
+
+#### REPEATABLE_READ
+ - `@Transactional (isolation=Isolation.REPEATABLE_READ)`
+ - Prevents non-repeatable reads - when a row is read multiple times in a single transaction, its value is guaranteed to be the same
+
+#### SERIALIZABLE
+ - `@Transactional (isolation=Isolation.SERIALIZABLE)`
+ - Prevents phantom reads
 
 ### Testing transactional methods
 
@@ -1911,4 +1948,51 @@ Initialise db
 
 ### Spring Data JPA
 
+- Simplifies data access by reducing boilerplate code
 - The central interface of Spring Data is `Repository< T, ID extends Serializable>`
+- Create a domain object class that will be mapped to a MongoDB object. The class must have an identified field that will be annotated with the Spring Data special annotation `@Id` from the package `org.springframework.data.annotation`
+- Create a new Repo interface that will extend the Spring Data MongoDB-specialized interface `MongoRepository<T,ID extends Serializable>`.
+- Create a configuration class and annotate it with `@EnableMongoRepositories` to enable creation of MongoDB repository instances.
+
+#### Spring data Repositories
+
+ - Spring searches for all interfaces extending Repository<DomainObjectType, DomainObjectIdType>
+ - Repository is just marker interface and has no method on its own
+ - Can annotate methods in the interface with @Query("Select p from person p where ...")
+ - Can extend CrudRepository instead of Repository - added methods for CRUD
+	 - Method names generated automatically based on naming convention
+	 - findBy + Field (+ Operation)
+	 - FindByFirstName(String name), findByDateOfBirthGt(Date date), ...
+	 - Operations - Gt, Lt, Ne, Like, Between, ...
+ - Can extend PagingAndSortingRepository - added sorting and paging
+ - Most Spring data sub-projects have their own variations of Repository
+ 	- JpaRepository for JPA
+ - Repositories can be injected by type of their interface
+ 
+```java
+public interface PersonRepository extends Repository<Person, Long> {}
+    
+@Service    
+public class PersonService {
+
+    @Autowired
+    private PersonRepository personRepository;
+           
+}  
+````
+
+- Locations, where spring should look for Repository interfaces need to be explicitly defined
+
+```java
+@Configuration 
+@EnableJpaRepositories(basePackages="com.example.**.repository") 
+public class JpaConfig {...}
+
+@Configuration 
+@EnableGemfireRepositories(basePackages="com.example.**.repository")
+public class GemfireConfig {...}
+  
+@Configuration 
+@EnableMongoRepositories(basePackages="com.example.**.repository") 
+public class MongoDbConfig {...}
+```
