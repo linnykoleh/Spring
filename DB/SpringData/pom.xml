@@ -7,17 +7,15 @@
 
     <parent>
         <groupId>com.learning.linnyk</groupId>
-        <artifactId>Spring</artifactId>
+        <artifactId>DB</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>DB</artifactId>
+    <artifactId>SpringData</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-        <module>SpringJDBC</module>
-        <module>SpringData</module>
+        <module>ps-guitar-db</module>
     </modules>
-
 
 </project>

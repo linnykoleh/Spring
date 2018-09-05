@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
+             version="1.0">
+
+	<persistence-unit name="application" transaction-type="RESOURCE_LOCAL">
+
+        <class>com.guitar.db.model.Location</class>
+        <class>com.guitar.db.model.Manufacturer</class>
+        <class>com.guitar.db.model.Model</class>
+        <class>com.guitar.db.model.ModelType</class>
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+	</persistence-unit>
+
+</persistence>

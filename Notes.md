@@ -1996,3 +1996,14 @@ public class GemfireConfig {...}
 @EnableMongoRepositories(basePackages="com.example.**.repository") 
 public class MongoDbConfig {...}
 ```
+
+- For Java configuration `@EnableJpaRepositories(basePackages="com.example.**.repository")` - Annotation to enable JPA repositories.
+- For XML configuration `<jpa:repositories base-package=""com.example.**.repository""/>` - Annotation to enable JPA repositories.
+
+![alt text](images/db/Screenshot_1.png "Screenshot_1")
+
+![alt text](images/db/Screenshot_2.png "Screenshot_2")
+
+![alt text](images/db/Screenshot_3.png "Screenshot_3")
+
+![alt text](images/db/Screenshot_4.png "Screenshot_4")
