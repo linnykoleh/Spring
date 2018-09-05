@@ -46,6 +46,7 @@
         <module>09-ps-data-jpa</module>
         <module>09-ps-data-jpa-practice</module>
         <module>09-ps-data-jpa-solution</module>
+        <module>09-ps-mongo-sample</module>
     </modules>
 
     <build>

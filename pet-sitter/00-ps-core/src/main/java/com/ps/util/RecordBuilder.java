@@ -19,7 +19,7 @@ public class RecordBuilder {
             user.setFirstName(names[0]);
         }
         user.setRating(0d);
-        user.setActive(true);
+//        user.setActive(true);
         return user;
     }
 }
