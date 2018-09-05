@@ -19,7 +19,6 @@ import static com.ps.util.RecordBuilder.buildUser;
 @Service
 public class DBInitializer {
 
-    private Logger logger = LoggerFactory.getLogger(DBInitializer.class);
     @Autowired
     UserRepo userRepo;
 
@@ -27,7 +26,7 @@ public class DBInitializer {
     public void init() {
         // always start with a clean database
         userRepo.deleteAll();
-        logger.info("Starting database initialization...");
+        System.out.println("Starting database initialization...");
         Set<User> users = new HashSet<>();
         User john = buildUser("john.cusack@pet.com");
         john.setPassword("test");
@@ -68,6 +67,6 @@ public class DBInitializer {
         gigi.setUserType(UserType.SITTER);
         users.add(gigi);
         userRepo.save(users);
-        logger.info("Database initialization finished.");
+        System.out.println("Database initialization finished.");
     }
 }

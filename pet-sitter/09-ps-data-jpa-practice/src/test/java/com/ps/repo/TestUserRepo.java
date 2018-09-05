@@ -37,9 +37,15 @@ public class TestUserRepo {
         assertTrue(johns.size() == 2);
     }
 
-    @Test//(expected = EntityNotFoundException.class)
+    @Test
+    public void testFindAll() {
+        List<User> users = userRepo.findAll();
+        users.forEach(System.out::println);
+    }
+
+    @Test
     public void testNoFindById() {
-        User user = userRepo.getOne(99L);
+        User user = userRepo.findUsernameById(99L);
         assertNull(user);
     }
 
@@ -49,22 +55,27 @@ public class TestUserRepo {
         diana.setPassword("test");
         diana.setUserType(UserType.SITTER);
         diana = userRepo.save(diana);
+
         assertNotNull(diana.getId());
     }
 
     @Test
     public void testUpdate() {
-        User john = userRepo.findOneByUsername("john.cusack");
+        final User john = userRepo.findOneByUsername("johncusack");
+
         john.setPassword("newpass");
+
         userRepo.saveAndFlush(john);
+
         assertEquals("newpass", john.getPassword());
-        //check the version field
+
         System.out.println(john);
     }
 
     @Test
     public void testDelete() {
-        User gigi =  userRepo.findOneByUsername("gigi.pedala");
+        final User gigi = userRepo.findOneByUsername("gigipedala");
+
         userRepo.delete(gigi.getId());
     }
 }

@@ -34,7 +34,7 @@ public class TestDataConfig implements DataConfig {
     @Bean
     public DataSource dataSource() {
         try {
-            HikariConfig hikariConfig = new HikariConfig();
+            final HikariConfig hikariConfig = new HikariConfig();
             hikariConfig.setDriverClassName(driverClassName);
             hikariConfig.setJdbcUrl(url);
             hikariConfig.setUsername(username);
@@ -58,7 +58,7 @@ public class TestDataConfig implements DataConfig {
 
     @Bean
     public Properties hibernateProperties() {
-        Properties hibernateProp = new Properties();
+        final Properties hibernateProp = new Properties();
         hibernateProp.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         hibernateProp.put("hibernate.hbm2ddl.auto", "create-drop");
         hibernateProp.put("hibernate.format_sql", true);
