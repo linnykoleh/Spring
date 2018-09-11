@@ -2006,6 +2006,8 @@ public class MongoDbConfig {...}
 
 ![alt text](images/db/Screenshot_3.png "Screenshot_3")
 
+### Query DSL 
+
 ![alt text](images/db/Screenshot_4.png "Screenshot_4")
 
 ![alt text](images/db/Screenshot_5.png "Screenshot_5")
@@ -2033,4 +2035,24 @@ public class MongoDbConfig {...}
 ![alt text](images/db/Screenshot_16.png "Screenshot_16")
 
 ![alt text](images/db/Screenshot_17.png "Screenshot_17")
+
+### Query Annotation
+
+![alt text](images/db/Screenshot_18.png "Screenshot_18")
+
+![alt text](images/db/Screenshot_19.png "Screenshot_19")
+
+![alt text](images/db/Screenshot_20.png "Screenshot_20")
+
+### Named Query
+
+![alt text](images/db/Screenshot_21.png "Screenshot_21")
+
+### Native Query
+
+![alt text](images/db/Screenshot_22.png "Screenshot_22")
+
+### Query Precedence
+
+![alt text](images/db/Screenshot_23.png "Screenshot_23")
 

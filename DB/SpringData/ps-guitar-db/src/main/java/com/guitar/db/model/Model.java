@@ -18,7 +18,8 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@NamedQuery(name="Model.findAllModelsByType", query="select m from Model m where m.modelType.name = :name")
+@NamedQuery(name="Model.findAllModelsByType",
+		    query="select m from Model m where m.modelType.name = :name")
 public class Model {
 
 	@Id

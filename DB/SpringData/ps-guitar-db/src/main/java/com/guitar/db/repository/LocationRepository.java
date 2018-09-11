@@ -15,37 +15,25 @@ public class LocationRepository {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	/**
-	 * Create
-	 */
 	public Location create(Location location) {
 		entityManager.persist(location);
 		entityManager.flush();
 		return location;
 	}
 
-	/**
-	 * Update
-	 */
+	public Location find(Long id) {
+		return entityManager.find(Location.class, id);
+	}
+
 	public Location update(Location location) {
 		location = entityManager.merge(location);
 		entityManager.flush();
 		return location;
 	}
 
-	/**
-	 * Delete
-	 */
 	public void delete(Location location) {
 		entityManager.remove(location);
 		entityManager.flush();
-	}
-
-	/**
-	 * Find
-	 */
-	public Location find(Long id) {
-		return entityManager.find(Location.class, id);
 	}
 
 	/**

@@ -66,13 +66,38 @@ public class ModelPersistenceTests {
 
 	@Test
 	public void testGetModelsByPriceRangeAndWoodType() {
-		List<Model> mods = modelRepository.getModelsByPriceRangeAndWoodType(BigDecimal.valueOf(1000L), BigDecimal.valueOf(2000L), "Maple");
+		final List<Model> mods = modelRepository
+				.getModelsByPriceRangeAndWoodType(BigDecimal.valueOf(1000L), BigDecimal.valueOf(2000L), "Maple");
+
+		assertEquals(3, mods.size());
+	}
+
+	@Test
+	public void testQueryByPriceRangeAndWoodType_SpringData() {
+		final List<Model> mods = modelDataJPARepository
+				.queryByPriceRangeAndWoodType(BigDecimal.valueOf(1000L), BigDecimal.valueOf(2000L), "%Maple%");
+
 		assertEquals(3, mods.size());
 	}
 
 	@Test
 	public void testGetModelsByType() {
-		List<Model> mods = modelRepository.getModelsByType("Electric");
+        final List<Model> mods = modelRepository.getModelsByType("Electric");
+
+		assertEquals(4, mods.size());
+	}
+
+    @Test
+    public void testFindAllModelsByType_SpringData() {
+        final List<Model> mods = modelDataJPARepository.findAllModelsByType("Electric");
+
+        assertEquals(4, mods.size());
+    }
+
+	@Test
+	public void testFindAllModelsByTypeUsingQuery_SpringData() {
+		final List<Model> mods = modelDataJPARepository.findAllModelsByTypeUsingQuery("Electric");
+
 		assertEquals(4, mods.size());
 	}
 

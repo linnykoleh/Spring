@@ -39,7 +39,22 @@ public class ManufacturerPersistenceTests {
 
 	@Test
 	public void testGetManufacturersThatSellModelsOfType() {
-		List<Manufacturer> mans = manufacturerRepository.getManufacturersThatSellModelsOfType("Semi-Hollow Body Electric");
+		final List<Manufacturer> mans = manufacturerRepository.getManufacturersThatSellModelsOfType("Semi-Hollow Body Electric");
+
+		assertEquals(1, mans.size());
+	}
+
+	@Test
+	public void testGetAllThatSellAcoustics_SpringData() {
+		final List<Manufacturer> mans = manufacturerDataJPARepository.getAllThatSellAcoustics("Semi-Hollow Body Electric");
+
+		assertEquals(1, mans.size());
+	}
+
+	@Test
+	public void testQueryAllThatSellAcoustics_SpringData() {
+		final List<Manufacturer> mans = manufacturerDataJPARepository.queryAllThatSellAcoustics("Semi-Hollow Body Electric");
+
 		assertEquals(1, mans.size());
 	}
 
