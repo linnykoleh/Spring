@@ -2056,3 +2056,48 @@ public class MongoDbConfig {...}
 
 ![alt text](images/db/Screenshot_23.png "Screenshot_23")
 
+### Paging and Sorting
+
+![alt text](images/db/Screenshot_24.png "Screenshot_24")
+
+```java
+@Test
+public void testQueryByPriceRangeAndWoodTypePaging_SpringData() {
+    final Pageable pageable = new PageRequest(0, 2);
+
+    Page<Model> page = modelDataJPARepository
+            .queryByPriceRangeAndWoodTypePaging(
+                    BigDecimal.valueOf(1000L), BigDecimal.valueOf(2000L), "%Maple%", pageable);
+    /* select name from Model m where m.price>=? and m.price<=? and (m.woodType like ?) limit ? */
+    
+    Iterator<Model> iterator = page.iterator();
+    while (iterator.hasNext()){
+        System.out.println(iterator.next());
+    }
+    // American Stratocaster
+    // Les Paul
+
+    page = modelDataJPARepository
+            .queryByPriceRangeAndWoodTypePaging(
+                    BigDecimal.valueOf(1000L), BigDecimal.valueOf(2000L), "%Maple%", page.nextPageable());
+
+    /* select name from Model m where m.price>=? and m.price<=? and (m.woodType like ?) limit ? offset ?*/
+    iterator = page.iterator();
+    while (iterator.hasNext()){
+        System.out.println(iterator.next());
+    }
+    // SG
+}
+```
+### Custom Repositories
+
+![alt text](images/db/Screenshot_25.png "Screenshot_25")
+
+### Auditing
+
+![alt text](images/db/Screenshot_26.png "Screenshot_26")
+
+### Locking
+
+![alt text](images/db/Screenshot_27.png "Screenshot_27")
+

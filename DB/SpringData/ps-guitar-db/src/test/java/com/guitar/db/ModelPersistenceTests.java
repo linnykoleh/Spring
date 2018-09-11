@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -14,6 +15,10 @@ import com.guitar.db.repository.spring_data.ModelDataJPARepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +70,11 @@ public class ModelPersistenceTests {
 	}
 
 	@Test
+	public void testCustomMethod() {
+		modelDataJPARepository.aCustomMethod();
+	}
+
+	@Test
 	public void testGetModelsByPriceRangeAndWoodType() {
 		final List<Model> mods = modelRepository
 				.getModelsByPriceRangeAndWoodType(BigDecimal.valueOf(1000L), BigDecimal.valueOf(2000L), "Maple");
@@ -78,6 +88,35 @@ public class ModelPersistenceTests {
 				.queryByPriceRangeAndWoodType(BigDecimal.valueOf(1000L), BigDecimal.valueOf(2000L), "%Maple%");
 
 		assertEquals(3, mods.size());
+	}
+
+	@Test
+	public void testQueryByPriceRangeAndWoodTypePaging_SpringData() {
+		final Sort sort = new Sort(Sort.Direction.DESC, "name");
+		final Pageable pageable = new PageRequest(0, 2, sort);
+
+		Page<Model> page = modelDataJPARepository
+				.queryByPriceRangeAndWoodTypePaging(
+						BigDecimal.valueOf(1000L), BigDecimal.valueOf(2000L), "%Maple%", pageable);
+		/* select name from Model m where m.price>=? and m.price<=? and (m.woodType like ?) order by m.name desc limit ? */
+
+		Iterator<Model> iterator = page.iterator();
+		while (iterator.hasNext()) {
+			System.out.println(iterator.next());
+		}
+		// SG
+		// Les Paul
+
+		page = modelDataJPARepository
+				.queryByPriceRangeAndWoodTypePaging(
+						BigDecimal.valueOf(1000L), BigDecimal.valueOf(2000L), "%Maple%", page.nextPageable());
+
+		/* select name from Model m where m.price>=? and m.price<=? and (m.woodType like ?) order by m.name desc limit ? offset ?*/
+		iterator = page.iterator();
+		while (iterator.hasNext()) {
+			System.out.println(iterator.next());
+		}
+		// American Stratocaster
 	}
 
 	@Test
