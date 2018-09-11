@@ -3,12 +3,14 @@ package com.guitar.db;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import com.guitar.db.repository.spring_data.ModelDataJPARepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class ModelPersistenceTests {
 
 	@Autowired
 	private ModelRepository modelRepository;
+
+	@Autowired
+	private ModelDataJPARepository modelDataJPARepository;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -68,6 +73,22 @@ public class ModelPersistenceTests {
 	@Test
 	public void testGetModelsByType() {
 		List<Model> mods = modelRepository.getModelsByType("Electric");
+		assertEquals(4, mods.size());
+	}
+
+	@Test
+	public void testGetModelsGreaterThanEqualAndLessThanEqual_SpringData() {
+		final List<Model> mods = modelDataJPARepository
+				.findByPriceGreaterThanEqualAndPriceLessThanEqual(BigDecimal.valueOf(100), BigDecimal.valueOf(1000));
+
+		assertEquals(5, mods.size());
+	}
+
+	@Test
+	public void testFindByModelTypeNameIn_SpringData() {
+		final List<Model> mods = modelDataJPARepository
+				.findByModelTypeNameIn(Arrays.asList("Electric", "Acoustic"));
+
 		assertEquals(4, mods.size());
 	}
 }

@@ -68,10 +68,73 @@ public class LocationPersistenceTests {
 	}
 
 	@Test
-	public void testFindWithLikeUsingSpringData() {
-		final List<Location> locs = locationDataJPARepository.findByStateLike("New%");
+	public void testFindWithLike_SpringData() {
+		final List<Location> locations = locationDataJPARepository.findByStateLike("New%");
 
-		assertEquals(4, locs.size());
+		assertEquals(4, locations.size());
+	}
+
+	@Test
+	public void testFindWithNotLike_SpringData() {
+		final List<Location> locations = locationDataJPARepository.findByStateNotLike("New%");
+
+		assertEquals(46, locations.size());
+	}
+
+	@Test
+	public void testFindWithAnd_SpringData() {
+		final List<Location> locations = locationDataJPARepository.findByStateAndCountry("Utah", "United States");
+
+		assertEquals(1, locations.size());
+	}
+
+	@Test
+	public void testFindWithOr_SpringData() {
+		final List<Location> locations = locationDataJPARepository.findByStateOrCountry("Utah", "United");
+
+		assertEquals(1, locations.size());
+	}
+
+	@Test
+	public void testFindWithAndNot_SpringData() {
+		final List<Location> locations = locationDataJPARepository.findByStateNotAndCountry("Utah", "United States");
+
+		assertEquals(49, locations.size());
+	}
+
+	@Test
+	public void testFindWithStartingWith_SpringData() {
+		final List<Location> locations = locationDataJPARepository.findByStateStartingWith("Uta");
+
+		assertEquals(1, locations.size());
+	}
+
+	@Test
+	public void testFindByStateIgnoreCaseStartingWith_SpringData() {
+		final List<Location> locations = locationDataJPARepository.findByStateIgnoreCaseStartingWith("new");
+
+		assertEquals(4, locations.size());
+	}
+
+	@Test
+	public void testFindByCountryLikeOrderByStateAsc_SpringData() {
+		final List<Location> locations = locationDataJPARepository.findByCountryLikeOrderByStateAsc("United%");
+
+		assertEquals(50, locations.size());
+	}
+
+	@Test
+	public void testFindTop5ByStateLike_SpringData() {
+		final List<Location> locations = locationDataJPARepository.findTop5ByStateLike("Ne%");
+
+		assertEquals(5, locations.size());
+	}
+
+	@Test
+	public void testFindDistinctByStateIsNotLike_SpringData() {
+		final Location location = locationDataJPARepository.findDistinctByState("New Mexico");
+
+		assertNotNull(location);
 	}
 
 	@Test

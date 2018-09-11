@@ -16,6 +16,8 @@ import com.guitar.db.model.ModelType;
 import com.guitar.db.repository.ModelTypeRepository;
 import com.guitar.db.repository.spring_data.ModelTypeDataJPARepository;
 
+import java.util.List;
+
 @ContextConfiguration(locations={"classpath:com/guitar/db/applicationTests-context.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ModelTypePersistenceTests {
@@ -70,8 +72,15 @@ public class ModelTypePersistenceTests {
 	}
 
 	@Test
-	public void testFindUsingSpringData() {
+	public void testFind_SpringData() {
 		ModelType mt = modelTypeDataJPARepository.findOne(1L);
 		assertEquals("Dreadnought Acoustic", mt.getName());
+	}
+
+	@Test
+	public void testFindByNameIsNull_SpringData() {
+		final List<ModelType> modelTypes = modelTypeDataJPARepository.findByNameIsNull();
+
+		assertEquals(1, modelTypes.size());
 	}
 }

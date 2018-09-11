@@ -24,12 +24,13 @@ import lombok.ToString;
 @ToString
 @Entity
 @NamedNativeQuery(name = "Manufacturer.getAllThatSellAcoustics", 
-		query = "SELECT m.id, m.name, m.foundedDate, m.averageYearlySales, m.location_id as headquarters_id "
+		query = "SELECT m.id, m.name, m.foundedDate, m.averageYearlySales, m.location_id as headquarters_id, m.active "
 	    + "FROM Manufacturer m "
 		+ "LEFT JOIN Model mod ON (m.id = mod.manufacturer_id) "
 		+ "LEFT JOIN ModelType mt ON (mt.id = mod.modeltype_id) "
 	    + "WHERE (mt.name = ?)", resultClass = Manufacturer.class)
 public class Manufacturer {
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
@@ -37,7 +38,8 @@ public class Manufacturer {
 	private String name;
 	private Date foundedDate;
 	private BigDecimal averageYearlySales;
-	
+	private boolean active;
+
 	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumn(name="MANUFACTURER_ID")
 	private List<Model> models = new ArrayList<>();
@@ -45,7 +47,4 @@ public class Manufacturer {
 	@ManyToOne
 	private Location headquarters;
 
-	public String getName() {
-		return name;
-	}
 }

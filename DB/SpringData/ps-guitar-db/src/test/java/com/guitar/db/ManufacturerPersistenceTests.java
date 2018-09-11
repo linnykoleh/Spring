@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Date;
 import java.util.List;
 
+import com.guitar.db.repository.spring_data.ManufacturerDataJPARepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class ManufacturerPersistenceTests {
 	@Autowired
 	private ManufacturerRepository manufacturerRepository;
 
+	@Autowired
+	private ManufacturerDataJPARepository manufacturerDataJPARepository;
+
 	@Test
 	public void testGetManufacturersFoundedBeforeDate() {
 		List<Manufacturer> mans = manufacturerRepository.getManufacturersFoundedBeforeDate(new Date());
@@ -36,6 +40,28 @@ public class ManufacturerPersistenceTests {
 	@Test
 	public void testGetManufacturersThatSellModelsOfType() {
 		List<Manufacturer> mans = manufacturerRepository.getManufacturersThatSellModelsOfType("Semi-Hollow Body Electric");
+		assertEquals(1, mans.size());
+	}
+
+	@Test
+	public void testGetManufacturersByFoundedDateBefore_SpringData() {
+		final List<Manufacturer> mans = manufacturerDataJPARepository.findByFoundedDateBefore(new Date());
+
+		assertEquals(2, mans.size());
+	}
+
+
+	@Test
+	public void testFindByActiveFalse_SpringData() {
+		final List<Manufacturer> mans = manufacturerDataJPARepository.findByActiveFalse();
+
+		assertEquals(1, mans.size());
+	}
+
+	@Test
+	public void testFindByActiveTrue_SpringData() {
+		final List<Manufacturer> mans = manufacturerDataJPARepository.findByActiveTrue();
+
 		assertEquals(1, mans.size());
 	}
 }
