@@ -11,6 +11,7 @@
 
     <modules>
         <module>1_configurations</module>
+        <module>crud</module>
     </modules>
     
 </project>
