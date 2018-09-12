@@ -5,18 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
 
-    <parent>
-        <groupId>com.learning.linnyk</groupId>
-        <artifactId>DB</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>SpringData</artifactId>
+    <groupId>com.learning.linnyk</groupId>
+    <artifactId>1_configurations</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-        <module>ps-guitar-db</module>
-        <module>Spring Data for Java Developers</module>
+        <module>Spring_Boot_Configuration</module>
+        <module>Java_Configuration</module>
+        <module>XML_Configuration</module>
     </modules>
-
 </project>
