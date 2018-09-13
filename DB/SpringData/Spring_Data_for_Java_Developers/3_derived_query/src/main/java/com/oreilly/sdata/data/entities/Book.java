@@ -32,4 +32,9 @@ public class Book {
     @Column(name = "PRICE")
     private BigDecimal price;
 
+    @ManyToOne
+    @JoinColumn(name="AUTHOR_ID")
+    private Author author;
+
+
 }
