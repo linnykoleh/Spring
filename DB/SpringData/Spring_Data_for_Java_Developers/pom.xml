@@ -13,6 +13,7 @@
         <module>1_configurations</module>
         <module>2_crud</module>
         <module>3_derived_query</module>
+        <module>4_query_techniques</module>
     </modules>
     
 </project>
