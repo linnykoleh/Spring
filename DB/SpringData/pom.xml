@@ -16,7 +16,7 @@
 
     <modules>
         <module>ps-guitar-db</module>
-        <module>Spring Data for Java Developers</module>
+        <module>Spring_Data_for_Java_Developers</module>
     </modules>
 
 </project>

@@ -11,7 +11,8 @@
 
     <modules>
         <module>1_configurations</module>
-        <module>crud</module>
+        <module>2_crud</module>
+        <module>3_derived_query</module>
     </modules>
     
 </project>

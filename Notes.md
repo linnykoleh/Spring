@@ -1996,9 +1996,12 @@ public class GemfireConfig {...}
 @EnableMongoRepositories(basePackages="com.example.**.repository") 
 public class MongoDbConfig {...}
 ```
+### Spring Data Configuration
 
 - For Java configuration `@EnableJpaRepositories(basePackages="com.example.**.repository")` - Annotation to enable JPA repositories.
 - For XML configuration `<jpa:repositories base-package=""com.example.**.repository""/>` - Annotation to enable JPA repositories.
+
+---
 
 ![alt text](images/db/Screenshot_1.png "Screenshot_1")
 
@@ -2007,6 +2010,8 @@ public class MongoDbConfig {...}
 ![alt text](images/db/Screenshot_3.png "Screenshot_3")
 
 ### Query DSL 
+
+![alt text](images/db/Screenshot_28.png "Screenshot_28")
 
 ![alt text](images/db/Screenshot_4.png "Screenshot_4")
 

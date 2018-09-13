@@ -32,5 +32,4 @@ public class Book {
     @Column(name = "PRICE")
     private BigDecimal price;
 
-
 }
