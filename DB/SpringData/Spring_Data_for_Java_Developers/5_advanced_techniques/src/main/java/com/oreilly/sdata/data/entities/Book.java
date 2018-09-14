@@ -21,11 +21,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EqualsAndHashCode(exclude = "publishDate")
 @Entity
 @Table(name = "BOOK")
-@NamedQueries({
-        @NamedQuery(name="Book.queryOne", query="select b from Book b"),
-        @NamedQuery(name="Book.queryTwo", query="select b from Book b where b.pageCount > ?1"),
-        @NamedQuery(name="Book.queryThree", query="select b from Book b where b.title = :title")
-})
 @EntityListeners(AuditingEntityListener.class)
 public class Book {
 
