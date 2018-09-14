@@ -1,14 +1,19 @@
 package com.oreilly.sdata.repositories;
 
+import com.oreilly.sdata.data.entities.Book;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.oreilly.sdata.data.entities.Book;
-import com.oreilly.sdata.repositories.custom.BookRepositoryCustom;
-
-public interface BookRepository extends JpaRepository<Book, Long>, BookRepositoryCustom {
+public interface BookRepository extends BaseRepository<Book, Long> {
 
 	List<Book> findByPageCountGreaterThan(int pageCount, Sort sort);
+
+	@Transactional
+	@Modifying
+	@Query("update Book b set b.pageCount = ?1 where b.title like ?2")
+	int setPageCount(int pageCount, String title);
 }

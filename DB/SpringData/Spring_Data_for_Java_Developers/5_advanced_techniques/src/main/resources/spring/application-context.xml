@@ -5,15 +5,26 @@
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xmlns:jpa="http://www.springframework.org/schema/data/jpa"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.1.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.8.xsd
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <bean id="customAuditorAware" class="com.oreilly.sdata.CustomAuditorAware"/>
+
+    <jpa:auditing auditor-aware-ref="customAuditorAware"/>
+
+    <!--Defines a ThreadPoolTaskExecutor instance with configurable pool size-->
+    <task:executor id="executor" pool-size="10"/>
+    <task:annotation-driven executor="executor"/>
 
     <context:component-scan base-package="com.oreilly.sdata"/>
 
-    <jpa:repositories base-package="com.oreilly.sdata" repository-impl-postfix="CustomImpl"/>
+    <jpa:repositories base-package="com.oreilly.sdata"
+                      base-class="com.oreilly.sdata.repositories.ExtendedRepositoryImpl"/>
 
     <tx:annotation-driven/>
 
