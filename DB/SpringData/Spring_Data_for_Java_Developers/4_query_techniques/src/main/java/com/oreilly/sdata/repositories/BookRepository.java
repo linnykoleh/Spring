@@ -5,7 +5,10 @@ import java.util.List;
 
 import com.oreilly.sdata.data.entities.Book;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,8 +36,15 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 	@Query(name = "Book.queryThree")
 	List<Book> queryAllFilterNamedParamsNamedQuery(@Param("title") String title);
 
-
 	/* Paging */
 	List<Book> findByPageCountGreaterThan(int pageCount, Pageable pageable);
+
+	Page<Book> findByPageCountLessThan(int pageCount, Pageable pageable);
+
+	Slice<Book> findByPageCountBetween(int pageCount1, int pageCount2, Pageable pageable);
+
+
+	/* Sorting */
+	List<Book> findByPageCountGreaterThan(int pageCount, Sort sort);
 
 }

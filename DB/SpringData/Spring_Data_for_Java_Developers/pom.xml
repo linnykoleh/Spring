@@ -14,6 +14,7 @@
         <module>2_crud</module>
         <module>3_derived_query</module>
         <module>4_query_techniques</module>
+        <module>5_advanced_techniques</module>
     </modules>
     
 </project>

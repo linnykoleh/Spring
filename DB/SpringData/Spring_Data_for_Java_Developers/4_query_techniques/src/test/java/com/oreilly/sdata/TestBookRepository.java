@@ -139,4 +139,54 @@ public class TestBookRepository {
 		// Book(bookId=3, title=For Whom the Bell Tolls, publishDate=1932-11-08 00:00:00.0, pageCount=210, price=13.00, author=Author(authorId=5, firstName=Ernest, lastName=Hemmingway, country=United States))
 		// Book(bookId=10, title=Great Expectations, publishDate=1878-10-08 00:00:00.0, pageCount=140, price=13.66, author=Author(authorId=6, firstName=Charles, lastName=Dickens, country=England))
 	}
+
+	@Test
+	public void sortingExample() {
+		log.info("================");
+		log.info("Sorting example ");
+		log.info("================");
+
+		final Sort sort = new Sort(Sort.Direction.ASC, "price");
+		final List<Book> books = bookRepository.findAll(sort);
+		// select * from BOOK b order by b.PRICE asc
+
+		books.forEach(b -> log.info(b.toString()));
+		// Book(bookId=1, title=Of Mice and Men, publishDate=1954-11-08 00:00:00.0, pageCount=230, price=11.00, author=Author(authorId=1, firstName=John, lastName=Steinbeck, country=United States))
+		// Book(bookId=3, title=For Whom the Bell Tolls, publishDate=1932-11-08 00:00:00.0, pageCount=210, price=13.00, author=Author(authorId=5, firstName=Ernest, lastName=Hemmingway, country=United States))
+		// Book(bookId=10, title=Great Expectations, publishDate=1878-10-08 00:00:00.0, pageCount=140, price=13.66, author=Author(authorId=6, firstName=Charles, lastName=Dickens, country=England))
+		// Book(bookId=6, title=Design Patterns, publishDate=1996-11-25 00:00:00.0, pageCount=120, price=14.00, author=Author(authorId=9, firstName=Erich, lastName=Gamma, country=United States))
+		// Book(bookId=2, title=One Flew Over the Cuckoos Nest, publishDate=1973-11-08 00:00:00.0, pageCount=301, price=15.00, author=Author(authorId=11, firstName=Ken, lastName=Kesey, country=Russia))
+		// Book(bookId=4, title=War and Peace, publishDate=1955-11-21 00:00:00.0, pageCount=400, price=15.00, author=Author(authorId=10, firstName=Leo, lastName=Tolstoy, country=Russia))
+
+		final Sort sort1 = new Sort(Sort.Direction.ASC, "price", "author.lastName", "pageCount");
+		final List<Book> books1 = bookRepository.findAll(sort1);
+		// select * from BOOK   b left outer join AUTHOR a on b.AUTHOR_ID=a.AUTHOR_ID order by   b.PRICE asc, a.LAST_NAME asc, b.PAGE_COUNT asc
+
+		books1.forEach(b -> log.info(b.toString()));
+		// Book(bookId=1, title=Of Mice and Men, publishDate=1954-11-08 00:00:00.0, pageCount=230, price=11.00, author=Author(authorId=1, firstName=John, lastName=Steinbeck, country=United States))
+		// Book(bookId=3, title=For Whom the Bell Tolls, publishDate=1932-11-08 00:00:00.0, pageCount=210, price=13.00, author=Author(authorId=5, firstName=Ernest, lastName=Hemmingway, country=United States))
+		// Book(bookId=10, title=Great Expectations, publishDate=1878-10-08 00:00:00.0, pageCount=140, price=13.66, author=Author(authorId=6, firstName=Charles, lastName=Dickens, country=England))
+		// Book(bookId=6, title=Design Patterns, publishDate=1996-11-25 00:00:00.0, pageCount=120, price=14.00, author=Author(authorId=9, firstName=Erich, lastName=Gamma, country=United States))
+		// Book(bookId=7, title=A Tale of Two Cities, publishDate=1943-11-19 00:00:00.0, pageCount=270, price=15.00, author=Author(authorId=6, firstName=Charles, lastName=Dickens, country=England))
+
+		final Sort sort2 = new Sort(Sort.Direction.ASC, "price").and(new Sort(Sort.Direction.DESC, "pageCount"));
+		final List<Book> books2 = bookRepository.findAll(sort2);
+		// select * from BOOK  b order by b.PRICE asc, b.PAGE_COUNT desc
+
+		books2.forEach(b -> log.info(b.toString()));
+		// Book(bookId=1, title=Of Mice and Men, publishDate=1954-11-08 00:00:00.0, pageCount=230, price=11.00, author=Author(authorId=1, firstName=John, lastName=Steinbeck, country=United States))
+		// Book(bookId=3, title=For Whom the Bell Tolls, publishDate=1932-11-08 00:00:00.0, pageCount=210, price=13.00, author=Author(authorId=5, firstName=Ernest, lastName=Hemmingway, country=United States))
+		// Book(bookId=10, title=Great Expectations, publishDate=1878-10-08 00:00:00.0, pageCount=140, price=13.66, author=Author(authorId=6, firstName=Charles, lastName=Dickens, country=England))
+		// Book(bookId=6, title=Design Patterns, publishDate=1996-11-25 00:00:00.0, pageCount=120, price=14.00, author=Author(authorId=9, firstName=Erich, lastName=Gamma, country=United States))
+		// Book(bookId=4, title=War and Peace, publishDate=1955-11-21 00:00:00.0, pageCount=400, price=15.00, author=Author(authorId=10, firstName=Leo, lastName=Tolstoy, country=Russia))
+		// Book(bookId=2, title=One Flew Over the Cuckoos Nest, publishDate=1973-11-08 00:00:00.0, pageCount=301, price=15.00, author=Author(authorId=11, firstName=Ken, lastName=Kesey, country=Russia))
+
+		final List<Book> books3 = bookRepository.findByPageCountGreaterThan(300, new Sort(Sort.Direction.DESC, "pageCount"));
+		// select * from BOOK b where b.PAGE_COUNT>? order by b.PAGE_COUNT desc
+
+		books3.forEach(b -> log.info(b.toString()));
+		// Book(bookId=4, title=War and Peace, publishDate=1955-11-21 00:00:00.0, pageCount=400, price=15.00, author=Author(authorId=10, firstName=Leo, lastName=Tolstoy, country=Russia))
+		// Book(bookId=5, title=The Grapes of Wrath, publishDate=1955-11-14 00:00:00.0, pageCount=350, price=16.00, author=Author(authorId=1, firstName=John, lastName=Steinbeck, country=United States))
+		// Book(bookId=2, title=One Flew Over the Cuckoos Nest, publishDate=1973-11-08 00:00:00.0, pageCount=301, price=15.00, author=Author(authorId=11, firstName=Ken, lastName=Kesey, country=Russia))
+	}
 }
