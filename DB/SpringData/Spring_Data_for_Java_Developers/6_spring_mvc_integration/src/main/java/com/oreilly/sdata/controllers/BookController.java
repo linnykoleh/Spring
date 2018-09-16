@@ -4,13 +4,13 @@ import com.oreilly.sdata.data.entities.Book;
 import com.oreilly.sdata.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.List;
 
 @Controller
 public class BookController {
@@ -23,16 +23,11 @@ public class BookController {
     }
 
     @RequestMapping("/books")
-    public String showBooks(Model model) {
-        final List<Book> books = repository.findAll();
+    public String showBooksPageable(Model model, Pageable pageable, Sort sort) {
+        final PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        final Page<Book> books = repository.findAll(pageRequest);
         model.addAttribute("page", books);
-        return "books";
-    }
-
-    @RequestMapping("/books/pageable")
-    public String showBooksPageable(Model model, Pageable pageable) {
-        final Page<Book> books = repository.findAll(pageable);
-        model.addAttribute("books", books);
+        model.addAttribute("sort", (sort != null) ? sort.iterator().next().getProperty(): "" );
         return "books";
     }
 
