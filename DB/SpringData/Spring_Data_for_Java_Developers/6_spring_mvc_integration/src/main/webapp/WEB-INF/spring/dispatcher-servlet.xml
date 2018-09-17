@@ -8,7 +8,6 @@
 
     <context:component-scan base-package="com.oreilly.sdata" />
 
-    <!-- Auto Paging -->
     <mvc:annotation-driven conversion-service="conversionService">
         <mvc:argument-resolvers>
             <!-- Auto Paging -->

@@ -2106,3 +2106,11 @@ public void testQueryByPriceRangeAndWoodTypePaging_SpringData() {
 
 ![alt text](images/db/Screenshot_27.png "Screenshot_27")
 
+### Spring data for updating data
+
+```java
+	@Transactional
+	@Modifying
+	@Query("update Book b set b.pageCount = ?1 where b.title like ?2")
+	int setPageCount(int pageCount, String title);
+```

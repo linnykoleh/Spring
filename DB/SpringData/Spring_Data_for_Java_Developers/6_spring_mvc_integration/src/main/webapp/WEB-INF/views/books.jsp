@@ -12,10 +12,10 @@
         <table>
 
             <tr>
-                <th><a href="<spring:url value="/books/page=0&sort=title"/>">Title</a></th>
-                <th><a href="<spring:url value="/books/page=0&sort=author.lastName"/>">Author</a></th>
-                <th><a href="<spring:url value="/books/page=0&sort=pageCount"/>">Page Count</a></th>
-                <th><a href="<spring:url value="/books/page=0&sort=price"/>">Price</a></th>
+                <th><a href="<spring:url value="/books?page=0&sort=title"/>">Title</a></th>
+                <th><a href="<spring:url value="/books?page=0&sort=author.lastName"/>">Author</a></th>
+                <th><a href="<spring:url value="/books?page=0&sort=pageCount"/>">Page Count</a></th>
+                <th><a href="<spring:url value="/books?page=0&sort=price"/>">Price</a></th>
             </tr>
 
             <c:forEach items="${page.content}" var="book">

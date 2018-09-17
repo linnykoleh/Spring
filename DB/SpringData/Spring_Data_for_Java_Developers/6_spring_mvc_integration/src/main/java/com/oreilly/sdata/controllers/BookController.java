@@ -22,12 +22,26 @@ public class BookController {
         this.repository = repository;
     }
 
+    /**
+     *  Pageable и Sort передается в аргументе метода благодаря:
+     *
+     *  <mvc:annotation-driven conversion-service="conversionService">
+     *         <mvc:argument-resolvers>
+     *
+     *             <bean class="org.springframework.data.web.PageableHandlerMethodArgumentResolver">
+     *                 <property name="maxPageSize" value="3"/>
+     *             </bean>
+
+     *             <bean class="org.springframework.data.web.SortHandlerMethodArgumentResolver"/>
+     *         </mvc:argument-resolvers>
+     *     </mvc:annotation-driven>
+     */
     @RequestMapping("/books")
     public String showBooksPageable(Model model, Pageable pageable, Sort sort) {
         final PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
         final Page<Book> books = repository.findAll(pageRequest);
         model.addAttribute("page", books);
-        model.addAttribute("sort", (sort != null) ? sort.iterator().next().getProperty(): "" );
+        model.addAttribute("sort", (sort != null) ? sort.iterator().next().getProperty(): "");
         return "books";
     }
 
