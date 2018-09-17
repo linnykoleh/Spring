@@ -860,7 +860,6 @@ public class MockPetServiceTest {
 @RunWith(MockitoJUnitRunner.class)
 public class MockPetServiceTest {
 
-
     @InjectMocks
     private SimplePetService simplePetService;
 
@@ -997,8 +996,8 @@ by applying advices to specific join points, specified by pointcuts.
 	- **After (finally) advice** - methods annotated with `@After` that will execute after a join point execution, no matter how the execution ended.
 	- **Around advice** - methods annotated with `@Around` intercept the target method and surround the join point. 
 	  This is the most powerful type of advice, since it can perform custom behavior before and after the invocation
-- **Pointcut** - a predicate used to identify join points.  Advice definitions are associated with a pointcut expression and the advice will execute on any join point matching the pointcut expression. <br/> 	  
-   Pointcut expressions can be defined as arguments for Advice annotations or as arguments for the `@Pointcut` annotation. 
+- **Pointcut** - a predicate used to identify join points.  Advice definitions are associated with a pointcut expression and the advice will execute on any join point matching the pointcut expression.
+    Pointcut expressions can be defined as arguments for Advice annotations or as arguments for the `@Pointcut` annotation. 
 - **Introduction** - declaring additional methods, fields, interfaces being implemented, annotations on behalf of another type.
 - **AOP proxy** - the object created by AOP to implement the aspect contracts. In SprJdbcTemplateUserRepoing, proxy objects can be `JDK dynamic proxies` or `CGLIB proxies`    
 
@@ -1239,7 +1238,7 @@ meaning that the advice decides whether the target method is called, and if so, 
 
 ![alt text](images/aop/Screenshot_15.png "Screenshot_15")
 
-#### @PointCut
+### @PointCut
 
 ![alt text](images/aop/Screenshot_16.png "Screenshot_16")
 
@@ -1528,31 +1527,31 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 - The `@SqlConfig` is used to specify the configuration of the SQL script.
 
 ```java
-	@Test
-	@Sql(statements = {"drop table NEW_P_USER if exists;"})
-	 public void testCreateTable(){
-		 int result = userRepo.createTable("new_p_user");
-		 assertEquals(0, result);
-	 }
+@Test
+@Sql(statements = {"drop table NEW_P_USER if exists;"})
+ public void testCreateTable(){
+	 int result = userRepo.createTable("new_p_user");
+	 assertEquals(0, result);
+ }
 ```
 
 ```java
-	@Test
-    @SqlGroup({
-            @Sql(
-                    value = "classpath:db/extra-data.sql",
-                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--")
-            ),
-            @Sql(
-                    scripts = "classpath:db/delete-test-data.sql",
-                    config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED),
-                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-            )
-    })
-    public void testCount() {
-        int count = userService.countUsers();
-        assertEquals(8, count);
-    }   
+@Test
+@SqlGroup({
+		@Sql(
+				value = "classpath:db/extra-data.sql",
+				config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--")
+		),
+		@Sql(
+				scripts = "classpath:db/delete-test-data.sql",
+				config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED),
+				executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+		)
+})
+public void testCount() {
+	int count = userService.countUsers();
+	assertEquals(8, count);
+}   
 ```
 
 ### jdbcTemplate
@@ -1575,38 +1574,38 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 - Inject into repository
 
 ```java
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+@Autowired
+private JdbcTemplate jdbcTemplate;
 
 ```
 
 - Select
 
 ```java
-	jdbcTemplate.query("SELECT * FROM MY_TABLE", new RowMapper());
+jdbcTemplate.query("SELECT * FROM MY_TABLE", new RowMapper());
 
-	jdbcTemplate.queryForObject("SELECT * FROM MY_TABLE WHERE ID = id", new RowMapper());
+jdbcTemplate.queryForObject("SELECT * FROM MY_TABLE WHERE ID = id", new RowMapper());
 ```
 
 - Insert
 
 ```java
-	jdbcTemplate.update(
-				"insert INTO MY_TABLE(NAME, DURATION) values (?, ?)",
-				obj.getName(), obj.getDuration());
+jdbcTemplate.update(
+			"insert INTO MY_TABLE(NAME, DURATION) values (?, ?)",
+			obj.getName(), obj.getDuration());
 ```
 
 - Update
 
 ```java
-	jdbcTemplate.update("UPDATE MY_TABLE set NAME = ?, DURATION = ? where id = ?",
-				obj.getName(), obj.getDuration(), obj.getId());
+jdbcTemplate.update("UPDATE MY_TABLE set NAME = ?, DURATION = ? where id = ?",
+			obj.getName(), obj.getDuration(), obj.getId());
 ```
 
 - Delete
 
 ```java
-	jdbcTemplate.update("delete from MY_TABLE where id = ?", id);
+jdbcTemplate.update("delete from MY_TABLE where id = ?", id);
 ```
 
 #### Query for domain object
@@ -1673,86 +1672,86 @@ Initialise db
 - Inject database params and use them when create beans
 
 ```java
-    @Value("${driverClassName}")
-    private String driverClassName;
-    @Value("${url}")
-    private String url;
-    @Value("${login}")
-    private String username;
-    @Value("${password}")
-    private String password;
+@Value("${driverClassName}")
+private String driverClassName;
+@Value("${url}")
+private String url;
+@Value("${login}")
+private String username;
+@Value("${password}")
+private String password;
 ```
 
 - Create `dataSource`
 
 ```java
-	@Bean
-    public DataSource dataSource() {
-        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(driverClassName);
-        dataSource.setUrl(url);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
-        return dataSource;
-    }
+@Bean
+public DataSource dataSource() {
+	final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+	dataSource.setDriverClassName(driverClassName);
+	dataSource.setUrl(url);
+	dataSource.setUsername(username);
+	dataSource.setPassword(password);
+	return dataSource;
+}
 ```
 
 - Create `sessionFactory`
 
 ```java
-	@Bean
-    public Properties hibernateProperties() {
-        final Properties hibernateProp = new Properties();
-        hibernateProp.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
-        hibernateProp.put("hibernate.hbm2ddl.auto", "create-drop");
-        hibernateProp.put("hibernate.format_sql", true);
-        hibernateProp.put("hibernate.use_sql_comments", true);
-        hibernateProp.put("hibernate.show_sql", true);
-        return hibernateProp;
-    }
+@Bean
+public Properties hibernateProperties() {
+	final Properties hibernateProp = new Properties();
+	hibernateProp.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+	hibernateProp.put("hibernate.hbm2ddl.auto", "create-drop");
+	hibernateProp.put("hibernate.format_sql", true);
+	hibernateProp.put("hibernate.use_sql_comments", true);
+	hibernateProp.put("hibernate.show_sql", true);
+	return hibernateProp;
+}
 
-    @Bean
-    public SessionFactory sessionFactory() {
-        return new LocalSessionFactoryBuilder(dataSource())
-                .scanPackages("com.ps.ents")
-                .addProperties(hibernateProperties())
-                .buildSessionFactory();
-    }
+@Bean
+public SessionFactory sessionFactory() {
+	return new LocalSessionFactoryBuilder(dataSource())
+			.scanPackages("com.ps.ents")
+			.addProperties(hibernateProperties())
+			.buildSessionFactory();
+}
 ```
 
 - Create `transactionManager`
 
 ```java
-	@Bean
-    public PlatformTransactionManager transactionManager() {
-        return new HibernateTransactionManager(sessionFactory());
-    }
+@Bean
+public PlatformTransactionManager transactionManager() {
+	return new HibernateTransactionManager(sessionFactory());
+}
 ```
 
 - Create `@Repository` bean
 
 ```java
-	@Repository
-	@Transactional
-	public class HibernateUserRepo implements UserRepo {
-		
-	}
+@Repository
+@Transactional
+public class HibernateUserRepo implements UserRepo {
+	
+}
 ```
 
 - Inject `sessionFactory` into `@Repository` beans and use session to deal with database
 
 ```java
-	@Repository
-	@Transactional
-	public class HibernateUserRepo implements UserRepo {
+@Repository
+@Transactional
+public class HibernateUserRepo implements UserRepo {
+
+	@Autowired
+	private SessionFactory sessionFactory;
 	
-		@Autowired
-		private SessionFactory sessionFactory;
-		
-		public Session session() {
-			return sessionFactory.getCurrentSession();
-		}
+	public Session session() {
+		return sessionFactory.getCurrentSession();
 	}
+}
 ```
 
 ### Spring + Hibernate XML configuration
@@ -1760,60 +1759,60 @@ Initialise db
 - Create `dataSource`
 
 ```xml
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="${driverClassName}" />
-		<property name="url" value="${url}" />
-		<property name="username" value="${login}" />
-		<property name="password" value="${password}" />
-	</bean>
+<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<property name="driverClassName" value="${driverClassName}" />
+	<property name="url" value="${url}" />
+	<property name="username" value="${login}" />
+	<property name="password" value="${password}" />
+</bean>
 ```
 - Create `sessionFactory`
 
 ```xml
-	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		<property name="packagesToScan" value="com.ps" />
-		<property name="hibernateProperties">
-			<props>
-				<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
-				<prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
-			</props>
-		</property>
-	</bean>
+<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+	<property name="dataSource" ref="dataSource" />
+	<property name="packagesToScan" value="com.ps" />
+	<property name="hibernateProperties">
+		<props>
+			<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+			<prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+		</props>
+	</property>
+</bean>
 ```
 
 - Create `transactionManager`
 
 ```xml
-	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
+<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+	<property name="sessionFactory" ref="sessionFactory" />
+</bean>
 ```
 
 - Create `@Repository` bean
 
 ```java
-	@Repository
-	@Transactional
-	public class HibernateUserRepo implements UserRepo {
-		
-	}
+@Repository
+@Transactional
+public class HibernateUserRepo implements UserRepo {
+	
+}
 ```
 
 - Inject `sessionFactory` into `@Repository` beans and use session to deal with database
 
 ```java
-	@Repository
-	@Transactional
-	public class HibernateUserRepo implements UserRepo {
+@Repository
+@Transactional
+public class HibernateUserRepo implements UserRepo {
+
+	@Autowired
+	private SessionFactory sessionFactory;
 	
-		@Autowired
-		private SessionFactory sessionFactory;
-		
-		public Session session() {
-			return sessionFactory.getCurrentSession();
-		}
+	public Session session() {
+		return sessionFactory.getCurrentSession();
 	}
+}
 ```
 
 ### Spring + JPA Java configuration
@@ -1821,71 +1820,71 @@ Initialise db
 - Create `dataSource`
 
 ```java
-    @Bean
-    public DataSource dataSource() {
-        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(driverClassName);
-        dataSource.setUrl(url);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
+@Bean
+public DataSource dataSource() {
+	final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+	dataSource.setDriverClassName(driverClassName);
+	dataSource.setUrl(url);
+	dataSource.setUsername(username);
+	dataSource.setPassword(password);
 
-        return dataSource;
-    }
+	return dataSource;
+}
 ```
 
 - Create `hibernateProperties`
 
 ```java
- 	@Bean
-    public Properties hibernateProperties() {
-        final Properties hibernateProp = new Properties();
-        hibernateProp.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
-        hibernateProp.put("hibernate.hbm2ddl.auto", "create-drop");
-        hibernateProp.put("hibernate.format_sql", true);
-        hibernateProp.put("hibernate.use_sql_comments", true);
-        hibernateProp.put("hibernate.show_sql", true);
-        return hibernateProp;
-    }
+@Bean
+public Properties hibernateProperties() {
+	final Properties hibernateProp = new Properties();
+	hibernateProp.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+	hibernateProp.put("hibernate.hbm2ddl.auto", "create-drop");
+	hibernateProp.put("hibernate.format_sql", true);
+	hibernateProp.put("hibernate.use_sql_comments", true);
+	hibernateProp.put("hibernate.show_sql", true);
+	return hibernateProp;
+}
 ```
 
 - Create `entityManagerFactory`
 
 ```java
-	@Bean
-    public EntityManagerFactory entityManagerFactory() {
-        final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-        factoryBean.setPackagesToScan("com.ps.ents");
-        factoryBean.setDataSource(dataSource());
-        factoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        factoryBean.setJpaProperties(hibernateProperties());
-        factoryBean.afterPropertiesSet();
-        return factoryBean.getNativeEntityManagerFactory();
-    }
+@Bean
+public EntityManagerFactory entityManagerFactory() {
+	final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
+	factoryBean.setPackagesToScan("com.ps.ents");
+	factoryBean.setDataSource(dataSource());
+	factoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+	factoryBean.setJpaProperties(hibernateProperties());
+	factoryBean.afterPropertiesSet();
+	return factoryBean.getNativeEntityManagerFactory();
+}
 ```
 
 - Create `transactionManager`
 
 ```java
-	@Bean
-    public PlatformTransactionManager transactionManager() {
-        return new JpaTransactionManager(entityManagerFactory());
-    }
+@Bean
+public PlatformTransactionManager transactionManager() {
+	return new JpaTransactionManager(entityManagerFactory());
+}
 ```
 
 - Create `@Repository` Bean
 
 ```java
-	@Repository("userJpaRepo")
-	public class JpaUserRepo implements UserRepo {
-		
+@Repository("userJpaRepo")
+public class JpaUserRepo implements UserRepo {
+	
 }
 ```
 
 - Inject `entityManager` into `@Repository` beans and use session to deal with database
 
 ```java
- 	@PersistenceContext
-    private EntityManager entityManager;
+@PersistenceContext
+private EntityManager entityManager;
 ```
 
 ### Spring + JPA XML configuration
@@ -1893,57 +1892,57 @@ Initialise db
 - Add transaction management
 
 ```xml
-	<tx:annotation-driven />
-	
-	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-    		<property name="entityManagerFactory" ref="entityManagerFactory" />
-    </bean>
+<tx:annotation-driven />
+
+<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+</bean>
 ```
 
 - Add `dataSource` bean
 
 ```xml
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="${driverClassName}" />
-		<property name="url" value="${url}" />
-		<property name="username" value="${username}" />
-		<property name="password" value="${password}" />
-	</bean>
+<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<property name="driverClassName" value="${driverClassName}" />
+	<property name="url" value="${url}" />
+	<property name="username" value="${username}" />
+	<property name="password" value="${password}" />
+</bean>
 ```
 
 - Add `entityManagerFactory` bean
 
 ```xml
-	<bean id="entityManagerFactory"
-		  class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		<property name="packagesToScan" value="com.ps" />
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
-		</property>
-		<property name="jpaProperties">
-			<props>
-				<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
-				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
-			</props>
-		</property>
-	</bean>
+<bean id="entityManagerFactory"
+	  class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+	<property name="dataSource" ref="dataSource" />
+	<property name="packagesToScan" value="com.ps" />
+	<property name="jpaVendorAdapter">
+		<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+	</property>
+	<property name="jpaProperties">
+		<props>
+			<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+			<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+		</props>
+	</property>
+</bean>
 ```
 
 - Create `@Repository` Bean
 
 ```java
-	@Repository("userJpaRepo")
-	public class JpaUserRepo implements UserRepo {
-		
+@Repository("userJpaRepo")
+public class JpaUserRepo implements UserRepo {
+	
 }
 ```
 
 - Inject `entityManager` into `@Repository` beans and use session to deal with database
 
 ```java
- 	@PersistenceContext
-    private EntityManager entityManager;
+@PersistenceContext
+private EntityManager entityManager;
 ```
 
 ### Spring Data JPA
@@ -1956,9 +1955,9 @@ Initialise db
 
 #### Spring data Repositories
 
- - Spring searches for all interfaces extending Repository<DomainObjectType, DomainObjectIdType>
+ - Spring searches for all interfaces extending `Repository<DomainObjectType, DomainObjectIdType>`
  - Repository is just marker interface and has no method on its own
- - Can annotate methods in the interface with @Query("Select p from person p where ...")
+ - Can annotate methods in the interface with `@Query("Select p from person p where ...")`
  - Can extend CrudRepository instead of Repository - added methods for CRUD
 	 - Method names generated automatically based on naming convention
 	 - findBy + Field (+ Operation)
@@ -2109,8 +2108,8 @@ public void testQueryByPriceRangeAndWoodTypePaging_SpringData() {
 ### Spring data for updating data
 
 ```java
-	@Transactional
-	@Modifying
-	@Query("update Book b set b.pageCount = ?1 where b.title like ?2")
-	int setPageCount(int pageCount, String title);
+@Transactional
+@Modifying
+@Query("update Book b set b.pageCount = ?1 where b.title like ?2")
+int setPageCount(int pageCount, String title);
 ```

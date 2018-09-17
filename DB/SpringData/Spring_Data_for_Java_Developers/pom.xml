@@ -16,6 +16,7 @@
         <module>4_query_techniques</module>
         <module>5_advanced_techniques</module>
         <module>6_spring_mvc_integration</module>
+        <module>7_mongo</module>
     </modules>
     
 </project>
