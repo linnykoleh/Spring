@@ -2,8 +2,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xmlns:repository="http://www.springframework.org/schema/data/repository"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-	        http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
+	        http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd http://www.springframework.org/schema/data/repository http://www.springframework.org/schema/data/repository/spring-repository.xsd">
 
     <mongo:template db-factory-ref="mongoDbFactory"/>
 
@@ -15,5 +16,8 @@
 
 
     <mongo:repositories base-package="com.oreilly.sdata"/>
+
+    <!--Populator of populate.js while start any tests/apps`-->
+    <!--<repository:jackson2-populator locations="populate.js"/>-->
 
 </beans>

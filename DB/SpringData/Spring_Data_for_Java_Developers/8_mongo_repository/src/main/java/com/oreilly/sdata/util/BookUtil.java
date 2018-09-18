@@ -3,11 +3,10 @@ package com.oreilly.sdata.util;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.oreilly.sdata.data.entities.Book;
+import com.oreilly.sdata.Book;
 
 public class BookUtil {
 

@@ -3,14 +3,16 @@ package com.oreilly.sdata;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.oreilly.sdata.data.entities.Book;
 import com.oreilly.sdata.repository.BookRepository;
 import com.oreilly.sdata.util.BookUtil;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:spring/application-context.xml")
@@ -27,4 +29,28 @@ public class TestMongoXMLConfig {
         bookRepository.save(book);
         // Inserting DBObject containing fields: [_class, _id, title, publishDate, pageCount, price, tags] in collection: book
     }
+
+    @Test
+    public void testFindByTitle(){
+        final Book book = bookRepository.findByTitle("To Kill a Mocking Bird");
+        //findOne using query: { "title" : "To Kill a Mocking Bird"} in db.collection: sandbox.book
+
+        log.info(book.toString());
+        // Book(bookId=5ba144447c04cb2d09cf1105, title=To Kill a Mocking Bird, publishDate=Tue Dec 30 02:00:00 EET 2014, pageCount=300, price=14.5, author=Author(authorId=null, firstName=Harper, lastName=Lee, country=United States), tags=[Classic, Best Seller], location=Library(libraryId=null, name=Library of Congress, coords=Point [x=-77.004665, y=38.888951]))
+    }
+
+    @Test
+    public void testFullSearch(){
+        final TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matching("Gatsby");
+        final List<Book> books = bookRepository.findAllBy(textCriteria);
+        //find using query: { "$text" : { "$search" : "Gatsby"}} fields: { "score" : { "$meta" : "textScore"}} for class: class com.oreilly.sdata.Book in collection: book
+
+        books.forEach(b -> log.info(b.toString()));
+        // Book(bookId=5ba144447c04cb2d09cf1109, title=The Great Gatsby, publishDate=Mon Dec 29 23:46:40 EET 2014, pageCount=220, price=7.4, author=Author(authorId=null, firstName=F.Scoot, lastName=Fitzgerald, country=United States), tags=[Best Seller], location=Library(libraryId=null, name=San Francisco Public Library, coords=Point [x=-122.413964, y=37.787228]), description=null, score=3.75)
+        // Book(bookId=5ba146677c045727399d9969, title=The Great Gatsby, publishDate=Mon Dec 29 23:46:40 EET 2014, pageCount=220, price=7.4, author=Author(authorId=null, firstName=F.Scoot, lastName=Fitzgerald, country=United States), tags=[Best Seller], location=Library(libraryId=null, name=San Francisco Public Library, coords=Point [x=-122.413964, y=37.787228]), description=null, score=3.75)
+        // Book(bookId=5ba146c27c045368b51c69d1, title=The Great Gatsby, publishDate=Mon Dec 29 23:46:40 EET 2014, pageCount=220, price=7.4, author=Author(authorId=null, firstName=F.Scoot, lastName=Fitzgerald, country=United States), tags=[Best Seller], location=Library(libraryId=null, name=San Francisco Public Library, coords=Point [x=-122.413964, y=37.787228]), description=null, score=3.75)
+    }
+
+
+
 }
