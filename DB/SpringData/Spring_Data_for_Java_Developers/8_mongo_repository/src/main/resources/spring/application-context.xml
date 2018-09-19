@@ -6,7 +6,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	        http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd http://www.springframework.org/schema/data/repository http://www.springframework.org/schema/data/repository/spring-repository.xsd">
 
-    <mongo:template db-factory-ref="mongoDbFactory"/>
+    <mongo:template db-factory-ref="mongoDbFactory" converter-ref="converter"/>
 
     <mongo:db-factory id="mongoDbFactory" dbname="sandbox" mongo-ref="mongoClient"/>
 
@@ -18,6 +18,17 @@
     <mongo:repositories base-package="com.oreilly.sdata"/>
 
     <!--Populator of populate.js while start any tests/apps`-->
-    <!--<repository:jackson2-populator locations="populate.js"/>-->
+    <repository:jackson2-populator locations="populate.js"/>
 
+    <mongo:mapping-converter id="converter">
+        <mongo:custom-converters>
+            <mongo:converter>
+                <bean class="com.oreilly.sdata.AuthorToDBObjectConverter"/>
+            </mongo:converter>
+
+            <mongo:converter>
+                <bean class="com.oreilly.sdata.DBObjectToAuthorConverter"/>
+            </mongo:converter>
+        </mongo:custom-converters>
+    </mongo:mapping-converter>
 </beans>

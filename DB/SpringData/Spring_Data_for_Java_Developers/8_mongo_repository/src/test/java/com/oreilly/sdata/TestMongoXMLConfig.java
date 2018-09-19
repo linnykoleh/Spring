@@ -51,6 +51,24 @@ public class TestMongoXMLConfig {
         // Book(bookId=5ba146c27c045368b51c69d1, title=The Great Gatsby, publishDate=Mon Dec 29 23:46:40 EET 2014, pageCount=220, price=7.4, author=Author(authorId=null, firstName=F.Scoot, lastName=Fitzgerald, country=United States), tags=[Best Seller], location=Library(libraryId=null, name=San Francisco Public Library, coords=Point [x=-122.413964, y=37.787228]), description=null, score=3.75)
     }
 
+    @Test
+    public void testJSONSearch(){
+        final List<Book> books = bookRepository.findLargeBook(140);
+        //find using query: { "pageCount" : { "$gt" : 140}} fields: { "title" : 1 , "pageCount" : 1 , "score" : { "$meta" : "textScore"}} for class: class com.oreilly.sdata.Book in collection: book
 
+        books.forEach(b -> log.info(b.toString()));
+        // Book(bookId=5ba0c133f2044529df086730, title=Using multi, publishDate=Tue Sep 18 11:11:14 CEST 2018, pageCount=141, price=15.00, author=null, tags=[], location=null, description=null, score=0.0)
+        // Book(bookId=5ba0d62c67a636b85b2320db, title=Using multi, publishDate=Tue Sep 18 12:40:42 CEST 2018, pageCount=147, price=15.00, author=null, tags=[], location=null, description=null, score=0.0)
+        // Book(bookId=5ba0d63e67a61ad208482d90, title=Using multi, publishDate=Tue Sep 18 12:40:59 CEST 2018, pageCount=148, price=15.00, author=null, tags=[], location=null, description=null, score=0.0)
+        // Book(bookId=5ba0f289d3165e9b805702f6, title=Using multi, publishDate=Tue Sep 18 14:41:45 CEST 2018, pageCount=149, price=15.00, author=null, tags=[], location=null, description=null, score=0.0)
+        // Book(bookId=5ba0f2c5d31694857605c027, title=Using multi, publishDate=Tue Sep 18 14:42:45 CEST 2018, pageCount=143, price=15.00, author=null, tags=[], location=null, description=null, score=0.0)
+    }
+
+    @Test
+    public void testFindUpdatedByConverter(){
+        final Book book = bookRepository.findByTitle("Moby Dick");
+
+        log.info(book.toString());
+    }
 
 }
