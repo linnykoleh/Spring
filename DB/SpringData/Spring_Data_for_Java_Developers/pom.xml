@@ -18,6 +18,7 @@
         <module>6_spring_mvc_integration</module>
         <module>7_mongo</module>
         <module>8_mongo_repository</module>
+        <module>9_spring_data_rest</module>
     </modules>
     
 </project>
