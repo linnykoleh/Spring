@@ -1,13 +1,17 @@
 package com.oreilly.sdata;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
 
-@Repository
+import java.util.List;
+
+@RepositoryRestResource(path = "classics", collectionResourceRel = "classics")
 public interface BookRepository extends JpaRepository<Book, Long> {
 
+	@RestResource(path = "title", rel = "title", exported = false)
 	List<Book> findByTitle(@Param("title") String title);
+
+	List<Book> findByPageCount(int pageCount);
 }

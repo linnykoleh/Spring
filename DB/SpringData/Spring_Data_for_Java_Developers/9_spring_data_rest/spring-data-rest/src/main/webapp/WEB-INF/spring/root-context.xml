@@ -5,4 +5,6 @@
 
 	<import resource="classpath:application-context.xml"/>
 
+	<bean class="com.oreilly.sdata.CustomRepositoryRestConfigurerAdapter"/>
+
 </beans>
