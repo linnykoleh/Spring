@@ -2113,3 +2113,12 @@ public void testQueryByPriceRangeAndWoodTypePaging_SpringData() {
 @Query("update Book b set b.pageCount = ?1 where b.title like ?2")
 int setPageCount(int pageCount, String title);
 ```
+
+## Spring Web
+
+- A typical Java Web application architecture
+
+![alt text](images/pet-sitter/Screenshot_14.png "Screenshot_14")
+
+- The central piece of Spring Web MVC is the `DispatcherServlet` class, which is the entry point for every Spring Web application.
+- The `DispatcherServlet` converts HTTP requests into commands for controller components and manages rendered data as well.
