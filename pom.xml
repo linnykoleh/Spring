@@ -14,8 +14,8 @@
         <module>IOC</module>
         <module>Testing</module>
         <module>AOP</module>
-        <module>SpringMVC</module>
         <module>DB</module>
+        <module>SpringWEB</module>
     </modules>
 
     <dependencies>
