@@ -1,12 +1,12 @@
 package com.ps.config.db;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -40,26 +40,8 @@ public class DataSourceConfig implements DataConfig {
     }
 
     @Bean
-    public DataSource dataSource() {
-        try {
-            final HikariConfig hikariConfig = new HikariConfig();
-            hikariConfig.setDriverClassName(driverClassName);
-            hikariConfig.setJdbcUrl(url);
-            hikariConfig.setUsername(username);
-            hikariConfig.setPassword(password);
-
-            hikariConfig.setMaximumPoolSize(5);
-            hikariConfig.setConnectionTestQuery("SELECT 1");
-            hikariConfig.setPoolName("springHikariCP");
-
-            hikariConfig.addDataSourceProperty("dataSource.cachePrepStmts", "true");
-            hikariConfig.addDataSourceProperty("dataSource.prepStmtCacheSize", "250");
-            hikariConfig.addDataSourceProperty("dataSource.prepStmtCacheSqlLimit", "2048");
-            hikariConfig.addDataSourceProperty("dataSource.useServerPrepStmts", "true");
-
-            return new HikariDataSource(hikariConfig);
-        } catch (Exception e) {
-            return null;
-        }
+    public DataSource dataSource(){
+        final EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
+        return builder.setType(EmbeddedDatabaseType.H2).build();
     }
 }

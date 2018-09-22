@@ -2313,3 +2313,91 @@ public class WebConfig extends WebMvcConfigurerAdapter {
    // other beans and method implementations that are not in scope
 }
 ```
+
+
+#### Getting Rid of web.xml     
+
+- Starting with Servlet 3.0+, the `web.xml` file is no longer necessary to configure a web application. 
+It can be replaced with a class implementing the `WebApplicationInitializer` interface
+
+- This can be done by implementing `SpringServletContainerInitializer`
+
+```java
+public class WebInitializer implements WebApplicationInitializer {
+ 
+    @Override
+    public void onStartup(ServletContext servletContext) throws ServletException {
+      ServletRegistration.Dynamic registration =
+      servletContext.addServlet("dispatcher", new DispatcherServlet());
+      registration.setLoadOnStartup(1);
+      registration.addMapping("/");
+      registration.setInitParameter("contextConfigLocation",
+            "com.ps.config.WebConfig");
+      registration.setInitParameter("contextClass",
+           "o.s.w.c.s.AnnotationConfigWebApplicationContext");
+    }
+}
+```
+
+- Another way extending the `AbstractAnnotationConfigDispatcherServletInitializer`
+
+```java
+public class WebInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+    
+     @Override
+     protected Class<?> getRootConfigClasses() {
+         return new Class<?>{
+                 ServiceConfig.class
+         };
+     }
+     
+     @Override
+     protected Class<?> getServletConfigClasses() {
+         return new Class<?>{
+                 WebConfig.class
+         };
+     }
+     
+     @Override
+     protected String getServletMappings() {
+         return new String{"/"};
+     }
+     
+     @Override
+     protected Filter getServletFilters() {
+         CharacterEncodingFilter cef = new CharacterEncodingFilter();
+         cef.setEncoding("UTF-8");
+         cef.setForceEncoding(true);
+         return new Filter{new HiddenHttpMethodFilter(), cef};
+     }
+}
+```
+
+- For configuration extends `WebMvcConfigurerAdapter`
+
+```java
+@Configuration
+@EnableWebMvc
+@ComponentScan(basePackages = {"com.ps.web"})
+public class WebConfig extends WebMvcConfigurerAdapter {
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/images/**").addResourceLocations("/images/").setCachePeriod(31556926);
+        registry.addResourceHandler("/styles/**").addResourceLocations("/styles/").setCachePeriod(31556926);
+    }
+
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
+    }
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("home");
+        registry.addViewController("/home").setViewName("home");
+    }
+
+    //...
+}
+```
