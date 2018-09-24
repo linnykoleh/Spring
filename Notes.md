@@ -2138,6 +2138,8 @@ The relationship between the two contexts is a parent–child relationship, with
 Thus, beans in the web context can access the beans in the parent context, but not conversely
 ```  
 
+#### XML Configuration
+
 ```xml
 <!-- web.xml -->
 <web-app>
@@ -2166,100 +2168,15 @@ Thus, beans in the web context can access the beans in the parent context, but n
 
 ``` 
 
-#### @Controller
+#### Java Configuration
 
-- Controllers are classes that define methods used to handle HTTP request
-
-```java
-@Controller
-@RequestMapping("/users")
-public class UserController {
-	
-}
-```
-
-#### @RequestMapping
-
-```java
-@RequestMapping(value = "/list", method = RequestMethod.GET)
-public String list(Model model) { 
-
-}
-```  
-
-#### @RequestParam
-
-Url `http://localhost:8080/mvc-basic/showUser?userId=105`
-handled by a method that has a parameter annotated with `@RequestParam` because the request is parametrized.
-
-```java
-@RequestMapping(value = "/showUser", method = RequestMethod.GET)
-public String show(@RequestParam("userId") Long id, Model model) {
-
-}
-```
-
-#### @PathVariable
-
-Url `http://localhost:8080/mvc-basic/users/105`
-handled by a method that has a parameter annotated with `@PathVariable` because the request URI contains a piece that is variable.
-
-```java
-@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-public String show(@PathVariable("userId") Long id, Model model) {
-
-}
-```
-
-#### Views
-
-- A handler method typically returns a string value representing a logical view name, and the view is populated with values in the Model object.
-- The model contains the data that will be used to populate a view
-- Need to provide view resolver e.g. `InternalResourceViewResolver`
+- To tell the `DispatcherServlet` that the configuration will be provided by a configuration java class(`WebConfig`) instead of a file, the following changes have to be made in `web.xml`
+- Need use `AnnotationConfigWebApplicationContext` for `contextClass` param
+- Also need to provide Java configuration class (`com.ps.config.WebConfig`) for `contextConfigLocation` param
 
 ```xml
-<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-    <property name="prefix" value="/WEB-INF/"/>
-    <property name="suffix" value=".jsp"/>
-</bean>
-```
-
-```java
-@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-public ModelAndView show(@PathVariable("userId") Long id) {
-	User user = ...;// no relevant
-	ModelAndView modelAndView = new ModelAndView("user");
-	return modelAndView;
-}
-```
-
-### MVC 
-
-#### MVC XML Configuration
-
-- The main component of an MVC XML configuration is the `<mvc:annotation-driven/>` which registers all necessary default infrastructure beans for a web application to work: handler mapping, validation, conversion beans
-- `<mvc:default-servlet-handler/>` - default servlet mapping "/" is mapped to the DispatcherServlet
-
-```xml
-<beans ...>
-                
-	<!-- Defines basic MVC defaults (handler mapping, date formatting, etc) -->
-   <mvc:annotation-driven/>
-   
-   <!-- Configures a handler for serving static resources by forwarding to the
-      Servlet container’s default Servlet.-->
-   <mvc:default-servlet-handler/>
-   
-</beans>
-```
-
-#### MVC Java Configuration
-
-- To tell the `DispatcherServlet` that the configuration will be provided by a configuration class instead of a file, the following changes have to be made in `web.xml`
-
-```xml
-<web-app ...>
-<!-- The front controller, the entry point for all requests -->
+<web-app>
+    <!-- The front controller, the entry point for all requests -->
    <servlet>
        <servlet-name>pet-dispatcher</servlet-name>
        <servlet-class>
@@ -2268,8 +2185,7 @@ public ModelAndView show(@PathVariable("userId") Long id) {
        <init-param>
            <param-name>contextClass</param-name>
            <param-value>
-               org.springframework.web.context.
-                       support.AnnotationConfigWebApplicationContext
+               org.springframework.web.context.support.AnnotationConfigWebApplicationContext
            </param-value>
        </init-param>
        <init-param>
@@ -2283,14 +2199,146 @@ public ModelAndView show(@PathVariable("userId") Long id) {
 </web-app>
 ```
 
-- ` @EnableWebMvc` -  is the equivalent of `<mvc:annotation-driven/>`
+#### @Controller annotation
+
+- Controllers are classes that define methods used to handle HTTP request
+
+```java
+@Controller
+@RequestMapping("/users")
+public class UserController {
+	
+}
+```
+
+#### @RequestMapping annotation
+
+```java
+@RequestMapping(value = "/list", method = RequestMethod.GET)
+public String list(Model model) { 
+
+}
+```  
+
+#### @RequestParam annotation
+
+Url `http://localhost:8080/mvc-basic/showUser?userId=105`
+handled by a method that has a parameter annotated with `@RequestParam` because the request is parametrized.
+
+```java
+@RequestMapping(value = "/showUser", method = RequestMethod.GET)
+public String show(@RequestParam("userId") Long id, Model model) {
+
+}
+```
+
+#### @PathVariable annotation
+
+Url `http://localhost:8080/mvc-basic/users/105`
+handled by a method that has a parameter annotated with `@PathVariable` because the request URI contains a piece that is variable.
+
+```java
+@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+public String show(@PathVariable("userId") Long id, Model model) {
+
+}
+```
+
+### Views and Models
+
+- A handler method typically returns a string value representing a logical view name, and the view is populated with values in the Model object.
+- The model contains the data that will be used to populate a view
+- Need to provide view resolver e.g. `InternalResourceViewResolver`
+
+```xml
+<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="prefix" value="/WEB-INF/"/>
+    <property name="suffix" value=".jsp"/>
+</bean>
+```
+
+**Model**
+
+- The model can supply attributes used for rendering views.
+
+```java
+@GetMapping("/showViewPage")
+public String passParametersWithModel(Model model) {
+    final Map<String, String> map = new HashMap<>();
+    map.put("spring", "mvc");
+    
+    model.addAttribute("message", "Baeldung");
+    model.mergeAttributes(map);
+    return "viewPage";
+}
+```
+
+**ModelMap**
+
+- Just like the `Model` interface above, `ModelMap` is also used to pass values to render a view.
+- The advantage of `ModelMap` is it gives us the ability to pass a collection of values and treat these values as if they were within a Map:
+
+```java
+@GetMapping("/printViewPage")
+public String passParametersWithModelMap(ModelMap map) {
+    map.addAttribute("welcomeMessage", "welcome");
+    map.addAttribute("message", "Baeldung");
+    return "viewPage";
+}
+```
+
+**ModelAndView**
+
+- This interface allows us to pass all the information required by Spring MVC in one return:
+
+```java
+@GetMapping("/goToViewPage")
+public ModelAndView passParametersWithModelAndView() {
+    final ModelAndView modelAndView = new ModelAndView("viewPage");
+    modelAndView.addObject("message", "Baeldung");
+    return modelAndView;
+}
+```
+
+### Spring MVC 
+
+#### Spring MVC XML Configuration
+
+- The main component of an SpringMVC XML configuration is the `<mvc:annotation-driven/>` which registers all necessary default infrastructure beans for a web application to work: handler mapping, validation, conversion beans
+- `<mvc:default-servlet-handler/>` - default servlet mapping "/" is mapped to the DispatcherServlet
+
+```xml
+<beans ...>
+                
+	<!-- Defines basic MVC defaults (handler mapping, date formatting, etc) -->
+   <mvc:annotation-driven/>
+   
+   <!-- Configures a handler for serving static resources by forwarding to the
+      Servlet container’s default Servlet.-->
+   <mvc:default-servlet-handler/>
+   
+   <mvc:resources mapping="pdfs" location="/pdfs/**"/>
+   
+   	<!-- Views -->
+   	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+   		<property name="prefix" value="/WEB-INF/jsp/"/>
+   		<property name="suffix" value=".jsp"/>
+   		<property name="order" value="2"/>
+   	</bean>
+   
+</beans>
+```
+
+#### Spring MVC Java Configuration
+
+- `@EnableWebMvc` -  is the equivalent of `<mvc:annotation-driven/>`
 - The configuration class has to be
 	- annotated with the `@Configuration` annotation 
 	- annotated with the  `@EnableWebMvc` annotation 
 	- implement `WebMvcConfigurer` 
 	- or extend an implementation of this interface `WebMvcConfigurerAdapter`
 
-- `@EnableWebMvc` —  by this annotaion we can use MVC 
+- `@EnableWebMvc` —  To enable auto-detection of such `@Controller` beans, you can add component scanning
 - `@RestController` - this is `@Controller` + `@ResponseBody` and not need to configure `ContentNegotiationViewResolver`
 	
 ```java
@@ -2305,9 +2353,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
              DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
     }
+    
     @Bean
-    InternalResourceViewResolver getViewResolver(){
-        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+    public InternalResourceViewResolver getViewResolver(){
+        final InternalResourceViewResolver resolver = new InternalResourceViewResolver();
         resolver.setPrefix("/WEB-INF/");
         resolver.setSuffix(".jsp" );
         resolver.setRequestContextAttribute("requestContext");
@@ -2317,13 +2366,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 }
 ```
 
-
-#### Getting Rid of web.xml     
+#### Get rid of web.xml     
 
 - Starting with Servlet 3.0+, the `web.xml` file is no longer necessary to configure a web application. 
 It can be replaced with a class implementing the `WebApplicationInitializer` interface
 
-- This can be done by implementing `SpringServletContainerInitializer`
+- This can be done by implementing `WebApplicationInitializer`, used for servlet engine
 
 ```java
 public class WebInitializer implements WebApplicationInitializer {
@@ -2376,7 +2424,7 @@ public class WebInitializer extends AbstractAnnotationConfigDispatcherServletIni
 }
 ```
 
-- For configuration extends `WebMvcConfigurerAdapter`
+- For Java configuration need also to extends `WebMvcConfigurerAdapter`
 
 ```java
 @Configuration
@@ -2401,8 +2449,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addViewController("/home").setViewName("home");
     }
 
-    //...
 }
 ```
 
 ![alt text](images/mvc/workflow.png)
+   
+   

@@ -16,6 +16,6 @@ public class EventController {
 
 		model.addAttribute("event", event);
 
-		return "event";
+		return "event"; //returns a name of the view
 	}
 }
