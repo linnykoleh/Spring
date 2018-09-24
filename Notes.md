@@ -2289,6 +2289,9 @@ public ModelAndView show(@PathVariable("userId") Long id) {
 	- annotated with the  `@EnableWebMvc` annotation 
 	- implement `WebMvcConfigurer` 
 	- or extend an implementation of this interface `WebMvcConfigurerAdapter`
+
+- `@EnableWebMvc` —  by this annotaion we can use MVC 
+- `@RestController` - this is `@Controller` + `@ResponseBody` and not need to configure `ContentNegotiationViewResolver`
 	
 ```java
 @Configuration
@@ -2401,3 +2404,5 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     //...
 }
 ```
+
+![alt text](images/mvc/workflow.png)

@@ -1,4 +1,4 @@
-package com.spring4.mvc.linnyk.controllers;
+package com.spring4.linnyk.mvc.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

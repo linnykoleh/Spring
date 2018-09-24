@@ -1,4 +1,4 @@
-package com.spring4.mvc.linnyk.controllers;
+package com.spring4.linnyk.mvc.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,14 +6,15 @@ import java.util.List;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.spring4.mvc.linnyk.model.Event;
+import com.spring4.linnyk.mvc.model.Event;
 
 @RestController
-public class EventReportController {
+public class EventReportRestController {
 
 	@RequestMapping("/events")
 	public List<Event> getEvents(){
-		List<Event> events = new ArrayList<Event>();
+		final List<Event> events = new ArrayList<>();
+
 		events.add(new Event("111"));
 		events.add(new Event("222"));
 		events.add(new Event("333"));

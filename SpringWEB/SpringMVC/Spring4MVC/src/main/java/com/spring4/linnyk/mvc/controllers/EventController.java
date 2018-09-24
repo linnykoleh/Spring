@@ -1,11 +1,11 @@
-package com.spring4.mvc.linnyk.controllers;
+package com.spring4.linnyk.mvc.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.spring4.mvc.linnyk.model.Event;
+import com.spring4.linnyk.mvc.model.Event;
 
 @Controller
 public class EventController {

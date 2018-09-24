@@ -1,7 +1,6 @@
-package com.spring4.mvc.linnyk.configuration;
+package com.spring4.linnyk.mvc.configuration;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 import org.springframework.web.WebApplicationInitializer;
@@ -13,15 +12,19 @@ import org.springframework.web.servlet.DispatcherServlet;
 public class WebAppInitializer implements WebApplicationInitializer {
 
 	@Override
-	public void onStartup(ServletContext servletContext) throws ServletException {
+	public void onStartup(ServletContext servletContext) {
 		final WebApplicationContext context = getContext();
 		servletContext.addListener(new ContextLoaderListener(context));
 
-		ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcherServlet", new DispatcherServlet(context));
+		final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcherServlet", new DispatcherServlet(context));
+		dispatcher.addMapping("/");
 		dispatcher.setLoadOnStartup(1);
 		dispatcher.addMapping("*.html");
 		dispatcher.addMapping("*.pdf");
 		dispatcher.addMapping("*.json");
+
+		dispatcher.setInitParameter("contextConfigLocation", "com.spring4.application.configuration.ApplicationConfig");
+		dispatcher.setInitParameter("contextClass", "org.springframework.web.context.support.AnnotationConfigWebApplicationContext");
 	}
 
 	private AnnotationConfigWebApplicationContext getContext(){
