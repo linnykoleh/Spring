@@ -25,7 +25,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
 		dispatcher.addMapping("*.pdf");
 		dispatcher.addMapping("*.json");
 
-		dispatcher.setInitParameter("contextConfigLocation", "com.spring4.application.configuration.ApplicationConfig");
-		dispatcher.setInitParameter("contextClass", "org.springframework.web.context.support.AnnotationConfigWebApplicationContext");
+//		dispatcher.setInitParameter("contextConfigLocation", "com.spring4.application.configuration.ApplicationConfig");
+//		dispatcher.setInitParameter("contextClass", "org.springframework.web.context.support.AnnotationConfigWebApplicationContext");
 	}
 }

@@ -14,4 +14,9 @@ public class HelloController {
 		modelAndView.addObject("greeting", "Hello world Spring 4!");
 		return modelAndView;
 	}
+
+	@RequestMapping(value = "/index")
+	public String index(Model model) {
+		return "forward:index.jsp";
+	}
 }
