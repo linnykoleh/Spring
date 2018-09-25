@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.spring4.linnyk.mvc.model.Event;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
+@SessionAttributes({"event"})
 public class EventController {
 
 	@RequestMapping(value = "/event", method = RequestMethod.GET)
