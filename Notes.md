@@ -2213,6 +2213,11 @@ public class UserController {
 
 #### @RequestMapping annotation
 
+- Can specify URL, which annotated method should handle - @RequestMapping("/foo")
+    - => server-url/app-context-root/servlet-mapping/request-mapping
+    - can use wildcards @RequestMapping("/foo/*")
+- Can specify HTTP method, which annotated method should handle
+
 ```java
 @RequestMapping(value = "/list", method = RequestMethod.GET)
 public String list(Model model) { 
@@ -2222,8 +2227,10 @@ public String list(Model model) {
 
 #### @RequestParam annotation
 
-Url `http://localhost:8080/mvc-basic/showUser?userId=105`
+- Url `http://localhost:8080/mvc-basic/showUser?userId=105`
 handled by a method that has a parameter annotated with `@RequestParam` because the request is parametrized.
+- Can specify parameter from http request to be injected as method parameter
+
 
 ```java
 @RequestMapping(value = "/showUser", method = RequestMethod.GET)
@@ -2234,8 +2241,9 @@ public String show(@RequestParam("userId") Long id, Model model) {
 
 #### @PathVariable annotation
 
-Url `http://localhost:8080/mvc-basic/users/105`
+- Url `http://localhost:8080/mvc-basic/users/105`
 handled by a method that has a parameter annotated with `@PathVariable` because the request URI contains a piece that is variable.
+- Can extract value as a method parameter from the url requested
 
 ```java
 @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
@@ -2339,7 +2347,6 @@ public ModelAndView passParametersWithModelAndView() {
 	- or extend an implementation of this interface `WebMvcConfigurerAdapter`
 
 - `@EnableWebMvc` —  To enable auto-detection of such `@Controller` beans, you can add component scanning
-- `@RestController` - this is `@Controller` + `@ResponseBody` and not need to configure `ContentNegotiationViewResolver`
 	
 ```java
 @Configuration
@@ -2452,6 +2459,36 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 }
 ```
 
+#### Spring MVC Quick Start
+1 Register Dispatcher servlet (web.xml or in Java)
+2Implement Controllers
+3 Register Controllers with Dispatcher Servlet
+   - Can be discovered using component-scan
+4 Implement Views
+   - eg. write JSP pages
+5 Register View resolver or use the default one
+   - Need to set prefix (eg. /WEB-INF/views/) and suffix (eg. .jsp)
+6 Deploy
+
 ![alt text](images/mvc/workflow.png)
+
+#### Spring Rest 
+
+- `Uniform Resource Identifier (URI)` is a string of characters designed for unambiguous identification of resources and extensibility via the URI scheme.
+- HTTP methods (GET, POST, PUT, DELETE) are actions performed on resource (like CRUD)
+- `@RestController` - this is `@Controller` + `@ResponseBody` and not need to configure `ContentNegotiationViewResolver`
+- `@ResponseStatus` can set HTTP response status code
+   - If used, void return type means no View (empty response body) and not default view!
+   - 2** - success (201 Created, 204 No Content,...)
+   - 3** - redirect
+   - 4** - client error (404 Not found, 405 Method Not Allowed, 409 Conflict,...)
+   - 5** - server error
+
+- `@ResponseBody` before controller method return type means that the response should be directly rendered to client and not evaluated as a logical view name
+    - public void updatePerson(@RequestBody Person person, @PathVariable("id") int personId)
+- `@RequestHeader` can inject value from HTTP request header as a method parameter
+- `@ExceptionHandler({MyException.class})` - Controller methods annotated with it are called when declared exceptions are thrown
+
+![alt text](images/mvc/web_services.png)
    
    
