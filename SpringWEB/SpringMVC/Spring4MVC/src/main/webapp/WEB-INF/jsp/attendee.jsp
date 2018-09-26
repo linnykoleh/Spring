@@ -14,7 +14,9 @@
 
     <p>
         <form:form commandName="attendee">
-            <form:errors path="*" cssClass="error" element="div"/>
+            <p>
+                <form:errors path="*" cssClass="error" element="div"/>
+            </p>
 
             <label for="textinput1"><spring:message code="attendee.name"/> : </label>
             <br/>
@@ -26,7 +28,14 @@
             <br/>
             <form:input path="emailAddress" cssErrorClass="error"/>
             <form:errors path="emailAddress" cssClass="error"/>
+            <br/>
 
+            <label for="textinput3"><spring:message code="attendee.phone"/> : </label>
+            <br/>
+            <form:input path="phone" cssErrorClass="error"/>
+            <form:errors path="phone" cssClass="error"/>
+
+            <br/>
             <input type="submit" class="btn" value="Enter attendee "/>
         </form:form>
     </p>
