@@ -1,23 +1,22 @@
 package com.spring4.linnyk.mvc.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.spring4.linnyk.mvc.model.Event;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.spring4.linnyk.mvc.model.Event;
+import java.util.ArrayList;
+import java.util.List;
 
-@RestController
+@RestController // @Controller + @ResponseBody
 public class EventReportRestController {
 
 	@RequestMapping("/events")
 	public List<Event> getEvents(){
 		final List<Event> events = new ArrayList<>();
 
-		events.add(new Event("111"));
-		events.add(new Event("222"));
-		events.add(new Event("333"));
+		events.add(new Event("Java User Group"));
+		events.add(new Event("Angular User Group"));
+		events.add(new Event("JEEConf"));
 
 		return events;
 	}
