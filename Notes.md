@@ -2491,4 +2491,16 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
 ![alt text](images/mvc/web_services.png)
    
-   
+### Spring Security   
+
+- Concepts
+	- `Principal` is the term that signifies a user, device, or system that could perform an action within the application.
+	- `Credentials` are identification keys that a principal uses to confirm its identity.
+	- `Authentication` is the process of verifying the validity of the principal’s credentials.
+	- `Authorization` is the process of making a decision whether an authenticated user is allowed to perform a certain action within the application
+	- `Secured` item is the term used to describe any resource that is being secured.
+
+- Common user roles 
+	- `ADMIN` is a role used for full power
+	- `MEMBER` is used for limited power
+	- `GUEST` is used for restricted use of the application
