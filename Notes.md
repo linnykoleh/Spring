@@ -2470,7 +2470,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
    - Need to set prefix (eg. /WEB-INF/views/) and suffix (eg. .jsp)
 6 Deploy
 
-![alt text](images/mvc/workflow.png)
+![alt text](images/web/mvc/workflow.png)
 
 #### Spring Rest 
 
@@ -2489,7 +2489,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 - `@RequestHeader` can inject value from HTTP request header as a method parameter
 - `@ExceptionHandler({MyException.class})` - Controller methods annotated with it are called when declared exceptions are thrown
 
-![alt text](images/mvc/web_services.png)
+![alt text](images/web/mvc/web_services.png)
    
 ### Spring Security   
 
@@ -2504,3 +2504,28 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	- `ADMIN` is a role used for full power
 	- `MEMBER` is used for limited power
 	- `GUEST` is used for restricted use of the application
+	
+![alt text](images/web/security/security_unders_the_hood.png)	
+
+1. A user tries to access the application by making a request. The application requires the user to provide the credentials so it can be logged in.
+2. The credentials are verified by the `Authenticaltion Manager` and the user is granted access to the application. The authorization rights for this user are loaded into the Spring Security context.
+3. The user makes a resource request (view, edit, insert, or delete information) and the Security Interceptor intercepts the request before the user accesses a protected/secured resource.
+4. The `Security Interceptor` extracts the user authorization data from the security context and…
+5. … delegates the decision to the Access `Decision Manager`.
+6. The `Access Decision Manager` polls a list of voters to return a decision regarding the rights of the authenticated user to system resources.
+7. Access is granted or denied to the resource based on the user rights and the resource attributes.
+	
+- To configure Spring Security, the `web.xml` must be modified to include the security filter	
+
+```xml
+<filter>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <filter-class>
+         org.springframework.web.filter.DelegatingFilterProxy
+    </filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>   
+```
