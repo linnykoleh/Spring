@@ -2529,3 +2529,148 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     <url-pattern>/*</url-pattern>
 </filter-mapping>   
 ```
+
+- `<form-login ../>` - configuration element is used to define the request URL for the login form where the user can provide its credentials.
+- `<logout ../> ` - configuration element is used to define the request URL for the logout form.
+- `<intercept-url …/>` - The paths defined as values for the pattern attribute are pieces of URLs defined 
+```xml
+<beans:beans  ...>
+        <http>
+              <intercept-url pattern="/users/edit"
+                   access="ROLE_ADMIN"/>
+              <intercept-url pattern="/users/list"
+                   access="ROLE_USER"/>
+              <intercept-url pattern="/users/**"
+                   access="IS_AUTHENTICATED_FULLY"/>
+        </http>
+</beans:beans> 
+```
+- ` <csrf disabled="true"/>` - using CSFR tokens in Spring forms to prevent cross-site request forgery
+- `authentication-failure-url` - is used to define where the user should be redirected when there is an authentication failure
+- `default-target-url` -  is used to define where the user will be redirected after a successful authentication
+- Configuring authentication for UserDetailsService 
+```xml
+<authentication-manager>
+        <authentication-provider>
+            <user-service>
+                <user name="john" password="doe"  authorities="ROLE_USER"/>
+                <user name="jane" password="doe" authorities="ROLE_USER,ROLE_ADMIN"/>
+                <user name="admin" password="admin" authorities="ROLE_ADMIN"/>
+            </user-service>
+        </authentication-provider>
+</authentication-manager>
+```
+
+#### Spring XML Configuration without web.xml
+
+- The security filter gets transformed into a class extending a Spring specialized class: `org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer`
+- The class that matches the DispatcherServlet declaration must be made to extend the `org.springframework.web.servlet.support.AbstractDispatcherServletInitializer` so the root context can be set to be the security context
+```java
+import org.springframework.security.web.context.
+         AbstractSecurityWebApplicationInitializer;
+// Empty class needed to register the springSecurityFilterChain bean
+public class SecurityInitializer extends AbstractSecurityWebApplicationInitializer {
+}
+
+public class WebInitializer extends AbstractDispatcherServletInitializer {
+	
+    @Override
+	protected WebApplicationContext createRootApplicationContext() {
+		final XmlWebApplicationContext ctx = new XmlWebApplicationContext();
+		ctx.setConfigLocation("/WEB-INF/spring/security-config.xml");
+		return ctx;
+    }
+    
+    @Override
+    protected WebApplicationContext createServletApplicationContext() {
+        final XmlWebApplicationContext ctx = new XmlWebApplicationContext();
+        ctx.setConfigLocations(
+            // MVC configuration
+            "/WEB-INF/spring/mvc-config.xml",
+            // Service configuration
+            "/WEB-INF/spring/app-config.xml");
+        return ctx;
+    }
+    ...
+}
+```
+
+#### Java Configuration
+
+- The configuration class should extend `WebSecurityConfigurerAdapter`
+- The `@EnableWebSecurity` annotation must be used on Security configuration classes 
+
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/resources/**","/images/**","/styles/**");
+    }
+    @Override
+    protected void configure(HttpSecurity http) {
+        http
+                .authorizeRequests()
+                .antMatchers("/user/edit").hasRole("ADMIN")
+                .antMatchers("/**").hasAnyRole("ADMIN","USER")
+                .anyRequest()
+                .authenticated()
+                .and()
+            .formLogin()
+                .usernameParameter("username")  //  customizable
+                .passwordParameter("password") // customizable
+                .loginProcessingUrl("/login") // customizable
+                .loginPage("/auth")
+                .failureUrl("/auth?auth_error=1")
+                .defaultSuccessUrl("/home")
+                .permitAll()
+                .and()
+            .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+            .and()
+            .csrf().disable();
+    }
+}
+```
+
+- The `antMatcher(…)` method is the equivalent of the `<intercept-url.../>` element from XML,
+- To enable `CSRF` usage, the configuration above must also define a CSRF provider bean
+
+```java
+@Bean
+public CsrfTokenRepository repo() {
+   HttpSessionCsrfTokenRepository repo = new HttpSessionCsrfTokenRepository();
+   repo.setParameterName("_csrf");
+   repo.setHeaderName("X-CSRF-TOKEN");
+   return repo;
+}
+```
+
+#### Method Security
+
+- XML
+```xml
+<global-method-security secured-annotations="enabled" />
+	<protect-pointcut expression="execution(* com.ps.*.*Service.findById(*))"
+			access="hasRole(’ADMIN’)" />
+</global-method-security>
+```
+
+- Java 
+	- Configuration class annotate with `@EnableGlobalMethodSecurity(securedEnabled  =  true)`
+	- Methods annotate with annotation `@Secured`
+	
+```java
+@Service
+@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
+public class UserServiceImpl implements UserService {
+    
+	@Secured("ROLE_ADMIN")
+    public User findById(Long id) {
+        return userRepo.findOne(id);
+    }
+    
+}
+```
