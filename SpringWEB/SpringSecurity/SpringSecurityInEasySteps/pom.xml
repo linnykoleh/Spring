@@ -5,12 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.learning.linnyk</groupId>
-    <artifactId>SpringWEB</artifactId>
+    <artifactId>SpringSecurityInEasySteps</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
 
     <modules>
-        <module>SpringMVC</module>
-        <module>SpringSecurity</module>
+        <module>SimpleSpringMVC</module>
     </modules>
 </project>

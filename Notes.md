@@ -2114,7 +2114,7 @@ public void testQueryByPriceRangeAndWoodTypePaging_SpringData() {
 int setPageCount(int pageCount, String title);
 ```
 
-## Spring Web
+## Spring MVC
 
 - A typical Java Web application architecture
 
@@ -2565,11 +2565,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
 - The security filter gets transformed into a class extending a Spring specialized class: `org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer`
 - The class that matches the DispatcherServlet declaration must be made to extend the `org.springframework.web.servlet.support.AbstractDispatcherServletInitializer` so the root context can be set to be the security context
+
 ```java
-import org.springframework.security.web.context.
-         AbstractSecurityWebApplicationInitializer;
-// Empty class needed to register the springSecurityFilterChain bean
 public class SecurityInitializer extends AbstractSecurityWebApplicationInitializer {
+    // Empty class needed to register the springSecurityFilterChain bean
 }
 
 public class WebInitializer extends AbstractDispatcherServletInitializer {
@@ -2591,14 +2590,13 @@ public class WebInitializer extends AbstractDispatcherServletInitializer {
             "/WEB-INF/spring/app-config.xml");
         return ctx;
     }
-    ...
 }
 ```
 
 #### Java Configuration
 
-- The configuration class should extend `WebSecurityConfigurerAdapter`
-- The `@EnableWebSecurity` annotation must be used on Security configuration classes 
+- Annotate your `@Configuration` with `@EnableWebSecurity`
+- Your `@Configuration` should extend `WebSecurityConfigurerAdapter`
 
 ```java
 @Configuration
@@ -2635,8 +2633,79 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 }
 ```
 
+#### Authorization
+
+- Process of checking a principal has privileges to perform requested action
+- Specific urls can have specific Role or authentication requirements
+- Can be configured using HttpSecurity.authorizeRequests().*
+
+```java
+@Configuration
+@EnableWebSecurity
+public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+  @Override
+  protected void configure(HttpSecurity httpSecurity) throws Exception {
+      httpSecurity.authorizeRequests().antMatchers("/css/**","/img/**","/js/**").permitAll()
+                                      .antMatchers("/admin/**").hasRole("ADMIN")
+                                      .antMatchers("/user/profile").hasAnyRole("USER","ADMIN")
+                                      .antMatchers("/user/**").authenticated()
+                                      .antMatchers("/user/private/**").fullyAuthenticated()
+                                      .antMatchers("/public/**").anonymous();
+  }
+}
+```
+
+- Rules are evaluated in the order listed
+- Should be from the most specific to the least specific
+- Options
+    - `hasRole()` - has specific role
+    - `hasAnyRole()` - multiple roles with OR
+    - `hasRole(FOO)` AND `hasRole(BAR)` - having multiple roles
+    - `isAnonymous()` - unauthenticated
+    - `isAuthenticated()` - not anonymous
+
 - The `antMatcher(…)` method is the equivalent of the `<intercept-url.../>` element from XML,
 - To enable `CSRF` usage, the configuration above must also define a CSRF provider bean
+
+#### Authentication
+
+- In-memory Authentication provider
+
+```java
+@Configuration
+@EnableWebSecurity
+public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+  @Override
+  public void configureGlobal(AuthenticationManagerBuilder authManagerBuilder) throws Exception  {
+      authManagerBuilder.inMemoryAuthentication().withUser("alice").password("letmein").roles("USER").and()
+                                                 .withUser("bob").password("12345").roles("ADMIN").and();
+  }
+}
+```
+
+- JDBC Authentication provider
+    - Authenticates against DB
+    - Can customize queries using .usersByUsernameQuery(), .authoritiesByUsernameQuery(), groupAuthoritiesByUsername()
+    - Otherwise default queries will be used
+```java
+@Configuration
+@EnableWebSecurity
+public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+  
+  @Autowired
+  private DataSource dataSource;  
+    
+  @Override
+  public void configureGlobal(AuthenticationManagerBuilder authManagerBuilder) throws Exception {
+      authManagerBuilder.jdbcAuthentication().dataSource(dataSource)
+                                             .usersByUsernameQuery(...)
+                                             .authoritiesByUsernameQuery(...)
+                                             .groupAuthoritiesByUsername(...);
+  }
+}
+```
 
 ```java
 @Bean
@@ -2645,6 +2714,42 @@ public CsrfTokenRepository repo() {
    repo.setParameterName("_csrf");
    repo.setHeaderName("X-CSRF-TOKEN");
    return repo;
+}
+```
+
+#### Password Encoding
+
+- Supports passwords hashing (md5, sha, ...)
+
+```java
+@Configuration
+@EnableWebSecurity
+public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+  
+  @Autowired
+  private DataSource dataSource;  
+    
+  @Override
+  public void configureGlobal(AuthenticationManagerBuilder authManagerBuilder) throws Exception {
+      authManagerBuilder.jdbcAuthentication().dataSource(dataSource)
+                                             .passwordEncoder(new StandardPasswordEncoder("this is salt"));
+  }
+}
+```
+
+#### Login and Logout
+
+```java
+@Configuration
+@EnableWebSecurity
+public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+  @Override
+  protected void configure(HttpSecurity httpSecurity) throws Exception {
+      httpSecurity.authorizeRequests().formLogin().loginPage("/login.jsp") .permitAll()
+                                      .and()
+                                      .logout().permitAll();
+  }
 }
 ```
 
