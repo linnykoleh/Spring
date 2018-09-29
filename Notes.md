@@ -2650,7 +2650,8 @@ public CsrfTokenRepository repo() {
 
 #### Method Security
 
-- XML
+##### XML
+
 ```xml
 <global-method-security secured-annotations="enabled" />
 	<protect-pointcut expression="execution(* com.ps.*.*Service.findById(*))"
@@ -2658,11 +2659,19 @@ public CsrfTokenRepository repo() {
 </global-method-security>
 ```
 
-- Java 
-	- Configuration class annotate with `@EnableGlobalMethodSecurity(securedEnabled  =  true)`
-	- Methods annotate with annotation `@Secured`
+##### Java 
+
+- Configuration class annotate with `@EnableGlobalMethodSecurity(securedEnabled  =  true)`
+- Methods annotate with annotation `@Secured`
 	
 ```java
+@Configuration
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true)
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+}
+
 @Service
 @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class UserServiceImpl implements UserService {
@@ -2672,5 +2681,55 @@ public class UserServiceImpl implements UserService {
         return userRepo.findOne(id);
     }
     
+}
+```
+     
+- Configuration class annotate with `@EnableGlobalMethodSecurity(jsr250Enabled  =  true)`
+
+```java
+@Configuration
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(jsr250Enabled = true)
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+}
+
+@Service
+@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
+public class UserServiceImpl implements UserService {
+    @RolesAllowed("ROLE_ADMIN")
+    public User findById(Long id) {
+        return userRepo.findOne(id);
+    }
+  
+}
+```
+
+#### Support expression attributes
+
+- @PreAuthorize
+- @PreFilter
+- @PostAuthorize
+- @PostFilter
+
+```java
+@Service
+@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
+public class UserServiceImpl implements UserService { 
+    
+    @PreAuthorize("hasRole(’USER’)")
+    public void create(User user){
+    
+    }
+       
+    @PreAuthorize("hasPermission(#user, ’admin’)")
+    public void delete(User user, Sid recipient, Permission permission){
+    
+    }
+    
+    @PreAuthorize("#user.username == authentication.name")
+    public void modifyProfile(User user){
+    
+    }
 }
 ```
