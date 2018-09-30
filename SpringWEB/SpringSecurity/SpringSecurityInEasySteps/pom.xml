@@ -12,5 +12,6 @@
     <modules>
         <module>SimpleSpringMVC</module>
         <module>SecurityInternal</module>
+        <module>SimpleSpringSecurity</module>
     </modules>
 </project>

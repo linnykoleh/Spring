@@ -2597,11 +2597,21 @@ public class WebInitializer extends AbstractDispatcherServletInitializer {
 
 - Annotate your `@Configuration` with `@EnableWebSecurity`
 - Your `@Configuration` should extend `WebSecurityConfigurerAdapter`
+- Register your SecurityConfig class with `AbstractSecurityWebApplicationInitializer`
 
 ```java
+public class SecurityWebAppInitializer extends AbstractSecurityWebApplicationInitializer {
+ 
+    public SecurityWebAppInitializer() {
+        super(SecurityConfig.class);
+    }
+ 
+}
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    
     @Override
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/resources/**","/images/**","/styles/**");
