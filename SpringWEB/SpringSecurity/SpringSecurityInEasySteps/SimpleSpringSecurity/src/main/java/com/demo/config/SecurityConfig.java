@@ -40,20 +40,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	 */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-    	/*Section 2 - Video 2.3 - Access control in Spring security*/
     	http.authorizeRequests()
-                .regexMatchers("/chief/.*").hasRole("USER")// .hasAuthority("ROLE_USER")
-		        .regexMatchers("/agent/.*").access("hasRole('AGENT') and principal.name='James Bond'")
-                .anyRequest().authenticated()
+                .regexMatchers("/chief/.*")
+                    .hasRole("USER")// .hasAuthority("ROLE_USER")
+                .regexMatchers("/agent/.*")
+                    .access("hasRole('AGENT') and principal.name='James Bond'")
+                    .anyRequest()
+                    .authenticated()
                 .and()
-                .requiresChannel().regexMatchers("/chief/*").requiresSecure()
+                    .requiresChannel().regexMatchers("/chief/*") .requiresSecure() /*Only https */
                 .and()
-				.requiresChannel().regexMatchers("/admin/*").requiresInsecure();
-    	
-    	/*Section 2 - Video 2.4 - form login*/
+                    .requiresChannel().regexMatchers("/admin/*").requiresInsecure();
+
     	http.formLogin()
     			.loginPage("/login") 
-    			.permitAll();       
-    	
+    			.permitAll();
     }
+
 }

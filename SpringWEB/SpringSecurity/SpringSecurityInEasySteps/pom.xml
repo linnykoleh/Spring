@@ -13,5 +13,6 @@
         <module>SimpleSpringMVC</module>
         <module>SecurityInternal</module>
         <module>SimpleSpringSecurity</module>
+        <module>SpringSecurityBasicAndDigestAuthentication</module>
     </modules>
 </project>
