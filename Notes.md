@@ -2616,6 +2616,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/resources/**","/images/**","/styles/**");
     }
+    
     @Override
     protected void configure(HttpSecurity http) {
         http
@@ -2848,3 +2849,7 @@ public class UserServiceImpl implements UserService {
     }
 }
 ```
+
+![alt text](images/web/security/Screenshot_1.png)	
+
+![alt text](images/web/security/Screenshot_2.png)	
