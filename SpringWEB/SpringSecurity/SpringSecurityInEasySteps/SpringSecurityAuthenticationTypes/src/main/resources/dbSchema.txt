@@ -1,0 +1,16 @@
+CREATE TABLE users (
+  username VARCHAR(50) NOT NULL ,
+  password VARCHAR(50) NOT NULL ,
+  enabled BOOLEAN NULL DEFAULT true, 
+  PRIMARY KEY (username));
+  
+CREATE TABLE user_roles (
+  user_role_id serial primary key,
+  username varchar(50) NOT NULL REFERENCES users,
+  role varchar(30));
+  
+insert into users values('testuser1','password#1');
+insert into users values('testuser2','password#2');
+
+insert into user_roles (username,role) values('testuser1','ROLE_USER');
+insert into user_roles (username,role) values('testuser2','ROLE_USER');

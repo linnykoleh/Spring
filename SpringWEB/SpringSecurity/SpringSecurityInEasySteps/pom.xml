@@ -14,5 +14,8 @@
         <module>SecurityInternal</module>
         <module>SimpleSpringSecurity</module>
         <module>SpringSecurityBasicAndDigestAuthentication</module>
+        <module>SpringSecurityRememberMeAuthentication</module>
+        <module>SpringSecurityHandlingLogouts</module>
+        <module>SpringSecurityAuthenticationTypes</module>
     </modules>
 </project>
