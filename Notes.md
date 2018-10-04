@@ -2854,6 +2854,10 @@ public class UserServiceImpl implements UserService {
 
 ![alt text](images/web/security/Screenshot_2.png)	
 
+![alt text](images/web/security/Screenshot_6.png)	
+
+![alt text](images/web/security/Screenshot_7.png)	
+
 ![alt text](images/web/security/Screenshot_3.png)	
 
 - `CSRF` - Cross-Site Request Forgery protection is enabled by default in the Java configuration
@@ -2861,4 +2865,3 @@ public class UserServiceImpl implements UserService {
 ![alt text](images/web/security/Screenshot_4.png)	
 
 ![alt text](images/web/security/Screenshot_5.png)	
-
