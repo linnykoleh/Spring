@@ -17,5 +17,13 @@
         <module>SpringSecurityRememberMeAuthentication</module>
         <module>SpringSecurityHandlingLogouts</module>
         <module>SpringSecurityAuthenticationTypes</module>
+        <module>SpringSecuritySecurityFilterChain</module>
+        <module>SpringSecurityCoreSecurityFilters</module>
+        <module>SpringSecurityMethodSecurity</module>
+        <module>SpringSecurityLocalization</module>
+        <module>SpringSecurityMongoDBUserDetailsService</module>
+        <module>SpringSecurityPasswordEncoding</module>
+        <module>SpringSecurityResponseHeaders</module>
+        <module>SpringSecuritySessionManagement</module>
     </modules>
 </project>

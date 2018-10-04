@@ -1,0 +1,10 @@
+CREATE TABLE users (
+  username VARCHAR(50) NOT NULL ,
+  password VARCHAR(200) NOT NULL ,
+  enabled BOOLEAN NULL DEFAULT true, 
+  PRIMARY KEY (username));
+  
+CREATE TABLE user_roles (
+  user_role_id serial primary key,
+  username varchar(50) NOT NULL REFERENCES users,
+  role varchar(30) DEFAULT 'USER');
