@@ -52,6 +52,7 @@
         <module>10-ps-mvc-solution</module>
         <module>11-ps-security-practice</module>
         <module>11-ps-security-solution</module>
+        <module>11-ps-boot-sample</module>
     </modules>
 
     <build>

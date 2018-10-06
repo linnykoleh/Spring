@@ -2865,3 +2865,126 @@ public class UserServiceImpl implements UserService {
 ![alt text](images/web/security/Screenshot_4.png)	
 
 ![alt text](images/web/security/Screenshot_5.png)	
+
+## Spring Boot
+
+```
+Spring Boot is a set of preconfigured frameworks/technologies designed to reduce boilerplate configuration(infrastructure) and provide a quick way to have a Spring web application up and running
+It’s goal is to allow developers to focus on implementation of the actual required functionality instead of how to configure an application, by providing out of the box ready-to-use infrastructure beans
+```
+
+- project must have as a parent the `spring-boot-starter-parent`
+- `main` method is the entry point of the application and it follows the Java convention for an application entry point
+- `main` method calls the static run method from the `org.springframework.boot.SpringApplication` class that will bootstrap the application and start the Spring IoC container, 
+which will start the configured embedded web server.
+
+```java
+@SpringBootApplication(scanBasePackages = {"com.ps.start"})
+public class Application {
+
+    public static void main(String... args) {
+        SpringApplication.run(Application.class, args);
+        System.out.println("Started ...");
+    }
+
+}
+```
+
+- If the `war` we want to produce a deployable web archive that can be deployed on any application server and since the project does not contain a `web.xml` file, 
+it is mandatory to define a class extending `SpringBootServletInitializer` and override its `configure` method.
+
+@RestController
+@SpringBootApplication(scanBasePackages = {"com.ps.start"})
+public class Application extends SpringBootServletInitializer {
+
+    private final AppSettings appSettings;
+
+    @Autowired
+    public Application(AppSettings appSettings) {
+        this.appSettings = appSettings;
+    }
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(Application.class);
+    }
+
+    public static void main(String... args) {
+        SpringApplication.run(Application.class, args);
+        System.out.println("Started ...");
+    }
+
+}
+
+#### Configuration Using YAML
+
+```
+YAML is a superset of JSON and has a very convenient syntax for storing external properties in a hierarchical format
+```
+
+```yaml
+app:
+     name: ps-boot
+datasource:
+    driverClassName:  org.h2.Driver
+    url: jdbc:h2:sample;DB_CLOSE_ON_EXIT=TRUE
+    username: sample
+    password: sample
+Server:
+    port: 9000
+    context:  /ps-boot
+```
+
+- To use YAML, the `application.properties` must be replaced with `application.yml` file`
+- To get YAML data need to use `@ConfigurationProperties` with defined prefix for the properties (see above)
+
+```java
+@ConfigurationProperties(prefix = "app")
+public class AppSettings {
+
+    @NotNull
+    private Integer port;
+
+    @NotNull
+    private Integer sessionTimeout;
+
+    @NotNull
+    private String context;
+
+    @PostConstruct
+    public void check() {
+        log.info("Initialized [{}] [{}] [{}]", port, context, sessionTimeout);
+    }
+}
+```
+
+- `@EnableConfigurationProperties` - enable support for beans annotated with `@ConfigurationProperties` (see above)
+
+```java
+@SpringBootApplication(scanBasePackages = {"com.ps.start"})
+@EnableConfigurationProperties(AppSettings.class)
+public class Application extends SpringBootServletInitializer {
+   ...
+}
+```
+
+- YAML files can not be loaded via the `@PropertySource` annotation. This annotation is specific to properties files.
+
+#### Testing with Spring Boot
+
+- `@SpringBootTest` - this annotation should be used on a test class that runs Spring Boot-based tests
+    - If no `@ContextConfiguration`, it uses `org.springframework.boot.test.context.SpringBootContextLoader` by default.
+    - Automated search for a Spring Boot configuration when nested `@Configuration` classes are used.
+    - Loading environment-specific properties via the `properties` attribute. This attribute allows for specification of properties (key=value pairs) as values for the attribute.
+    - Defining different web environment modes and starting a fully running container on a random port, using the `webEnvironment` attribute
+    - Registering a `org.springframework.boot.test.web.client.TestRestTemplate` bean for use in web tests that use a fully running container.
+```java
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {"app.port=9090"})
+public class CtxControllerTest {
+...
+}
+```
+
+- The `SpringRunner` is an alias for `SpringJUnit4ClassRunner`
