@@ -2868,12 +2868,21 @@ public class UserServiceImpl implements UserService {
 
 ## Spring Boot
 
+Start collect the project by [https://start.spring.io/](https://start.spring.io/)	
+
 ```
 Spring Boot is a set of preconfigured frameworks/technologies designed to reduce boilerplate configuration(infrastructure) and provide a quick way to have a Spring web application up and running
 It’s goal is to allow developers to focus on implementation of the actual required functionality instead of how to configure an application, by providing out of the box ready-to-use infrastructure beans
 ```
 
+![alt text](images/web/boot/Screenshot_2.png)
+
+![alt text](images/web/boot/Screenshot_3.png)
+
 - project must have as a parent the `spring-boot-starter-parent`
+
+![alt text](images/web/boot/Screenshot_1.png)	
+
 - `main` method is the entry point of the application and it follows the Java convention for an application entry point
 - `main` method calls the static run method from the `org.springframework.boot.SpringApplication` class that will bootstrap the application and start the Spring IoC container, 
 which will start the configured embedded web server.
