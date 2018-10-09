@@ -2925,6 +2925,8 @@ public class Application extends SpringBootServletInitializer {
 
 }
 
+![alt text](images/web/boot/Screenshot_4.png)	
+
 #### Configuration Using YAML
 
 ```

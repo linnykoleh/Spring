@@ -8,10 +8,9 @@ public class HomeController {
 
     @RequestMapping("/")
     public Ship home() {
-        return new Ship("Dass Boot", 500);
+        return new Ship("Das Boot", 500);
     }
 }
-
 
 class Ship {
 
