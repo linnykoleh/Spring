@@ -1,11 +1,10 @@
 package com.learning.linnyk.model;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 @Getter
 @Setter
@@ -13,15 +12,18 @@ import lombok.ToString;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Entity
 public class Shipwreck {
 
-	private Long id;
-	private String name;
-	private String description;
-	private String condition;
-	private Integer depth;
-	private Double latitude;
-	private Double longitude;
-	private Integer yearDiscovered;
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String name;
+    private String description;
+    private String condition;
+    private Integer depth;
+    private Double latitude;
+    private Double longitude;
+    private Integer yearDiscovered;
 
 }

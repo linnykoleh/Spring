@@ -16,7 +16,7 @@ import com.learning.linnyk.repository.ShipwreckStub;
  */
 @RestController
 @RequestMapping("api/v1")
-public class ShipwreckController {
+public class ShipwreckControllerV1 {
 
 	@RequestMapping(value = "shipwrecks", method = RequestMethod.GET)
 	public List<Shipwreck> list() {
