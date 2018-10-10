@@ -50,6 +50,12 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.learning.linnyk</groupId>
+            <artifactId>just-gif-it-autoconfigure</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
     <build>
