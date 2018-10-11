@@ -3020,3 +3020,20 @@ public class CtxControllerTest {
 ```
 
 - The `SpringRunner` is an alias for `SpringJUnit4ClassRunner`
+
+#### Monitoring
+
+![alt text](images/web/boot/Screenshot_14.png)
+
+![alt text](images/web/boot/Screenshot_15.png)
+
+![alt text](images/web/boot/Screenshot_16.png)
+
+![alt text](images/web/boot/Screenshot_17.png)
+
+![alt text](images/web/boot/Screenshot_18.png)
+
+![alt text](images/web/boot/Screenshot_19.png)
+
+![alt text](images/web/boot/Screenshot_20.png)
+

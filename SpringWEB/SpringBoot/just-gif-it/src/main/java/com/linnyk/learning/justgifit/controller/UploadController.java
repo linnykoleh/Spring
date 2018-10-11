@@ -50,7 +50,7 @@ public class UploadController {
 	}
 
 	/**
-	 * curl -F file=@/home/olinnyk/IdeaProjects/Spring/SpringWEB/SpringBoot/just-get-it/video/PexelsVideos.mp4 -F start=0 -F end=5 -F speed=1 -F repeat=0 localhost:8080/upload
+	 * curl -F file=@/home/olinnyk/IdeaProjects/Spring/SpringWEB/SpringBoot/just-gif-it/video/PexelsVideos.mp4 -F start=0 -F end=5 -F speed=1 -F repeat=0 localhost:8080/upload
 	 */
 	@PostMapping
 	@RequestMapping(value = "/upload", produces = MediaType.IMAGE_GIF_VALUE)
