@@ -5,7 +5,7 @@ import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
 
-import com.linnyk.learning.justgifit.JustGifItProperties;
+import com.linnyk.learning.justgifit.properties.JustGifItProperties;
 
 @Component
 public class JustGiftItIndicator implements HealthIndicator {

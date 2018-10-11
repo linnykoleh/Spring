@@ -1,10 +1,10 @@
 package com.linnyk.learning.justgifit.services;
 
+import java.io.File;
+
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FrameGrabber;
 import org.springframework.stereotype.Service;
-
-import java.io.File;
 
 @Service
 public class VideoDecoderService {

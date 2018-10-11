@@ -1,9 +1,10 @@
 package com.linnyk.learning.justgifit.services;
 
-import com.madgag.gif.fmsware.AnimatedGifEncoder;
+import java.nio.file.Path;
+
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Path;
+import com.madgag.gif.fmsware.AnimatedGifEncoder;
 
 @Service
 public class GifEncoderService {

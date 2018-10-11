@@ -1,4 +1,4 @@
-package com.linnyk.learning.justgifit;
+package com.linnyk.learning.justgifit.properties;
 
 import java.io.File;
 

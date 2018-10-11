@@ -12,7 +12,6 @@
     <modules>
         <module>ShipWrecks</module>
         <module>just-gif-it</module>
-        <module>just-gif-it-autoconfigure</module>
     </modules>
 
 
