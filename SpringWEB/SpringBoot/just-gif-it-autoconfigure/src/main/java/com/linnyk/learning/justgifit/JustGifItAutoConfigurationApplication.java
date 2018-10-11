@@ -1,9 +1,5 @@
 package com.linnyk.learning.justgifit;
 
-import com.linnyk.learning.justgifit.services.ConverterService;
-import com.linnyk.learning.justgifit.services.GifEncoderService;
-import com.linnyk.learning.justgifit.services.VideoDecoderService;
-import com.madgag.gif.fmsware.AnimatedGifEncoder;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +7,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
@@ -21,12 +18,22 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import com.linnyk.learning.justgifit.services.ConverterService;
+import com.linnyk.learning.justgifit.services.GifEncoderService;
+import com.linnyk.learning.justgifit.services.VideoDecoderService;
+import com.madgag.gif.fmsware.AnimatedGifEncoder;
+
 @Configuration
 @ConditionalOnClass({FFmpegFrameGrabber.class, AnimatedGifEncoder.class})
+@EnableConfigurationProperties(JustGifItProperties.class)
 public class JustGifItAutoConfigurationApplication {
 
+    private final JustGifItProperties properties;
+
     @Autowired
-    private JustGifItProperties properties;
+    public JustGifItAutoConfigurationApplication(JustGifItProperties properties) {
+        this.properties = properties;
+    }
 
     @Bean
     @ConditionalOnProperty(prefix = "com.linnyk.learing", name = "create-result-dir")
@@ -34,7 +41,6 @@ public class JustGifItAutoConfigurationApplication {
         if (!properties.getGifLocation().exists()) {
             properties.getGifLocation().mkdir();
         }
-
         return true;
     }
 
@@ -60,7 +66,7 @@ public class JustGifItAutoConfigurationApplication {
     @ConditionalOnWebApplication
     public static class WebConfiguration {
 
-        @Value("${multipart.location}/gif/")
+        @Value("${spring.servlet.multipart.location}/gif/")
         private String gifLocation;
 
         @Bean

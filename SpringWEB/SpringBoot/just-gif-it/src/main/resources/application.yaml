@@ -1,0 +1,24 @@
+logging:
+  level:
+    com.linnyk.learning.justgifit: debug
+    org.springframework: debug
+
+spring:
+  servlet:
+    multipart:
+      location: ${java.io.tmpdir}
+      max-file-size: 50MB
+      max-request-size: 50MB
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration
+  mvc:
+    favicon:
+      enabled: false
+
+server:
+  port: 8080
+
+com:
+  justgifit:
+    gif-location: ${java.io.tmpdir}/gif
+    optimize: true

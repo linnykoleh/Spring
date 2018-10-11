@@ -1,22 +1,24 @@
 package com.linnyk.learning.justgifit.services;
 
-import com.madgag.gif.fmsware.AnimatedGifEncoder;
+import java.awt.image.BufferedImage;
+
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
 import org.springframework.stereotype.Service;
 
-import java.awt.image.BufferedImage;
+import com.madgag.gif.fmsware.AnimatedGifEncoder;
 
 @Service
 public class ConverterService {
 
     public void toAnimatedGif(FFmpegFrameGrabber frameGrabber, AnimatedGifEncoder
             gifEncoder, int start, int end, int speed) throws FrameGrabber.Exception {
-        long startFrame = Math.round(start * frameGrabber.getFrameRate());
-        long endFrame = Math.round(end * frameGrabber.getFrameRate());
 
-        Java2DFrameConverter frameConverter = new Java2DFrameConverter();
+        final long startFrame = Math.round(start * frameGrabber.getFrameRate());
+        final long endFrame = Math.round(end * frameGrabber.getFrameRate());
+
+        final Java2DFrameConverter frameConverter = new Java2DFrameConverter();
 
         for (long i = startFrame; i < endFrame; i++) {
 
@@ -27,8 +29,7 @@ public class ConverterService {
                     frameGrabber.setFrameNumber((int) i);
                 }
 
-                BufferedImage bufferedImage = frameConverter
-                        .convert(frameGrabber.grabImage());
+                final BufferedImage bufferedImage = frameConverter.convert(frameGrabber.grabImage());
                 gifEncoder.addFrame(bufferedImage);
             }
 

@@ -2933,6 +2933,14 @@ public class Application extends SpringBootServletInitializer {
 YAML is a superset of JSON and has a very convenient syntax for storing external properties in a hierarchical format
 ```
 
+![alt text](images/web/boot/Screenshot_5.png)	
+
+![alt text](images/web/boot/Screenshot_6.png)	
+
+![alt text](images/web/boot/Screenshot_7.png)	
+
+![alt text](images/web/boot/Screenshot_8.png)	
+
 ```yaml
 app:
      name: ps-boot
@@ -2946,8 +2954,20 @@ Server:
     context:  /ps-boot
 ```
 
+#### @ConfigurationProperties
+
 - To use YAML, the `application.properties` must be replaced with `application.yml` file`
 - To get YAML data need to use `@ConfigurationProperties` with defined prefix for the properties (see above)
+
+![alt text](images/web/boot/Screenshot_9.png)	
+
+![alt text](images/web/boot/Screenshot_10.png)	
+
+![alt text](images/web/boot/Screenshot_11.png)	
+
+![alt text](images/web/boot/Screenshot_12.png)	
+
+![alt text](images/web/boot/Screenshot_13.png)	
 
 ```java
 @ConfigurationProperties(prefix = "app")
@@ -2989,6 +3009,7 @@ public class Application extends SpringBootServletInitializer {
     - Loading environment-specific properties via the `properties` attribute. This attribute allows for specification of properties (key=value pairs) as values for the attribute.
     - Defining different web environment modes and starting a fully running container on a random port, using the `webEnvironment` attribute
     - Registering a `org.springframework.boot.test.web.client.TestRestTemplate` bean for use in web tests that use a fully running container.
+    
 ```java
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
