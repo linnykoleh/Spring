@@ -1,5 +1,6 @@
 # Spring notes
 
+[https://docs.spring.io/spring/docs/5.0.3.RELEASE](https://docs.spring.io/spring/docs/5.0.3.RELEASE/spring-framework-reference/index.html)
 
 ## Spring Configuration
 
@@ -2866,6 +2867,32 @@ public class UserServiceImpl implements UserService {
 
 ![alt text](images/web/security/Screenshot_5.png)	
 
+### Spring Security Tag Libraries
+
+- Add taglib to JSP
+
+```jsp
+ <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+```
+
+- Facelet fags for JSF also available
+- Displaying properties of Authentication object - `<security:authentication property=“principal.username”/>`
+- Display content only if principal has certain role
+
+```xml
+<security:authorize access="hasRole('ADMIN')"> 
+    <p>Admin only content</p>
+</security:authorize>
+```
+
+- Or inherit the role required from specific url (roles required for specific urls are centralized in config and not across many JSPs)
+
+```xml
+<security:authorize url="/admin"> 
+    <p>Admin only content</p>
+</security:authorize>
+```
+
 ## Spring Boot
 
 Start collect the project by [https://start.spring.io/](https://start.spring.io/)	
@@ -2958,6 +2985,10 @@ Server:
 
 - To use YAML, the `application.properties` must be replaced with `application.yml` file`
 - To get YAML data need to use `@ConfigurationProperties` with defined prefix for the properties (see above)
+- Class is annotated with `@ConfigurationProperties(prefix= "com.example")`
+- Fields of the class are automatically injected with values from properties
+- `@ConfigurationProperties(prefix= "com.example")` + com.example.foo → foo field injected
+- Needs to be enabled on `@Configuration` class - `@EnableConfigurationProperties(MyProperties.class)`
 
 ![alt text](images/web/boot/Screenshot_9.png)	
 
@@ -3009,6 +3040,7 @@ public class Application extends SpringBootServletInitializer {
     - Loading environment-specific properties via the `properties` attribute. This attribute allows for specification of properties (key=value pairs) as values for the attribute.
     - Defining different web environment modes and starting a fully running container on a random port, using the `webEnvironment` attribute
     - Registering a `org.springframework.boot.test.web.client.TestRestTemplate` bean for use in web tests that use a fully running container.
+- The `SpringRunner` is an alias for `SpringJUnit4ClassRunner`
     
 ```java
 @RunWith(SpringRunner.class)
@@ -3019,7 +3051,16 @@ public class CtxControllerTest {
 }
 ```
 
-- The `SpringRunner` is an alias for `SpringJUnit4ClassRunner`
+- `@SpringApplicationConfiguration(classes= MyApplication.class)`
+- For testing web app - `@WebAppConfiguration`
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes=MyApplication.class) 
+public class FooServiceTest {
+    ...
+}
+```
 
 #### Monitoring
 
@@ -3037,3 +3078,78 @@ public class CtxControllerTest {
 
 ![alt text](images/web/boot/Screenshot_20.png)
 
+#### Logging
+
+- By default Logback over SLF4J
+- By default logs to console, but can define log file
+
+```properties
+#Logging through SLF4J
+logging.level.org.springframework=DEBUG
+logging.level.com.example=INFO
+
+logging.file=logfile.log
+#OR spring.log file in to configured path
+logging.path=/log
+```
+
+#### DataSource
+
+- either include spring-boot-starter-jdbc or spring-boot-starter- data-jpa
+- JDBC driver required on classpath, datasource will be created automatically
+- Tomcat JDBC as default pool, other connection pools can be used if present - eg.HikariCP
+
+```properties
+#Connection
+spring.datasource.url=             
+spring.datasource.username=
+spring.datasource.password=
+spring.datasource.driver-class-name=
+
+#Scripts to be executed
+spring.datasource.schema=
+spring.datasource.data=
+
+#Connection pool
+spring.datasource.initial-size=
+spring.datasource.max-active=
+spring.datasource.max-idle=
+spring.datasource.min-idle=
+```
+
+#### Container
+
+```properties
+server.port=
+server.address=
+server.session-timeout=
+server.context-path=
+server.servlet-path=
+```
+
+- Web container can be configured in Java dynamically by implementing `EmbeddedServletContainerCustomizer` interface and registering resulting class as a @Component
+- if needed more fine-grained configuration - declare bean of type `EmbeddedServletContainerFactory`
+
+```java
+@Override
+public void customize(ConfigurableEmbeddedServletContainer container) {
+  container.setPort(8081);
+  container.setContextPath("/foo");
+}
+```
+
+### @Conditional
+
+- Enables bean instantiatiation only when specific condition is met
+- Core concept of spring boot
+- Only when specific bean found - `@ConditionalOnBean(type={DataSource.class})`
+- Only when specific bean is not found - `@ConditionalOnMissingBean`
+- Only when specific class is on classpath - `@ConditionalOnClass`
+- Only When specific class is not present on classpath - `@ConditionalOnMissingClass`
+- Only when system property has certain value - `@ConditionalOnProperty(name="server.host", havingValue="localhost")`
+- `@Profile` is a special case of conditional
+- org.springframework.boot.autoconfigure contains a lot of conditionals for auto-configuration
+	- eg. `@ConditionalOnMissingBean(DataSource.class)` → Created embedded data source
+	- Specifically declared beans usually disable automatically created ones
+	- If needed, specific autoconfiguration classes can be excluded explicitly
+	- `@EnableAutoConfiguration(exclude=DataSourceAutoConfiguration.class)`
