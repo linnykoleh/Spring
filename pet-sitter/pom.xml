@@ -53,6 +53,9 @@
         <module>11-ps-security-practice</module>
         <module>11-ps-security-solution</module>
         <module>11-ps-boot-sample</module>
+        <module>12-ps-remoting-sample</module>
+        <module>12-ps-remoting-practice</module>
+        <module>12-ps-remoting-solution</module>
     </modules>
 
     <build>
@@ -134,7 +137,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
-            <scope>test</scope>
         </dependency>
 
 		<dependency>

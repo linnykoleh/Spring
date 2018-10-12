@@ -25,8 +25,12 @@ import javax.persistence.EntityManagerFactory;
 @EnableJpaRepositories(basePackages = {"com.ps.repos"})
 public class ServiceConfig {
 
+    private final DataConfig dataConfig;
+
     @Autowired
-    private DataConfig dataConfig;
+    public ServiceConfig(DataConfig dataConfig) {
+        this.dataConfig = dataConfig;
+    }
 
     @Bean
     public EntityManagerFactory entityManagerFactory(){

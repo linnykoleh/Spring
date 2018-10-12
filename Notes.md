@@ -3153,3 +3153,194 @@ public void customize(ConfigurableEmbeddedServletContainer container) {
 	- Specifically declared beans usually disable automatically created ones
 	- If needed, specific autoconfiguration classes can be excluded explicitly
 	- `@EnableAutoConfiguration(exclude=DataSourceAutoConfiguration.class)`
+	
+## Integration
+
+- Remoting and Web Services are ways of communicating between applications
+- The communication is done using a binary, XML, or JSON format
+
+***Web Services*** constitute a cross-platform interprocess communication method using common standards and able to work through firewalls. 
+They work with messages, not objects. So the client basically sends a message, and a reply is returned. 
+Web services work in a stateless environment whereby each message results in a new object created to service the request. 
+Web services support interoperability across platforms and are good for heterogeneous environments. 
+They expose their own arbitrary sets of operations such as via WSDL (Web Services Description Language) and SOAP (Simple Object Access Protocol).
+
+***REST***, or representational state transfer, also called RESTful web services, is currently the most popular way applications communicate with each other. 
+REST services allow access and manipulation of textual representations of web resources using a uniform and predefined set of stateless operations. 
+The most common protocol used with REST services is HTTP, so the HTTP methods map on REST operations such as GET, POST, PUT, DELETE. 
+Initially, web resources were documents or files accessed using a URL (Uniform Resource Locator, also known as a web address), but recently, 
+a web resource became able to be anything (object, entity) that can be accessed via the web and is identified by a URI (Uniform Resource Identifier).
+
+- There are three types of middleware:
+	- Remote Procedure Call, or RPC, which allows one application to call procedures from another application remotely as if they were local calls.
+	- Object Request Broker, or ORB-based, which enables an application’s objects to be distributed and shared across heterogeneous networks. (Remoting falls in this category.)
+	- Message Oriented Middleware or MOM-based middleware, which allows distributed applications to communicate and exchange data by sending and receiving messages.
+	
+- Spring provides support for the `JMS (Java Messaging Service)` API, which is an abstraction written in Java for accessing MOM middleware.	
+	- An application produces messages, and a client application consumes them asynchronously.
+	- The application sending the messages has no knowledge of its client (or clients)
+	- Messaging is a form of loosely coupled distributed communication.
+- `JMX (Java Management Extensions)` is a Java technology that supplies tools for managing and monitoring applications, system objects, devices (such as printers) and service-oriented networks
+	- Those resources are represented by objects called `MBeans` (Managed Bean)
+	
+### Spring Remoting
+
+### Java Remote Method Invocation 
+
+- `Java Remote Invocation` allows for an object running in one JVM to invoke methods on an object running in another JVM.
+- `RMI` (Remote Method Invocation) is Java’s version of `RPC` (Remote Procedure Call).
+
+![alt text](images/integration/Screenshot_1.png)
+
+![alt text](images/integration/Screenshot_2.png)
+
+- RMI applications often consist of two processes: a server and a client.
+- The server creates the objects that will be accessed remotely, and it will expose a skeleton (the interface of the remote object).
+- The client invokes methods on a stub (proxy object).
+- Objects transferred using RMI must therefore be serializable and they must implement `java.io.Serializable`
+	
+![alt text](images/integration/Screenshot_3.png)
+
+### Spring Remote Method Invocation 
+
+- The abstract schema of client and server applications remoting using Spring
+
+![alt text](images/integration/Screenshot_4.png)
+
+### Spring Remote Configuration
+
+- Configure a bean extending `org.springframework.remoting.rmi.RmiServiceExporter`
+
+```xml
+ <bean class="org.springframework.remoting.rmi.RmiServiceExporter"
+         p:registryPort="1099"
+         p:alwaysCreateRegistry="true"
+         p:serviceName="userService"
+         p:serviceInterface="com.ps.services.UserService"
+         p:service-ref="userServiceImpl"/>
+```
+
+or 
+
+```java
+@Configuration
+public class RmiServerConfig {
+	
+    @Autowired
+    @Qualifier("userServiceImpl")
+    UserService userService;
+    
+    @Bean
+    public RmiServiceExporter userService() {
+        RmiServiceExporter exporter = new RmiServiceExporter();
+        exporter.setRegistryPort(1099);
+        exporter.setAlwaysCreateRegistry(true);
+        exporter.setServiceName("userService");
+        exporter.setServiceInterface(UserService.class);
+        exporter.setService(userService);
+        return exporter;
+    }
+}
+```
+
+- Create a server application that will contain the remote exported bean and the application beans that need to be accessed remotely.
+
+```java
+public class RmiExporterBootstrap {
+       public static void main(String args) throws Exception {
+               ClassPathXmlApplicationContext ctx =
+                   new ClassPathXmlApplicationContext(
+                       "spring/rmi-server-config.xml",
+                       "spring/app-config.xml");
+               System.out.println("RMI server started.");
+               System.in.read();
+               ctx.close();
+       }
+}
+```
+The `app-config.xml` contains all the service and repository beans needed to be executed on the remote server.
+
+```xml
+<beans ...">
+   <!-- import service configurations -->
+    <bean class="com.ps.config.ServiceConfig"/>
+    <context:annotation-config/>
+</beans>
+```
+
+or 
+      
+```java
+public class RmiExporterBootstrap {
+	
+  public static void main(String args) throws Exception {
+      AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(
+              RmiServerConfig.class, ServiceConfig.class);
+      System.out.println("RMI reward network server started.");
+      System.in.read();
+      ctx.close();
+   }
+}
+```
+
+- Configure a bean of type `org.springframework.remoting.rmi.RmiProxyFactoryBean` that will take care of creating the proxy objects needed on the client side to access the RMI service
+
+```xml
+<beans ...>
+    <bean id="userService"
+          class="org.springframework.remoting.rmi.RmiProxyFactoryBean"
+          p:serviceInterface="com.ps.services.UserService"
+          p:serviceUrl="rmi://localhost:1099/userService"/>
+</beans>
+```
+
+or 
+
+```java
+@Configuration
+public class RmiClientConfig {
+	
+    @Bean
+    public UserService userService() {
+        RmiProxyFactoryBean factoryBean = new RmiProxyFactoryBean();
+        factoryBean.setServiceInterface(UserService.class);
+        factoryBean.setServiceUrl("rmi://localhost:1099/userService");
+        factoryBean.afterPropertiesSet();
+        return (UserService) factoryBean.getObject();
+    }
+}
+```
+
+- Create a client application that will use the client factory bean
+
+```java
+@ContextConfiguration(locations = {"classpath:spring/rmi-client-config.xml"})
+@RunWith(SpringJUnit4ClassRunner.class)
+public class RmiTests {
+	
+    @Autowired
+    private UserService userService;
+    
+    public void setUp() {
+        assertNotNull(userService);
+    }
+    
+    @Test
+    public void testRmiAll() {
+        List<User> users = userService.findAll();
+        assertEquals(5, users.size());
+    }
+    
+    @Test
+    public void testRmiJohn() {
+        User user = userService.findByEmail("john.cusack@pet.com");
+       assertNotNull(user);
+    }
+}
+```
+
+### Spring RMI services over HTTP
+
+- Spring provides classes that allow exposing RMI services over HTTP, using a lightweight binary HTTP-based protocol.
+	- The classes to use are `HttpInvokerProxyFactoryBean` and `HttpInvokerServiceExporter`
+	- RMI methods will be converted to HTTP methods: GET and POST
