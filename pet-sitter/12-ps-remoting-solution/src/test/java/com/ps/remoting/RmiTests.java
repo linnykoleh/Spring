@@ -1,7 +1,7 @@
 package com.ps.remoting;
 
 import com.ps.ents.User;
-import com.ps.remoting.config.RmiClientConfig;
+import com.ps.remoting.config.HttpInvokerClientConfig;
 import com.ps.services.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,9 +15,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Test for the RMI client spring.proxy
+ * Test for the HTTP RMI client
  */
-@ContextConfiguration(classes = RmiClientConfig.class)
+@ContextConfiguration(classes = HttpInvokerClientConfig.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 public class RmiTests {
 
@@ -30,13 +30,13 @@ public class RmiTests {
 
     @Test
     public void testRmiAll() {
-        List<User> users = userService.findAll();
+        final List<User> users = userService.findAll();
         assertEquals(5, users.size());
     }
 
     @Test
     public void testRmiJohn() {
-        User user = userService.findByEmail("john.cusack@pet.com");
-       assertNotNull(user);
+        final User user = userService.findByEmail("John.Cusack@pet.com");
+        assertNotNull(user);
     }
 }

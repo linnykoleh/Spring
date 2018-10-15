@@ -23,6 +23,7 @@ import java.util.Locale;
 @EnableWebMvc
 @ComponentScan(basePackages = {"com.ps.web"})
 public class WebConfig extends WebMvcConfigurerAdapter {
+
     //Declare our static resources. I added cache to the java config but it?s not required.
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

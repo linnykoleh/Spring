@@ -25,15 +25,11 @@ import javax.persistence.EntityManagerFactory;
 @EnableJpaRepositories(basePackages = {"com.ps.repos"})
 public class ServiceConfig {
 
-    private final DataConfig dataConfig;
-
     @Autowired
-    public ServiceConfig(DataConfig dataConfig) {
-        this.dataConfig = dataConfig;
-    }
+    private DataConfig dataConfig;
 
     @Bean
-    public EntityManagerFactory entityManagerFactory(){
+    public EntityManagerFactory entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
         factoryBean.setPersistenceUnitManager(persistenceUnitManager());
         factoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
@@ -44,17 +40,17 @@ public class ServiceConfig {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(){
+    public PlatformTransactionManager transactionManager() {
         return new JpaTransactionManager(entityManagerFactory());
     }
 
     @Bean
-    public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
+    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
 
     @Bean
-    public PersistenceUnitManager persistenceUnitManager(){
+    public PersistenceUnitManager persistenceUnitManager() {
         final MergingPersistenceUnitManager persistenceUnitManager = new MergingPersistenceUnitManager();
         persistenceUnitManager.setPackagesToScan("com.ps.ents");
         persistenceUnitManager.setDefaultDataSource(dataConfig.dataSource());

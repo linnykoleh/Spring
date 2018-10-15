@@ -3211,17 +3211,6 @@ a web resource became able to be anything (object, entity) that can be accessed 
 
 - Configure a bean extending `org.springframework.remoting.rmi.RmiServiceExporter`
 
-```xml
- <bean class="org.springframework.remoting.rmi.RmiServiceExporter"
-         p:registryPort="1099"
-         p:alwaysCreateRegistry="true"
-         p:serviceName="userService"
-         p:serviceInterface="com.ps.services.UserService"
-         p:service-ref="userServiceImpl"/>
-```
-
-or 
-
 ```java
 @Configuration
 public class RmiServerConfig {
@@ -3247,6 +3236,7 @@ public class RmiServerConfig {
 
 ```java
 public class RmiExporterBootstrap {
+    
        public static void main(String args) throws Exception {
                ClassPathXmlApplicationContext ctx =
                    new ClassPathXmlApplicationContext(
@@ -3258,17 +3248,7 @@ public class RmiExporterBootstrap {
        }
 }
 ```
-The `app-config.xml` contains all the service and repository beans needed to be executed on the remote server.
-
-```xml
-<beans ...">
-   <!-- import service configurations -->
-    <bean class="com.ps.config.ServiceConfig"/>
-    <context:annotation-config/>
-</beans>
-```
-
-or 
+The `RmiExporterBootstrap` contains all the service and repository beans needed to be executed on the remote server.
       
 ```java
 public class RmiExporterBootstrap {
@@ -3284,17 +3264,6 @@ public class RmiExporterBootstrap {
 ```
 
 - Configure a bean of type `org.springframework.remoting.rmi.RmiProxyFactoryBean` that will take care of creating the proxy objects needed on the client side to access the RMI service
-
-```xml
-<beans ...>
-    <bean id="userService"
-          class="org.springframework.remoting.rmi.RmiProxyFactoryBean"
-          p:serviceInterface="com.ps.services.UserService"
-          p:serviceUrl="rmi://localhost:1099/userService"/>
-</beans>
-```
-
-or 
 
 ```java
 @Configuration
@@ -3344,3 +3313,48 @@ public class RmiTests {
 - Spring provides classes that allow exposing RMI services over HTTP, using a lightweight binary HTTP-based protocol.
 	- The classes to use are `HttpInvokerProxyFactoryBean` and `HttpInvokerServiceExporter`
 	- RMI methods will be converted to HTTP methods: GET and POST
+	- Spring’s HttpInvoker is another Java-to-Java binary remoting protocol; it requires that Spring be used on both the server and the client.
+- The properties for the Spring Http Invoker classes have the same meaning as for the RMI Spring classes; the only difference is that they apply to the HTTP protocol	
+      
+![alt text](images/integration/Screenshot_5.png)
+
+- On the server side, a bean of type `HttpInvokerServiceExporter` must be configured.
+
+```java
+@Configuration
+public class HttpInvokerConfig {
+    
+    @Autowired
+    @Qualifier("userServiceImpl")
+    UserService userService;
+    
+    @Bean(name = "/httpInvoker/userService")
+    HttpInvokerServiceExporter httpInvokerServiceExporter(){
+        HttpInvokerServiceExporter invokerService = new HttpInvokerServiceExporter();
+        invokerService.setService(userService);
+        invokerService.setServiceInterface(UserService.class);
+        return invokerService;
+    }
+}
+```
+
+- On the client side, a bean of type `HttpInvokerProxyFactoryBean` must be configured.
+
+```java
+ @Configuration
+public class HttpInvokerClientConfig {
+    
+    @Bean
+    public UserService userService() {
+        HttpInvokerProxyFactoryBean factoryBean = new HttpInvokerProxyFactoryBean();
+        factoryBean.setServiceInterface(UserService.class);
+        factoryBean.setServiceUrl
+             ("http://localhost:8080/invoker/httpInvoker/userService");
+        factoryBean.afterPropertiesSet();
+        return (UserService) factoryBean.getObject();
+    }
+}
+```
+
+- Provide configuration via `web.xml` or via `implements WebApplicationInitializer`
+
