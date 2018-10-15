@@ -5,10 +5,23 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.linnik.wickiup</groupId>
-    <artifactId>11-ps-security-practice</artifactId>
+    <artifactId>13-ps-jms-solution</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.4.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
     <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-activemq</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.linnik.wickiup</groupId>
             <artifactId>00-ps-core</artifactId>
@@ -19,6 +32,18 @@
             <groupId>com.linnik.wickiup</groupId>
             <artifactId>09-ps-data-jpa</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-spring</artifactId>
+            <version>5.14.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+            <version>5.14.1</version>
         </dependency>
 
     </dependencies>
@@ -36,5 +61,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

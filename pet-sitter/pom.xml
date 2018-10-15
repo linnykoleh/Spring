@@ -56,6 +56,8 @@
         <module>12-ps-remoting-sample</module>
         <module>12-ps-remoting-practice</module>
         <module>12-ps-remoting-solution</module>
+        <module>13-ps-jms-practice</module>
+        <module>13-ps-jms-solution</module>
     </modules>
 
     <build>
@@ -185,6 +187,12 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
             <version>${spring.security.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>${spring.version}</version>
         </dependency>
 
 

@@ -3190,22 +3190,22 @@ a web resource became able to be anything (object, entity) that can be accessed 
 - `Java Remote Invocation` allows for an object running in one JVM to invoke methods on an object running in another JVM.
 - `RMI` (Remote Method Invocation) is Java’s version of `RPC` (Remote Procedure Call).
 
-![alt text](images/integration/Screenshot_1.png)
+![alt text](images/pet-sitter/Screenshot_15.png)
 
-![alt text](images/integration/Screenshot_2.png)
+![alt text](images/pet-sitter/Screenshot_16.png)
 
 - RMI applications often consist of two processes: a server and a client.
 - The server creates the objects that will be accessed remotely, and it will expose a skeleton (the interface of the remote object).
 - The client invokes methods on a stub (proxy object).
 - Objects transferred using RMI must therefore be serializable and they must implement `java.io.Serializable`
 	
-![alt text](images/integration/Screenshot_3.png)
+![alt text](images/pet-sitter/Screenshot_17.png)
 
 ### Spring Remote Method Invocation 
 
 - The abstract schema of client and server applications remoting using Spring
 
-![alt text](images/integration/Screenshot_4.png)
+![alt text](images/pet-sitter/Screenshot_18.png)
 
 ### Spring Remote Configuration
 
@@ -3316,7 +3316,7 @@ public class RmiTests {
 	- Spring’s HttpInvoker is another Java-to-Java binary remoting protocol; it requires that Spring be used on both the server and the client.
 - The properties for the Spring Http Invoker classes have the same meaning as for the RMI Spring classes; the only difference is that they apply to the HTTP protocol	
       
-![alt text](images/integration/Screenshot_5.png)
+![alt text](images/pet-sitter/Screenshot_19.png)
 
 - On the server side, a bean of type `HttpInvokerServiceExporter` must be configured.
 
@@ -3358,3 +3358,40 @@ public class HttpInvokerClientConfig {
 
 - Provide configuration via `web.xml` or via `implements WebApplicationInitializer`
 
+## Spring JMS
+
+The basic building blocks of a JMS applications are:
+- messages
+- message producers (publisher)
+- messages consumers (subscriber)
+- connections
+- sessions
+- connection factories
+- destinations
+
+### JMS Messages
+
+![alt text](images/pet-sitter/Screenshot_20.png)
+
+- The message has a standard structure, being composed of a header and a body
+    - The header contains system-level information common to all messages, such as the destination and the time it was sent and application-specific information, stored as keyword/value properties
+    - The body contains the effective application data, and JMS defines five distinct message body types represented as Java interfaces extending `javax.jms.Message`
+    
+![alt text](images/pet-sitter/Screenshot_21.png)
+
+### JMS Destinations
+
+- The `javax.jms.Destination` interface is implemented on the client side and is used to specify the target of the messages produced by the client and the source of messages the client consumes
+- Depending on the messaging domain, the implementation differs:
+    - a queue in `point-to-point` domains, where each message has one producer and one consumer.
+    - a topic in `publisher/subscriber` domains, where each message that is published is consumed by multiple subscribers.
+    
+![alt text](images/pet-sitter/Screenshot_22.png)    
+
+```java
+//Java Configuration standalone Queue
+@Bean
+public Queue userQueue(){
+     return new ActiveMQQueue("queues.users");
+}
+```

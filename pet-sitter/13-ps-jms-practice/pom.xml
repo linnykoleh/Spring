@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.linnik.wickiup</groupId>
-    <artifactId>11-ps-security-practice</artifactId>
+    <artifactId>13-ps-jms-practice</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
@@ -19,6 +19,18 @@
             <groupId>com.linnik.wickiup</groupId>
             <artifactId>09-ps-data-jpa</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-spring</artifactId>
+            <version>5.14.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+            <version>5.14.1</version>
         </dependency>
 
     </dependencies>
