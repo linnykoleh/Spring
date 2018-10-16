@@ -3395,3 +3395,40 @@ public Queue userQueue(){
      return new ActiveMQQueue("queues.users");
 }
 ```
+
+## Spring Web Services
+
+- `SOAP` is an acronym for Simple Object Access Protocol. It is a protocol specification for exchanging structured information in the implementation of web services in computer networks
+
+- Here are the 3 steps of designing a Contract-first:
+- create sample messages. A simple service user message could look like this:
+```xml
+<userMessage   xmlns="http://ws-boot.com/schemas/um" active="true">
+    <email>John.Cusack@pet.com</email>
+    <rating>5.0</rating>
+</userMessage>
+```
+- define the XSD schema the service message must comply to
+```xml
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified"
+           targetNamespace="http://ws-boot.com/schemas/um">
+    <xs:complexType name="userMessage">
+        <xs:sequence>
+            <xs:element name="email" type="xs:string"/>
+            <xs:element name="rating" type="xs:double"/>
+        </xs:sequence>
+        <xs:attribute name="active" type="xs:boolean"/>
+    </xs:complexType>
+</xs:schema>
+```
+- restrict types and values, by enriching the XSD schema. In the next code snippet, a regular expression pattern is specify to validate the value of the email address.
+```xml
+<xs:element name="email">
+    <xs:simpleType>
+        <xs:restriction  base="xs:string">
+           <xs:pattern  value="[^@]+@[^\.]+\..+"/>
+         </xs:restriction>
+   </xs:simpleType>
+</xs:element>
+```
