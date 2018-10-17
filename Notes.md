@@ -3478,7 +3478,173 @@ public Queue userQueue(){
 - RESTful applications use HTTP requests to post data (create and/or update), read data (e.g., make queries), and delete data. 
 - REST uses HTTP for all four CRUD (Create/Read/Update/Delete) operations
 
-![alt text](images/pet-sitter/Screenshot_24.png) 
+![alt text](images/pet-sitter/Screenshot_25.png) 
 
 - URIs (Uniform Resource Identifiers) are used to identify resources
 - HTTP response: response codes, body, and headers are used to deliver the state to clients
+- Spring MVC does not implement JAX-RS, but it does provide REST Support 
+
+- `@RestController` is a combination of `@Controller` and `@ResponseBody`, and when used on a class, 
+  it assumes that all values returned by the methods in this controller should be bound to the web response body.
+  
+```java
+@RestController
+public class RestUserController {
+ 
+    @Autowired
+    UserService userService;
+ 
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public List<User> all() {
+        return userService.findAll();
+    }
+...
+}
+```  
+
+- With Spring MVC, the status code of a response can be set easily using the `@ResponseStatus` annotation on controller methods.
+  
+![alt text](images/pet-sitter/Screenshot_26.png)   
+
+![alt text](images/pet-sitter/Screenshot_27.png)   
+
+- If for some reason `@RestController` cannot be used, in Spring MVC, type `org.springframework.http.ResponseEntity` can be used as the return value from 
+  a `@Controller` method to tell the dispatcher that the response is to be serialized and forwarded to the client instead of being resolved to a view
+  
+```java
+@Controller
+public class UserController {
+    
+    @Autowired
+    UserService userService;
+    
+    @Autowired
+    PetService petService;
+    
+    @RequestMapping(value = "/pets/{$username}", method = RequestMethod.POST)
+    public ResponseEntity<String> createPet(@PathVariable("$username") String username,
+                @RequestBody Pet pet,
+                @Value("#{request.requestURL}") StringBuffer url)
+                throws UserException {
+    
+        User owner = userService.findByUsername(username);
+        if (owner == null) {
+            throw new UserException("User not found with username " + username);
+        }
+        petService.save(pet);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", getLocationForPet(url, pet.getRfid()));
+        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+    }
+
+    private  String getLocationForPet(StringBuffer url, Object petRfid) {
+        UriTemplate template = new UriTemplate(url.append("/{$petid}").toString());
+        return template.expand(petRfid).toASCIIString();
+    }
+}
+``` 
+
+### Exception Handling
+    
+```java
+@RestController
+public class RestUserController {
+ 
+        @ResponseStatus(HttpStatus.NOT_FOUND)
+        @ExceptionHandler({IllegalArgumentException.class})
+        public void handleNotFound() {
+                // just return empty 404
+        }
+ 
+        @ResponseStatus(HttpStatus.CONFLICT)
+        @ExceptionHandler({DataIntegrityViolationException.class})
+        public void handleAlreadyExists() {
+                // just return empty 409
+        }
+}
+```
+
+- Another method to process REST request-related exceptions is to define a specialized exception class for a REST controller and a specialized component to intercept those types of exceptions and treat them in a certain way.
+
+```java
+@ControllerAdvice
+public class RestExceptionProcessor {
+ 
+    @ExceptionHandler
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public JsonError exception(UserException ex) {
+        return new JsonError(ex.getMessage());
+    }
+}
+```
+
+or 
+
+```java
+public class RestExceptionProcessor {
+ 
+    @ExceptionHandler
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public JsonError exception(Exception ex) {
+        return new JsonError(ex.getMessage());
+    }
+}
+```
+
+or
+
+```java
+@ControllerAdvice(basePackageClasses = RestExceptionProcessor.class)
+public class RestExceptionProcessor {
+ 
+    @ExceptionHandler
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public JsonError exception(UserException ex) {
+        return new JsonError(ex.getMessage());
+    }
+}
+```
+
+### HTTP Message Converters
+
+- `@ResponseBody` introduced earlier is also used to facilitate understanding of the REST message format between client and server
+- `@ResponseBody` is applied to the response
+- `@RequestBody` is applied to the request
+- The client must know the format to use, or request a resource with a representation it understands form the server. 
+  Representations are converted to HTTP requests and from HTTP responses by implementations of the `org.springframework.http.converter.HttpMessageConverter<T>` interface
+- Message converters are automatically detected and used by Spring in applications configured with `<mvc:annotation-driven/>` or `@EnableWebMvc`
+
+![alt text](images/pet-sitter/Screenshot_28.png)  
+
+```java
+public class RestUserController {
+ 
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/users/{$username}",
+         method = RequestMethod.PUT,
+         consumes = MediaType.APPLICATION_JSON_UTF8_VALUE
+         produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public User updateByEmail(
+        @PathVariable("$username") String username,
+        @RequestBody User newUser) throws UserException {
+        
+        User user = userService.findByUsername(username);
+        if (user == null) {
+            throw new UserException("User not found with username " + username);
+        }
+        copyProperties(newUser, user);
+        userService.update(user);
+        return user;
+    }
+}
+```
+
+- The `consumes` attribute defines the consumable media types of the mapped request (defined on the server), 
+  and the value of the `Content-Type` header (defined on the client side) must match at least one of the values of this property in order for a method to handle a specific REST request.
+  
+- The `produces` attribute defines the producible media types of the mapped request, narrowing the primary mapping, 
+  and the value of the `Accept` header (on the client side) must match at least one of the values of this property in order for a method to handle a specific REST request. 
+  
