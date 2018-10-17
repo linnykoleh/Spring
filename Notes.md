@@ -3469,3 +3469,16 @@ public Queue userQueue(){
 		
 - The main disadvantage of SOAP is only the use of XML, which is verbose and takes a lot of time to be parsed		
 
+## Spring REST
+
+- `REpresentational State Transfer`
+- REST is a lightweight alternative to mechanisms like `RPC (Remote Procedure Calls)` and `Web Services (SOAP, WSDL, etc)`
+- REST is an architecture style for designing networked (distributed) applications
+- The idea is that rather than using complex mechanisms such as `CORBA`, `RPC`, or `SOAP` to connect between machines, simple `HTTP` is used to make calls between machines
+- RESTful applications use HTTP requests to post data (create and/or update), read data (e.g., make queries), and delete data. 
+- REST uses HTTP for all four CRUD (Create/Read/Update/Delete) operations
+
+![alt text](images/pet-sitter/Screenshot_24.png) 
+
+- URIs (Uniform Resource Identifiers) are used to identify resources
+- HTTP response: response codes, body, and headers are used to deliver the state to clients
