@@ -58,6 +58,7 @@
         <module>12-ps-remoting-solution</module>
         <module>13-ps-jms-practice</module>
         <module>13-ps-jms-solution</module>
+        <module>14-ps-ws-sample</module>
     </modules>
 
     <build>
@@ -194,7 +195,6 @@
             <artifactId>spring-jms</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
 
         <!--Jackson-->
         <dependency>

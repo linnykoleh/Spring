@@ -3432,3 +3432,40 @@ public Queue userQueue(){
    </xs:simpleType>
 </xs:element>
 ```
+
+### SOAP Messages
+
+- SOAP messages have a structure similar to JMS Messages: they have a header and a body that are enclosed in a special SOAP envelope that identifies the XML document as a SOAP message. 
+- SOAP message containing user information looks like the following XML snippet.
+
+```xml
+<soapenv:Envelope
+     xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:um="http://ws-boot.com/schemas/um">
+<soapenv:Header/>
+<soapenv:Body>
+    <um:getUserRequest>
+        <um:email>John.Cusack@pet.com</um:email>
+    </um:getUserRequest>
+</soapenv:Body>
+</soapenv:Envelope>
+```
+
+- The XSD schema defines the web service domain and the operations that can be performed using web services
+- WSDL defines a network interface that consists of endpoints that get messages and then sometimes reply with messages. 
+- WSDL describes the endpoints, and the request and reply messages
+
+![alt text](images/pet-sitter/Screenshot_23.png)  
+
+- Generating Java Code with XJC
+	- The JDK comes with a utility executable called `xjc`
+		- `xjc -d src/main/jaxb -p com.ps.ws src/main/resources/sample/userMessage.xsd`	
+	- Intellij IDEA have the capability of generating JAVA code from a built-in XSD schema
+		- select the `userMessages.xsd` file and right click
+		- on the menu that appears, there is a `WebServices` option
+		- click on it, and it will expand. In the submenu there is a `Generate Java Code from XML Schema using JAXB`
+
+![alt text](images/pet-sitter/Screenshot_24.png)  
+		
+- The main disadvantage of SOAP is only the use of XML, which is verbose and takes a lot of time to be parsed		
+
