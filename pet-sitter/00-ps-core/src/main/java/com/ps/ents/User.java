@@ -12,14 +12,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="P_USER")
+@Table(name = "P_USER")
 @SequenceGenerator(name = "seqGen", allocationSize = 1)
 @NamedQueries({
-        @NamedQuery(name=User.FIND_BY_USERNAME_EXACT, query = "from User u where username= :un"),
-        @NamedQuery(name=User.FIND_BY_USERNAME_LIKE, query = "from User u where username like :un")
+        @NamedQuery(name = User.FIND_BY_USERNAME_EXACT, query = "from User u where username= :un"),
+        @NamedQuery(name = User.FIND_BY_USERNAME_LIKE, query = "from User u where username like :un")
 
 })
 public class User extends AbstractEntity {
+
     public static final String FIND_BY_USERNAME_EXACT = "findByUsernameExact";
     public static final String FIND_BY_USERNAME_LIKE = "findByUsernameLike";
 
@@ -30,10 +31,10 @@ public class User extends AbstractEntity {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(name="first_name")
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name="last_name")
+    @Column(name = "last_name")
     private String lastName;
 
     @NotEmpty
@@ -62,11 +63,11 @@ public class User extends AbstractEntity {
     private Set<Pet> pets = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade =  {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Set<Request> requests = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade =  {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Set<Response> responses = new HashSet<>();
 
     @Column
@@ -190,13 +191,21 @@ public class User extends AbstractEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         User user = (User) o;
 
-        if (username != null ? !username.equals(user.username) : user.username != null) return false;
+        if (username != null ? !username.equals(user.username) : user.username != null) {
+            return false;
+        }
         return userType == user.userType;
 
     }
@@ -214,7 +223,7 @@ public class User extends AbstractEntity {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return super.toString() + ";" + String.format("User[username='%s', firstName='%s', lastName='%s', email='%s'" +
                         " userType='%s', activeSince='%s', rating=id='%f%n']", getUsername(),
-                getFirstName(), getLastName(), getEmail(), getUserType().toString(),sdf.format(createdAt), rating);
+                getFirstName(), getLastName(), getEmail(), getUserType().toString(), sdf.format(createdAt), rating);
 
     }
 }

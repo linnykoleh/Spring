@@ -2340,14 +2340,14 @@ public ModelAndView passParametersWithModelAndView() {
 
 #### Spring MVC Java Configuration
 
-- `@EnableWebMvc` -  is the equivalent of `<mvc:annotation-driven/>`
+- `@EnableWebMvc` - is the equivalent of `<mvc:annotation-driven/>`
 - The configuration class has to be
 	- annotated with the `@Configuration` annotation 
 	- annotated with the  `@EnableWebMvc` annotation 
 	- implement `WebMvcConfigurer` 
 	- or extend an implementation of this interface `WebMvcConfigurerAdapter`
 
-- `@EnableWebMvc` —  To enable auto-detection of such `@Controller` beans, you can add component scanning
+- `@EnableWebMvc` — to enable auto-detection `@Controller` beans, request/response converters
 	
 ```java
 @Configuration
@@ -2462,7 +2462,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
 #### Spring MVC Quick Start
 1 Register Dispatcher servlet (web.xml or in Java)
-2Implement Controllers
+2 Implement Controllers
 3 Register Controllers with Dispatcher Servlet
    - Can be discovered using component-scan
 4 Implement Views
@@ -3469,7 +3469,7 @@ public Queue userQueue(){
 		
 - The main disadvantage of SOAP is only the use of XML, which is verbose and takes a lot of time to be parsed		
 
-## Spring REST
+## REST
 
 - `REpresentational State Transfer`
 - REST is a lightweight alternative to mechanisms like `RPC (Remote Procedure Calls)` and `Web Services (SOAP, WSDL, etc)`
@@ -3648,3 +3648,99 @@ public class RestUserController {
 - The `produces` attribute defines the producible media types of the mapped request, narrowing the primary mapping, 
   and the value of the `Accept` header (on the client side) must match at least one of the values of this property in order for a method to handle a specific REST request. 
   
+#### HATEOAS   
+
+- Hypermedia As The Engine of Application State
+- Response contains links to other items and actions → can change behavior without changing client
+- Decoupling of client and server
+
+#### JAX-RS 
+
+- Java API for RESTful web services
+- Part of Java EE6
+- Jersey is reference implementation
+
+```java
+@Path("/persons/{id}")
+public class PersonService {
+	
+    @GET
+    public Person getPerson(@PathParam("id") String id) {
+        return findPerson(id);
+    }
+}
+```
+### RESTful  
+
+- **GET**: method used to retrieve a representation of a resource
+	- When resource is not found, a `404 (Not found)` status code is returned, `200(OK)` otherwise
+
+![alt text](images/pet-sitter/Screenshot_29.png)  
+
+- **POST**: method used to create a new resource. 
+	- When the resource being created requires a parent that does not exist, a `404 (Not found)` status code is returned.
+	- When an identical resource already exists, a `409 (Conflict)` status code is returned. 
+	- When the resource was created correctly, a `201 (Created)` status code is returned
+
+![alt text](images/pet-sitter/Screenshot_30.png)  
+
+- **PUT**: updates an existing resource or creates it with a known destination URI.
+	- When a PUT request refers to an existing resource, the resource is updated
+	- When the resource is updated correctly and nothing is returned as a response body, a `204 (No content)` response status is returned.
+	- When the resource does not exist, PUT acts like a POST and creates it, and the location of the resource is returned. The response status in this case is `201(CREATED)`
+	
+![alt text](images/pet-sitter/Screenshot_31.png)	
+
+- **DELETE**: deletes a resource. 
+	- When the resource being deleted does not exist, a `404 (Not found)` status code is returned. 
+	- When the resource was deleted correctly, a `200 (OK)` status code is returned. 
+	
+![alt text](images/pet-sitter/Screenshot_32.png)	
+
+- Idempotence
+	- From a RESTful service standpoint, for an operation (or service call) to be idempotent, clients can make that same call repeatedly while producing the same result. In other words, making multiple identical requests has the same effect as making a single request. Note that while idempotent operations produce the same result on the server (no side effects), the response itself may not be the same (e.g. a resource's state may change between requests).
+	- The PUT and DELETE methods are defined to be idempotent. However, there is a caveat on DELETE. The problem with DELETE, which if successful would normally return a 200 (OK) or 204 (No Content), will often return a 404 (Not Found) on subsequent calls, unless the service is configured to "mark" resources for deletion without actually deleting them. However, when the service actually deletes the resource, the next call will not find the resource to delete it and return a 404. However, the state on the server is the same after each DELETE call, but the response is different.
+	- GET, HEAD, OPTIONS and TRACE methods are defined as safe, meaning they are only intended for retrieving data. This makes them idempotent as well since multiple, identical requests will behave the same.
+
+- Spring RESTful application can be tested without deploying it on a server by declaring a mock restful server and using mock dependencies, so the REST requests can be tested in isolation
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {WebConfig.class, StandaloneRestUserControllerTest.TestConfig.class})
+@WebAppConfiguration
+public class StandaloneRestUserControllerTest {
+
+	@Configuration
+	static class TestConfig {
+
+		@Bean
+		UserService userService() {
+			return Mockito.mock(UserService.class);
+		}
+	}
+
+	private RestTemplate restTemplate = new RestTemplate();
+	private MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
+
+
+	@Test
+	public void findByUsername() {
+		...
+	}
+
+}
+```
+
+- Advantages of REST
+	- REST is simple.
+	- REST is widely supported.
+	- Resources can be represented in a wide variety of data formats (JSON, XML, etc.).
+	- You can make good use of HTTP cache and proxy server to help you handle high load and improve performance.
+	- It reduces client/server coupling.
+	- Browsers can interpret representations.
+	- Javascript can use representations.
+	- A rest service can be consumed by applications written in different languages.
+	- It makes it easy for new clients to use a RESTful application, even if the application was not designed specifically for them.
+	- Because of statelessness of REST systems, multiple servers can be behind a load-balancer and provide services transparently, which means increased scalability.
+	- Because of the uniform interface, little or no documentation of the resources and basic operations API is necessary.
+	- Using REST does not imply specific libraries at client level in order to communicate with the server. With REST, all that is needed is a network connection.

@@ -6,9 +6,7 @@ import com.ps.ents.User;
 import com.ps.repos.PetRepo;
 import com.ps.services.PetService;
 
-
 public class SimplePetService extends SimpleAbstractService<Pet> implements PetService {
-
 
     private PetRepo repo;
 
@@ -18,7 +16,7 @@ public class SimplePetService extends SimpleAbstractService<Pet> implements PetS
 
     @Override
     public Pet createPet(User user, String name, int age, PetType petType, String rfid) {
-        Pet pet = new Pet();
+        final Pet pet = new Pet();
         pet.setOwner(user);
         pet.setName(name);
         pet.setAge(age);
@@ -28,7 +26,6 @@ public class SimplePetService extends SimpleAbstractService<Pet> implements PetS
         return pet;
     }
 
-    //                setters & getters
     public PetRepo getRepo() {
         return repo;
     }

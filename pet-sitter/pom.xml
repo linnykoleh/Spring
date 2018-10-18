@@ -59,6 +59,8 @@
         <module>13-ps-jms-practice</module>
         <module>13-ps-jms-solution</module>
         <module>14-ps-ws-sample</module>
+        <module>15-ps-ws-rest-practice</module>
+        <module>15-ps-ws-rest-solution</module>
     </modules>
 
     <build>

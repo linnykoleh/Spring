@@ -42,7 +42,7 @@ public class UserMessageRepository {
     /**
      * returns the user type of user with this email
      */
-    public UserType findUserType(String email) {
+    UserType findUserType(String email) {
         if(USER_MESSAGES.containsKey(email))  {
             return USER_MESSAGES.get(email).getUserType();
         }
