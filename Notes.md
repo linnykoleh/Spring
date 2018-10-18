@@ -3788,4 +3788,143 @@ public class RestUserController {
 }
 ```
 
+## Spring JMX
+
+
+- JMX is an acronym for Java Management Extensions,  this technology provides the tools for building distributed, Web-based, modular, and dynamic solutions for managing and monitoring devices, applications, and service-driven networks
+- JMX technology can be used to monitor and manage the `Java Virtual Machine (Java VM)`.
+- JMX allows configuration properties to be changed at runtime
+- It is not hard to use. You must create an interface that ends with MXBean or use the annotation
+- Using JMX, a given resource can be instrumented by one or more components called `Management Beans`, or simply `MBeans`.
+
+### JMX Architecture
+
+- **Instrumentation layer**: where resources are wrapped in MBeans.
+- **Agent layer**: the management infrastructure consisting of the MBean Server and agents that provide the following JMX services:
+  - Monitoring
+  - Event notification
+  - Timers
+- **Management layer**: Defines how external management applications can interact with the underlying layers in terms of protocols  
+
+![alt text](images/pet-sitter/Screenshot_33.png)
+
+- The JMX technology defines standard connectors (known as JMX connectors) that enable you to access JMX agents from remote management applications
+- The MBean server acts as a broker for communication between local MBeans and agents and between MBeans and remote clients
+- Common and accessible clients for the MBean Server are provided within the JDK: VisualVM,,jconsole, jvisualvm, and jmc.
+
+- MBeans expose a management interface that consists of the following:
+	- attributes (properties), which can be readable, writable, or both
+    - operations (methods)
+    - self description
+    
+- By convention, an MBean interface takes the name of the Java class that implements it, with the suffix **MBean** added.    
+
+```java
+MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+ObjectName name = new ObjectName("com.ps.jmx:type=UserCounter");
+UserCounter mbean = new UserCounter();
+mbs.registerMBean(mbean, name);
+```
+
+### Spring JMX
+
+- Spring’s JMX support provides four core features:
+	- The automatic registration of any Spring bean as a JMX MBean.
+    - A flexible mechanism for controlling the management interface of your beans.
+    - The declarative exposure of MBeans over remote JSR-160 connectors.
+    - The simple proxying of both local and remote MBean resources.
+    
+- JMX infrastructure can be configured using the context namespace or using Java Configuration.    
+- The core class in Spring’s JMX framework is the `MBeanExporter` - responsible for taking your Spring beans and registering them with a JMX MBeanServer
+
+```xml
+<beans ...>
+
+    <!-- Configuration for JMX exposure in the application -->
+    <context:mbean-server />
+    <context:mbean-export />
+</beans>
+```
+
+or 
+
+```java
+@Configuration
+public clas JmxConfig(){
+	
+    // equivalent of <context:mbean-server />
+    @Bean
+    MBeanServerFactoryBean mbeanServer(){
+        return new MBeanServerFactoryBean();
+    }
+    
+    // equivalent of <context:mbean-export />
+    @Bean
+    MBeanExporter exporter(){
+         MBeanExporter exporter = new MBeanExporter();
+         exporter.setAutodetect(true);
+         exporter.setBeans(map);
+         return exporter;
+    }
+}
+```
+
+- The <context:mbean-server/> declares a bean of type `org.springframework.jmx.support.MBeanServerFactoryBean`. 
+  This bean has the responsibility of obtaining a `javax.management.MBeanServer` reference from the the standard JMX 1.2 javax.management.MBeanServerFactory API.
+
+- The <context:mbean-export/> declares a bean of type `org.springframework.jmx.export.MBeanExporter`, 
+   and this is the bean that allows exposing any Spring-managed bean to a MBeanServer without the need to define any Spring-managed bean to a MBeanServer without the need to define any JMX-specific information in the bean classes.
+    
+- `@EnableMBeanExport` is very important, because it enables default exporting of all standard MBeans from the Spring context and there is no need to configure the exporter bean explicitly.
+	- Behind the scenes, it basically declares and registers a bean of type `JmxMBeanServer` and a bean of type AnnotationMBeanExporter for you that will take care of registering and will expose your Spring managed beans as MBean
+
+```java
+@SpringBootApplication
+@EnableMBeanExport
+public class Application {
+
+	public static void main(String[] args) throws IOException {
+		ConfigurableApplicationContext ctx = SpringApplication.run(Application.class, args);
+		log.info("Started ...");
+		System.in.read();
+		ctx.close();
+	}
+}
+```
+
+- Spring `MBeanExporter` exposes existing POJO beans to the `MBeanServer` without the need to write the registration code. Spring beans must be annotated with the proper annotations.
+	- `@ManagedResource` marks all instances of a `JmxCounterImpl` as JMX managed resources.
+	- `objectName` of the managed bean is either derived from the fully qualified class name or passed as attribute to the `@ManagedResource`
+	- `@ManagedOperation` marks the method as a JMX operation
+	- `@ManagedAttribute` marks a getter or setter as one half of a JMX attribute.
+
+```java
+@ManagedResource(description = "sample JMX managed resource", objectName="bean:name=jmxCounter")
+public class JmxCounterImpl implements JmxCounter {
+	
+    private int counter =0;
+    
+    @ManagedOperation(description = "Increment the counter")
+    @Override
+    public int add() {
+        return ++counter;
+    }
+    
+    @ManagedAttribute(description = "The counter")
+    @Override
+    public int getCount() {
+        return counter;
+    }
+}
+```
+
+![alt text](images/pet-sitter/Screenshot_34.png)
+
+- Using `jconsole` we can check our MBean 
+
+![alt text](images/pet-sitter/Screenshot_35.png)
+
+![alt text](images/pet-sitter/Screenshot_36.png)
+
+![alt text](images/pet-sitter/Screenshot_37.png)
 

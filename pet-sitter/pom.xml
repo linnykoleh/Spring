@@ -62,6 +62,7 @@
         <module>15-ps-ws-rest-practice</module>
         <module>15-ps-ws-rest-solution</module>
         <module>15-ps-rest-boot-sample</module>
+        <module>16-ps-jmx-sample</module>
     </modules>
 
     <build>
