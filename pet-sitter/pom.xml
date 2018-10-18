@@ -61,6 +61,7 @@
         <module>14-ps-ws-sample</module>
         <module>15-ps-ws-rest-practice</module>
         <module>15-ps-ws-rest-solution</module>
+        <module>15-ps-rest-boot-sample</module>
     </modules>
 
     <build>

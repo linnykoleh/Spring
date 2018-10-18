@@ -3744,3 +3744,48 @@ public class StandaloneRestUserControllerTest {
 	- Because of statelessness of REST systems, multiple servers can be behind a load-balancer and provide services transparently, which means increased scalability.
 	- Because of the uniform interface, little or no documentation of the resources and basic operations API is necessary.
 	- Using REST does not imply specific libraries at client level in order to communicate with the server. With REST, all that is needed is a network connection.
+	
+## RESTful Spring Application with Spring Boot
+
+- Spring Boot is very practical for writing RESTful applications, because it automatically configures the infrastructure beans necessary in the background, and all that is left for the developer to do is to create REST controller classes
+
+- Add start point for spring boot appication
+
+```java
+@Slf4j
+@SpringBootApplication
+public class Application {
+
+	public static void main(String[] args) throws IOException {
+		final ConfigurableApplicationContext ctx = SpringApplication.run(Application.class, args);
+		log.info("Started ...");
+		System.in.read();
+		ctx.close();
+	}
+}
+```
+
+- Provide implementation for `@RestController`
+
+```java
+@RestController
+public class RestUserController {
+
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public List<User>  all() {
+        ...
+    }
+    
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "/users", method = RequestMethod.POST)
+    public void create(@RequestBody @Valid User newUser,
+            @Value("#{request.requestURL}")
+            StringBuffer originalUrl, HttpServletResponse response)
+                throws UserException {
+        ...
+    }
+    ...
+}
+```
+
+
