@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void create(String email, String password, UserType userType) {
-        User user = buildUser(email);
+        final User user = buildUser(email);
         user.setPassword(password);
         user.setUserType(userType);
         userRepo.save(user);

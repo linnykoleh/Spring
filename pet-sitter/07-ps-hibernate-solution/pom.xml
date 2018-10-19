@@ -25,6 +25,19 @@
             <artifactId>HikariCP</artifactId>
             <version>3.2.0</version>
         </dependency>
+
+        <!-- Log and format SQL statements-->
+        <dependency>
+            <groupId>p6spy</groupId>
+            <artifactId>p6spy</artifactId>
+            <version>3.7.0</version>
+        </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>net.ttddyy</groupId>-->
+            <!--<artifactId>datasource-proxy</artifactId>-->
+            <!--<version>1.4.10</version>-->
+        <!--</dependency>-->
     </dependencies>
 
 </project>
