@@ -11,6 +11,7 @@
 
     <modules>
         <module>spring-integration-demo</module>
+        <module>spring-integration</module>
     </modules>
 
 

@@ -21,7 +21,6 @@ public class UserMessageEndpoint {
         this.userMessageRepository = userMessageRepository;
     }
 
-
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getUserRequest")
     @ResponsePayload
     public GetUserResponse getUser(@RequestPayload GetUserRequest request) {
