@@ -3902,7 +3902,7 @@ public class Application {
 @ManagedResource(description = "sample JMX managed resource", objectName="bean:name=jmxCounter")
 public class JmxCounterImpl implements JmxCounter {
 	
-    private int counter =0;
+    private int counter = 0;
     
     @ManagedOperation(description = "Increment the counter")
     @Override
@@ -3923,8 +3923,19 @@ public class JmxCounterImpl implements JmxCounter {
 - Using `jconsole` we can check our MBean 
 
 ![alt text](images/pet-sitter/Screenshot_35.png)
-
+ 
 ![alt text](images/pet-sitter/Screenshot_36.png)
 
 ![alt text](images/pet-sitter/Screenshot_37.png)
 
+## Spring Integration
+
+### Core Integration Components 
+
+![alt text](images/integration/Screenshot_1.png)
+
+![alt text](images/integration/Screenshot_2.png)
+
+![alt text](images/integration/Screenshot_3.png)
+
+![alt text](images/integration/Screenshot_4.png)

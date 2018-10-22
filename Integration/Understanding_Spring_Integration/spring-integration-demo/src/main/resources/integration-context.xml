@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-4.2.xsd">
+
+	<!-- Endpoint -->	
+	<int:gateway service-interface="com.oreilly.demo.CustomGateway" default-request-channel="inputChannel">
+		<int:method name="print"/>	
+	</int:gateway>
+
+	<!-- Channel -->
+	<int:channel id="inputChannel"/>
+
+	<!-- Endpoint -->	
+	<int:service-activator ref="reverseService" input-channel="inputChannel" method="reverse"/>
+
+	<!-- Spring Bean -->
+	<bean id="printService" class="com.oreilly.demo.PrintService"/>
+
+	<!--  Spring Bean -->
+	<bean id="reverseService" class="com.oreilly.demo.ReverseService"/>
+
+</beans>
