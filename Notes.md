@@ -3828,6 +3828,11 @@ mbs.registerMBean(mbean, name);
 
 ### Spring JMX
 
+- JMX is a technology that enables you to instrument applications for management, monitoring, and configuration
+- JMX MBeans makes it possible for a JMX-based management tool such as JConsole or VisualVM to peer inside a running application to view the beans’ properties and invoke their methods.
+
+![alt text](images/integration/Screenshot_1.png)
+
 - Spring’s JMX support provides four core features:
 	- The automatic registration of any Spring bean as a JMX MBean.
     - A flexible mechanism for controlling the management interface of your beans.
@@ -3927,15 +3932,3 @@ public class JmxCounterImpl implements JmxCounter {
 ![alt text](images/pet-sitter/Screenshot_36.png)
 
 ![alt text](images/pet-sitter/Screenshot_37.png)
-
-## Spring Integration
-
-### Core Integration Components 
-
-![alt text](images/integration/Screenshot_1.png)
-
-![alt text](images/integration/Screenshot_2.png)
-
-![alt text](images/integration/Screenshot_3.png)
-
-![alt text](images/integration/Screenshot_4.png)
