@@ -16,7 +16,6 @@
 
     <modules>
         <module>SimpleRMI</module>
-        <module>Understanding_Spring_Integration</module>
     </modules>
 
 </project>
