@@ -1,0 +1,20 @@
+# Spring properties
+spring:
+  application:
+     name: users-service  # Service registers under this name
+
+# HTTP Server
+server:
+  port: 4001   # HTTP (Tomcat) port
+
+# Discovery Server Access
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://localhost:3000/eureka/
+
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    preferIpAddress: false

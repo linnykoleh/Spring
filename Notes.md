@@ -3933,3 +3933,113 @@ public class JmxCounterImpl implements JmxCounter {
 ![alt text](images/pet-sitter/Screenshot_36.png)
 
 ![alt text](images/pet-sitter/Screenshot_37.png)
+
+## Spring Microservices with Spring Cloud
+
+- Microservices are a specialization and implementation approach for service-oriented architectures (SOA), and they are used to build flexible, independently deployable services. 
+Microservices is a paradigm that requires for services to be broken down into highly specialized instances as functionality and be interconnected through agnostic communication protocols (like REST, for example) that work together to accomplish a common business goal. 
+Each microservice is a really small unit of stateless functionality, a process that does not care where the input is coming from and does not know where its output is going
+
+- Microservices’ modular architectural style seems particularly well suited to cloud-based environments.
+- A microservice must be able to scale, up or down, independently of other services in the same application.
+- Microservices architectural idea is similar to how beans are managed by the Spring container and how they communicate in a Spring application context.
+
+![alt text](images/pet-sitter/Screenshot_38.png)
+
+- Spring Cloud builds on Spring Boot
+- To develop a microservices application with Spring components, good knowledge of the following Spring technologies is needed:
+	- a service registration and discovery technology like Netflix’s OSS Eureka
+	- Spring Cloud projects like Eureka or Consul
+	- REST concepts
+
+- **Spring Cloud** is a big umbrella project that provides development tools designed to ease the development of distributed applications.	
+	- configuration management (Spring Cloud Config provides centralized external configuration backed by a Git repository)
+	- service discovery (Eureka is an AWS Service registry for resilient midtier load balancing and failover and is supported by Spring Cloud)
+	- circuit breakers (Spring Cloud supports Netflix’s Hystrix, which is a library that provides components that stop calling services when a response is not received by a predefined threshold)
+	- intelligent routing (Zuul, used to forward and distribute calls to services)
+	- micro-proxy (client-side proxies to midtier services)
+	- control bus (a messaging system can be used for monitoring and managing the components within the framework, as is used for “application-level” messaging)
+	- one-time tokens (used for data access only once with Spring Vault)
+	- global locks (used to coordinate, prioritize, or restrict access to resources)
+	- leadership election (the process of designating a single process as the organizer of some task distributed among several nodes)
+	- distributed sessions (sessions distributed across multiple servlet servers)
+	- cluster state (cluster state request is routed to the master node, to ensure that the latest cluster state is returned)
+	- client-side load balancing
+	
+### Registration and Discovery Server
+
+- To communicate with each other, they first have to know “of” each other. This is where the **Neflix Eureka** registration server comes in
+
+```java
+@SpringBootApplication
+@EnableEurekaServer
+public class DiscoveryServer {
+	
+        public static void main(String args) throws IOException {
+                // Tell server to look for discovery.properties or discovery.yml
+                System.setProperty("spring.config.name",  "discovery");
+                
+                ConfigurableApplicationContext ctx = SpringApplication.run(DiscoveryServer.class,  args);
+                System.in.read();
+                ctx.close();
+        }
+}
+```
+
+- To use the Eureka Server in a project, the `spring-cloud-starter-eureka-server` starter project must be included as a dependency of the project
+- `@EnableEurekaServer` annotation, which is responsible for injecting a Eureka server instance into your project.
+- The `discovery.yml` file contains settings for this server
+	- If the `port` value is not specified, the default value for the port is implicitly set to 8761
+	- `waitTimeInMsWhenSyncEmpty` - it was designed so that clients would not get partial/empty registry information until the server has had enough time to build the registry
+	- `eureka.client.registerWithEureka` property has “true” as a default value and is used to register Eureka clients. Since the application above registers a server, it must be explicitly set to "false" to stop the server from trying to register itself.
+
+```yaml
+# Configure this Discovery Server
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: false # do not auto-register as client
+    fetchRegistry: false
+
+server:
+  port: 3000   # where this discovery server is accessible
+  waitTimeInMsWhenSyncEmpty: 0
+
+```
+
+![alt text](images/pet-sitter/Screenshot_39.png)
+
+### Microservices Development
+
+- `@EnableDiscoveryClient` annotation, which is the key component that transforms this application into a microservice, because it enables service registration and discovery
+	- The `Spring section` defines the application name as pets-service. The microservice will register itself with this name with the Eureka server.
+	- The `HTTP Server section` defines the custom port to listen on.
+	- The `Discovery Server Access section`  defines the URL where the server to register to 
+		- `eureka.client.registerWithEureka` property has "true" as a default value and is used to register Eureka clients.
+		- `eureka.instance.preferIpAddress` is used to tell the Eureka server whether it should use the domain name or an IP.
+
+```yaml
+# Spring properties
+spring:
+  application:
+     name: pets-service # Service registers under this name
+     
+# HTTP Server
+server:
+  port: 4000 # HTTP (Tomcat) port
+  
+# Discovery Server Access
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:3000/eureka/
+  instance:
+  leaseRenewalIntervalInSeconds: 5
+  preferIpAddress: false
+```
+
+- `@LoadBalanced` annotation, which marks the injected RestTemplate bean to be configured to use a `LoadBalancerClient` implementation.
+	- `RestTemplate` is thread-safe

@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: web-service
+  freemarker:
+    enabled: false     # Ignore Eureka dashboard FreeMarker templates
+  thymeleaf:
+    cache: false
+    prefix: classpath:/web-server/templates/
+
+error:
+  path=/error
+
+# HTTP Server
+server:
+  port: 4002   # HTTP (Tomcat) port
+
+eureka:
+  instance:
+     leaseRenewalIntervalInSeconds: 5
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:3000/eureka/
+
+
