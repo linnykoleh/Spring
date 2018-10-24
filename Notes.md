@@ -3968,7 +3968,10 @@ Each microservice is a really small unit of stateless functionality, a process t
 	
 ### Registration and Discovery Server
 
-- To communicate with each other, they first have to know “of” each other. This is where the **Neflix Eureka** registration server comes in
+- To communicate with each other, they first have to know “of” each other. 
+	- `Eureka` - by Netflix
+	- `Consul.io` - by Hashicorp
+- Annotate @SpringBootApplication with @EnableEurekaServer
 
 ```java
 @SpringBootApplication
@@ -3985,7 +3988,7 @@ public class DiscoveryServer {
         }
 }
 ```
-
+- Provide Eureka config to application.properties (or application.yml)
 - To use the Eureka Server in a project, the `spring-cloud-starter-eureka-server` starter project must be included as a dependency of the project
 - `@EnableEurekaServer` annotation, which is responsible for injecting a Eureka server instance into your project.
 - The `discovery.yml` file contains settings for this server
@@ -4010,7 +4013,10 @@ server:
 
 ![alt text](images/pet-sitter/Screenshot_39.png)
 
-### Microservices Development
+### Microservices Registration
+
+- Annotate `@SpringBootApplication` with `@EnableDiscoveryClient`
+- Each microservice is a spring boot app
 
 - `@EnableDiscoveryClient` annotation, which is the key component that transforms this application into a microservice, because it enables service registration and discovery
 	- The `Spring section` defines the application name as pets-service. The microservice will register itself with this name with the Eureka server.
@@ -4041,5 +4047,21 @@ eureka:
   preferIpAddress: false
 ```
 
+- Inject `RestTemplate` using `@Autowired` with additional `@LoadBalanced`
+- `RestService` automatically looks up microservice by logical name and provides load-balancing
+- `Ribbon` service by Netflix provides load balancing
 - `@LoadBalanced` annotation, which marks the injected RestTemplate bean to be configured to use a `LoadBalancerClient` implementation.
 	- `RestTemplate` is thread-safe
+	
+```java
+@Autowired
+@LoadBalanced
+private RestTemplate restTemplate;
+```
+
+Then call specific Microservice with the `restTemplate`
+
+```java
+
+User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.class, id);
+```	
