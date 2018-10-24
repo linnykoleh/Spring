@@ -3899,9 +3899,10 @@ public class Application {
 
 - Spring `MBeanExporter` exposes existing POJO beans to the `MBeanServer` without the need to write the registration code. Spring beans must be annotated with the proper annotations.
 	- `@ManagedResource` marks all instances of a `JmxCounterImpl` as JMX managed resources.
-	- `objectName` of the managed bean is either derived from the fully qualified class name or passed as attribute to the `@ManagedResource`
+		- `objectName` of the managed bean is either derived from the fully qualified class name or passed as attribute to the `@ManagedResource`
 	- `@ManagedOperation` marks the method as a JMX operation
 	- `@ManagedAttribute` marks a getter or setter as one half of a JMX attribute.
+	- `@EnableMBeanExport` – registers with the JMX Agent all components annotated with the `@ManagedResource`
 
 ```java
 @ManagedResource(description = "sample JMX managed resource", objectName="bean:name=jmxCounter")

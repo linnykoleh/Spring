@@ -16,6 +16,7 @@
 
     <modules>
         <module>SimpleRMI</module>
+        <module>SimpleJMX</module>
     </modules>
 
 </project>
