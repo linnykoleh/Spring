@@ -4024,6 +4024,8 @@ To use the Eureka Server in a project, the `spring-cloud-starter-eureka-server` 
 
 ![alt text](images/spring_cloud/Screenshot_4.png)	
 
+![alt text](images/spring_cloud/Screenshot_5.png)	
+
 ![alt text](images/pet-sitter/Screenshot_39.png)
 
 ### Microservices Registration
