@@ -17,6 +17,7 @@
         <module>DB</module>
         <module>SpringWEB</module>
         <module>Integration</module>
+        <module>SpringCloud</module>
     </modules>
 
     <dependencies>

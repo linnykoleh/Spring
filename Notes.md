@@ -3968,10 +3968,19 @@ Each microservice is a really small unit of stateless functionality, a process t
 	
 ### Registration and Discovery Server
 
-- To communicate with each other, they first have to know “of” each other. 
+![alt text](images/spring_cloud/Screenshot_1.png)
+
+![alt text](images/spring_cloud/Screenshot_2.png)
+
+- Implementations 
 	- `Eureka` - by Netflix
-	- `Consul.io` - by Hashicorp
-- Annotate @SpringBootApplication with @EnableEurekaServer
+	- `Consul` - by Hashicorp
+	- `Zookeeper` - by Apache
+	
+![alt text](images/spring_cloud/Screenshot_3.png)	
+	
+- Annotate `@SpringBootApplication` with `@EnableEurekaServer`
+- `@EnableEurekaServer` annotation, which is responsible for injecting a Eureka server instance into your project. 
 
 ```java
 @SpringBootApplication
@@ -3988,13 +3997,13 @@ public class DiscoveryServer {
         }
 }
 ```
-- Provide Eureka config to application.properties (or application.yml)
-- To use the Eureka Server in a project, the `spring-cloud-starter-eureka-server` starter project must be included as a dependency of the project
-- `@EnableEurekaServer` annotation, which is responsible for injecting a Eureka server instance into your project.
-- The `discovery.yml` file contains settings for this server
-	- If the `port` value is not specified, the default value for the port is implicitly set to 8761
-	- `waitTimeInMsWhenSyncEmpty` - it was designed so that clients would not get partial/empty registry information until the server has had enough time to build the registry
-	- `eureka.client.registerWithEureka` property has “true” as a default value and is used to register Eureka clients. Since the application above registers a server, it must be explicitly set to "false" to stop the server from trying to register itself.
+- Provide Eureka config to `application.properties` (or `application.yml`)
+    - The `application.yml` file contains settings for this server
+        - `waitTimeInMsWhenSyncEmpty` - it was designed so that clients would not get partial/empty registry information until the server has had enough time to build the registry
+        - `eureka.client.registerWithEureka` property has “true” as a default value and is used to register Eureka clients. Since the application above registers a server, it must be explicitly set to "false" to stop the server from trying to register itself.
+        - `eureka.client.fetch-registry` - Indicates whether this client should fetch eureka registry information from eureka server.
+        - `server.port` - default value for the port is implicitly set to 8761
+
 
 ```yaml
 # Configure this Discovery Server
@@ -4011,12 +4020,30 @@ server:
 
 ```
 
+To use the Eureka Server in a project, the `spring-cloud-starter-eureka-server` starter project must be included as a dependency of the project
+
+![alt text](images/spring_cloud/Screenshot_4.png)	
+
 ![alt text](images/pet-sitter/Screenshot_39.png)
 
 ### Microservices Registration
 
-- Annotate `@SpringBootApplication` with `@EnableDiscoveryClient`
 - Each microservice is a spring boot app
+- To use the Eureka Client in a project, the `spring-cloud-starter-eureka` starter project must be included as a dependency of the project
+
+- Annotate `@SpringBootApplication` with `@EnableDiscoveryClient`
+
+```java
+@EnableDiscoveryClient
+@SpringBootApplication
+public class ServiceApplication {
+	
+	public static void main(String[] args) {
+		SpringApplication.run(ServiceApplication.class, args);
+	}
+	
+}
+```
 
 - `@EnableDiscoveryClient` annotation, which is the key component that transforms this application into a microservice, because it enables service registration and discovery
 	- The `Spring section` defines the application name as pets-service. The microservice will register itself with this name with the Eureka server.
@@ -4024,6 +4051,7 @@ server:
 	- The `Discovery Server Access section`  defines the URL where the server to register to 
 		- `eureka.client.registerWithEureka` property has "true" as a default value and is used to register Eureka clients.
 		- `eureka.instance.preferIpAddress` is used to tell the Eureka server whether it should use the domain name or an IP.
+		- `eureka.client.service-url.defaultZone` - where Discovery Server is located
 
 ```yaml
 # Spring properties
