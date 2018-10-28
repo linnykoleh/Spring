@@ -4100,7 +4100,7 @@ User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.c
 
 ![alt text](images/spring_cloud/Screenshot_6.png)
 
-#### Using Spring Cloud Config Server
+##### Using Spring Cloud Config Server
 
 ![alt text](images/spring_cloud/Screenshot_7.png)
 
@@ -4112,15 +4112,26 @@ User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.c
 
 ![alt text](images/spring_cloud/Screenshot_11.png)
 
-#### Config Server REST Support: Parameters
+##### Config Server REST Support: Parameters
 
 ![alt text](images/spring_cloud/Screenshot_12.png)
 
-#### Config Server REST Support: Endpoints
+##### Config Server REST Support: Endpoints
 
 ![alt text](images/spring_cloud/Screenshot_13.png)
 
 ![alt text](images/spring_cloud/Screenshot_14.png)
 
-![alt text](images/spring_cloud/Screenshot_15.png)
+![alt text](images/spring_cloud/Screenshot_15.png
 
+#### Using Spring Cloud Config Client
+
+![alt text](images/spring_cloud/Screenshot_16.png)
+
+![alt text](images/spring_cloud/Screenshot_17.png)
+
+![alt text](images/spring_cloud/Screenshot_18.png)
+
+#### Refreshing configuration at runtime
+
+![alt text](images/spring_cloud/Screenshot_19.png)

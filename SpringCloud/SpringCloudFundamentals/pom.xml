@@ -14,6 +14,7 @@
         <module>application-service</module>
         <module>discovery-client</module>
         <module>config-server</module>
+        <module>config-client-app</module>
     </modules>
 
 </project>

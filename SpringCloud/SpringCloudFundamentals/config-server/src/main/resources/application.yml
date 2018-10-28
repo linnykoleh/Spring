@@ -7,3 +7,10 @@ spring:
       server:
         git:
           uri: https://github.com/LinnykOleh/scf-config-repository.git
+  application:
+    name: configserver
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
