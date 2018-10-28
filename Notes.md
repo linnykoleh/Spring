@@ -4094,4 +4094,33 @@ Then call specific Microservice with the `restTemplate`
 ```java
 
 User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.class, id);
-```	
+```
+
+### Application Configuration server
+
+![alt text](images/spring_cloud/Screenshot_6.png)
+
+#### Using Spring Cloud Config Server
+
+![alt text](images/spring_cloud/Screenshot_7.png)
+
+![alt text](images/spring_cloud/Screenshot_8.png)
+
+![alt text](images/spring_cloud/Screenshot_9.png)
+
+![alt text](images/spring_cloud/Screenshot_10.png)
+
+![alt text](images/spring_cloud/Screenshot_11.png)
+
+#### Config Server REST Support: Parameters
+
+![alt text](images/spring_cloud/Screenshot_12.png)
+
+#### Config Server REST Support: Endpoints
+
+![alt text](images/spring_cloud/Screenshot_13.png)
+
+![alt text](images/spring_cloud/Screenshot_14.png)
+
+![alt text](images/spring_cloud/Screenshot_15.png)
+
