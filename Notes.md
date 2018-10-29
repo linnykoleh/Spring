@@ -4135,3 +4135,23 @@ User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.c
 #### Refreshing configuration at runtime
 
 ![alt text](images/spring_cloud/Screenshot_19.png)
+
+### Intelligent Routing with Netflix Zuul
+
+![alt text](images/spring_cloud/Screenshot_20.png)
+
+![alt text](images/spring_cloud/Screenshot_21.png)
+
+![alt text](images/spring_cloud/Screenshot_22.png)
+
+![alt text](images/spring_cloud/Screenshot_23.png)
+
+![alt text](images/spring_cloud/Screenshot_24.png)
+
+![alt text](images/spring_cloud/Screenshot_25.png)
+
+![alt text](images/spring_cloud/Screenshot_26.png)
+
+![alt text](images/spring_cloud/Screenshot_27.png)
+
+

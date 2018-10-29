@@ -15,6 +15,8 @@
         <module>discovery-client</module>
         <module>config-server</module>
         <module>config-client-app</module>
+        <module>gateway-service</module>
+        <module>routing-hello-service</module>
     </modules>
 
 </project>
