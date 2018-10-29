@@ -4122,7 +4122,7 @@ User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.c
 
 ![alt text](images/spring_cloud/Screenshot_14.png)
 
-![alt text](images/spring_cloud/Screenshot_15.png
+![alt text](images/spring_cloud/Screenshot_15.png)
 
 #### Using Spring Cloud Config Client
 

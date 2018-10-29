@@ -17,6 +17,7 @@
         <module>config-client-app</module>
         <module>gateway-service</module>
         <module>routing-hello-service</module>
+        <module>routing-goodbye-service</module>
     </modules>
 
 </project>

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.learning.linnyk</groupId>
-    <artifactId>routing-hello-service</artifactId>
+    <artifactId>routing-goodbye-service</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <name>hello-service</name>
@@ -58,4 +58,5 @@
             </plugin>
         </plugins>
     </build>
+    
 </project>
