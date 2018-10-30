@@ -4154,4 +4154,34 @@ User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.c
 
 ![alt text](images/spring_cloud/Screenshot_27.png)
 
+### Load Balancing with Netflix Ribbon
+
+![alt text](images/spring_cloud/Screenshot_28.png)
+
+![alt text](images/spring_cloud/Screenshot_29.png)
+
+- **Client-side load balancing is a natural fit for cloud native architectures**
+
+![alt text](images/spring_cloud/Screenshot_30.png)
+
+![alt text](images/spring_cloud/Screenshot_31.png)
+
+![alt text](images/spring_cloud/Screenshot_32.png)
+
+- By default it uses **round-robbin algorithm** for distributing the load
+
+![alt text](images/spring_cloud/Screenshot_33.png)
+
+#### Load Balancing Strategies
+
+![alt text](images/spring_cloud/Screenshot_34.png)
+
+![alt text](images/spring_cloud/Screenshot_35.png)
+
+#### Liveliness Check
+
+![alt text](images/spring_cloud/Screenshot_36.png)
+
+![alt text](images/spring_cloud/Screenshot_37.png)
+
 
