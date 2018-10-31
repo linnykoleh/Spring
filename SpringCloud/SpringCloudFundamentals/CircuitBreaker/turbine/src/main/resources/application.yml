@@ -1,0 +1,15 @@
+server:
+    port: 3000
+
+spring:
+  application:
+    name: turbine-aggregator
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+turbine:
+  app-config: weather-app,datetime-app
+  cluster-name-expression: "'default'"

@@ -4184,4 +4184,57 @@ User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.c
 
 ![alt text](images/spring_cloud/Screenshot_37.png)
 
+### Circuit Breaker with Netflix Hystrix
+
+- Multiple issues at play
+	- `Fault tolerance` problem
+	- `Resourse overloading` problem
+
+![alt text](images/spring_cloud/Screenshot_38.png)
+
+![alt text](images/spring_cloud/Screenshot_39.png)
+
+![alt text](images/spring_cloud/Screenshot_40.png)
+
+![alt text](images/spring_cloud/Screenshot_41.png)
+
+![alt text](images/spring_cloud/Screenshot_42.png)
+
+![alt text](images/spring_cloud/Screenshot_43.png)
+
+#### Netflix Hystrix Dashboard
+
+![alt text](images/spring_cloud/Screenshot_44.png)
+
+![alt text](images/spring_cloud/Screenshot_45.png)
+
+![alt text](images/spring_cloud/Screenshot_46.png)
+
+![alt text](images/spring_cloud/Screenshot_47.png)
+
+![alt text](images/spring_cloud/Screenshot_48.png)
+
+![alt text](images/spring_cloud/Screenshot_49.png)
+
+#### Aggregating Hystrix Metrics with Netflix Turbine
+
+![alt text](images/spring_cloud/Screenshot_50.png)
+
+![alt text](images/spring_cloud/Screenshot_51.png)
+
+![alt text](images/spring_cloud/Screenshot_52.png)
+
+![alt text](images/spring_cloud/Screenshot_53.png)
+
+![alt text](images/spring_cloud/Screenshot_54.png)
+
+- Go to `http://localhost:8080/hystrix`
+
+![alt text](images/spring_cloud/Screenshot_55.png)
+
+![alt text](images/spring_cloud/Screenshot_56.png)
+
+### Bring all together
+
+![alt text](images/spring_cloud/Screenshot_57.png)
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.learning.linnyk</groupId>
+    <artifactId>CircuitBreaker</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>discovery-server-circuit-breaker</module>
+        <module>hystrix-weather-service</module>
+        <module>hystrix-weather-app</module>
+        <module>hystrix-dashboard</module>
+        <module>hystrix-datetime-service</module>
+        <module>hystrix-datetime-app</module>
+        <module>turbine</module>
+    </modules>
+
+</project>
