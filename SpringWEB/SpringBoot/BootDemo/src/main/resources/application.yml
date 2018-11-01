@@ -1,0 +1,3 @@
+server:
+  context-path: /app
+  port: 9999
