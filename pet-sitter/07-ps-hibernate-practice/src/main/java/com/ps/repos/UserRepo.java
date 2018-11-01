@@ -7,6 +7,8 @@ import java.util.Set;
 
 public interface UserRepo {
 
+    void flush();
+
     List<User> findAll();
 
     User findById(Long id);

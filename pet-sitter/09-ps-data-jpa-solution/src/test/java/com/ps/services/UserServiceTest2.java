@@ -1,5 +1,6 @@
 package com.ps.services;
 
+import com.ps.base.UserType;
 import com.ps.ents.User;
 import com.ps.repos.UserRepo;
 import com.ps.services.impl.UserServiceImpl;
@@ -28,5 +29,10 @@ public class UserServiceTest2 {
         when(userRepo.findOne(1L)).thenReturn(u);
         User user = userService.findById(1L);
         assertNotNull(user);
+    }
+
+    @Test
+    public void testCreate() {
+       userService.create("test@test.com", "12345", UserType.ADMIN);
     }
 }

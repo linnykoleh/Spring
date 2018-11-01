@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "P_USER")
-@SequenceGenerator(name = "seqGen", allocationSize = 1)
+//@SequenceGenerator(name = "seqGen", allocationSize = 1)
 @NamedQueries({
         @NamedQuery(name = User.FIND_BY_USERNAME_EXACT, query = "from User u where username= :un"),
         @NamedQuery(name = User.FIND_BY_USERNAME_LIKE, query = "from User u where username like :un")

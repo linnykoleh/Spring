@@ -41,4 +41,10 @@ public class TestUserService {
         User user = userService.findById(1L);
         assertNotNull(user);
     }
+
+    @Test
+    public void testCreate() {
+        userService.create("sds", "DDD", UserType.ADMIN);
+        System.out.println("test testCreate");
+    }
 }

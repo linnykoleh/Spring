@@ -42,4 +42,9 @@ public class UserServiceTest {
 		User user = userService.findById(1L);
 		assertNotNull(user);
 	}
+
+	@Test
+	public void testCreateUser() {
+		userService.create("test@test.com", "12345", UserType.ADMIN);
+	}
 }
