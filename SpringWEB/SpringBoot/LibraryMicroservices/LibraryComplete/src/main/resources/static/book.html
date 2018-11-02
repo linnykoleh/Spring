@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Library Catalog</title>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"
+	integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+	crossorigin="anonymous"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#submit").click(function() {
+			$.get("/book/search/title", {
+				"title" : $("input[name='title']").val()
+			}, function(data) {
+				var book = data._embedded.book[0];
+				var thead = "<th>Title</th><th>Author</th><th>Pages</th><th>Reserve</th>"
+				var tbody = "<td>"
+						+ book.title
+						+ "</td><td>"
+						+ book.authorFirstName
+						+ " "
+						+ book.authorLastName
+						+ "</td><td>"
+						+ book.pageCount
+						+ "</td><td><a href=\"\">"
+						+ "Reserve"
+						+ "</a></td>";
+				$("body").append("<table><thead>" +thead+"</thead><tbody>"+tbody +"</tbody></table>");
+			}, "json");
+		});
+	});
+</script>
+</head>
+<body>
+	<div>
+		<label>Title:</label> <input name="title" />
+		<button id="submit">Submit</button>
+	</div>
+</body>
+</html>
