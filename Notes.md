@@ -3936,6 +3936,8 @@ public class JmxCounterImpl implements JmxCounter {
 
 ## Spring Microservices with Spring Cloud
 
+![alt text](images/spring_cloud/diagram-distributed-systems.svg)
+
 - Microservices are a specialization and implementation approach for service-oriented architectures (SOA), and they are used to build flexible, independently deployable services. 
 Microservices is a paradigm that requires for services to be broken down into highly specialized instances as functionality and be interconnected through agnostic communication protocols (like REST, for example) that work together to accomplish a common business goal. 
 Each microservice is a really small unit of stateless functionality, a process that does not care where the input is coming from and does not know where its output is going
@@ -4238,5 +4240,10 @@ User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.c
 
 ### Bring all together
 
+![alt text](images/spring_cloud/Screenshot_59.png)
+
 ![alt text](images/spring_cloud/Screenshot_57.png)
+
+
+
 

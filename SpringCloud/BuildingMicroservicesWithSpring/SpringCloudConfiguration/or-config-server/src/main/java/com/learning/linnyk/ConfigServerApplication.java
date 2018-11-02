@@ -6,7 +6,7 @@ import org.springframework.cloud.config.server.EnableConfigServer;
 
 @EnableConfigServer
 @SpringBootApplication
-public class DiscoveryServerApplication {
+public class ConfigServerApplication {
 
 	/**
 	 * - http://localhost:8888/config-client-development.properties
@@ -15,6 +15,6 @@ public class DiscoveryServerApplication {
 	 */
 
 	public static void main(String[] args) {
-		SpringApplication.run(DiscoveryServerApplication.class, args);
+		SpringApplication.run(ConfigServerApplication.class, args);
 	}
 }
