@@ -4116,6 +4116,8 @@ User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.c
 
 ![alt text](images/spring_cloud/Screenshot_12.png)
 
+![alt text](images/spring_cloud/Screenshot_58.png)
+
 ##### Config Server REST Support: Endpoints
 
 ![alt text](images/spring_cloud/Screenshot_13.png)
