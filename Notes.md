@@ -4148,6 +4148,8 @@ User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.c
 
 ![alt text](images/spring_cloud/Screenshot_22.png)
 
+![alt text](images/spring_cloud/Screenshot_60.png)
+
 ![alt text](images/spring_cloud/Screenshot_23.png)
 
 ![alt text](images/spring_cloud/Screenshot_24.png)
