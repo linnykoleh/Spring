@@ -5,14 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.learning.linnyk</groupId>
-    <artifactId>BuildingMicroservicesWithSpring</artifactId>
+    <artifactId>CircuitBreakingAndMonitoringWithHystrix</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>SpringCloudConfiguration</module>
-        <module>ServiceRegistryAndDiscoveryWithEureka</module>
-        <module>CircuitBreakingAndMonitoringWithHystrix</module>
+        <module>spring-microservices-simple-service</module>
+        <module>spring-microservices-hystrix</module>
     </modules>
 
 </project>
