@@ -5,15 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.learning.linnyk</groupId>
-    <artifactId>BuildingMicroservicesWithSpring</artifactId>
+    <artifactId>LoadBalancingWithRibbon</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
 
     <modules>
-        <module>SpringCloudConfiguration</module>
-        <module>ServiceRegistryAndDiscoveryWithEureka</module>
-        <module>CircuitBreakingAndMonitoringWithHystrix</module>
-        <module>LoadBalancingWithRibbon</module>
+        <module>or-ribbon-cloud-service-server</module>
+        <module>or-ribbon-cloud-service-client</module>
     </modules>
 
 </project>
