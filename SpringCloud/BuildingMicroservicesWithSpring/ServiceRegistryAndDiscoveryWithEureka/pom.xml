@@ -12,6 +12,7 @@
     <modules>
         <module>or-eureka-server</module>
         <module>or-eureka-client</module>
+        <module>or-service</module>
     </modules>
 
 </project>
