@@ -4246,6 +4246,10 @@ User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.c
 
 ![alt text](images/spring_cloud/Screenshot_57.png)
 
+### Spring Cloud Security
+
+![alt text](images/spring_cloud/Screenshot_61.png)
+
 
 
 
