@@ -18,7 +18,7 @@ Page.prototype.bind = function() {
 Page.prototype.bindNavigation = function() {
 	var that = this;
 	$("#my-reservations").click(function() {
-		$.post("http://localhost:5000/reservation/user/" + that.name, function(data) {
+        $.post("http://localhost:5005/reservation/user/" + that.name, function (data) {
 				var html = "<h4>Reservations</h4>"; 
 				html += "<table>";
 				html += "<tr>";
@@ -41,7 +41,7 @@ Page.prototype.bindNavigation = function() {
 	});
 
 	$("#catalog").click(function() {
-		$.post("http://localhost:5001/catalog", function(data) {
+		$.post("http://localhost:5005/catalog", function(data) {
 			var html = "<h4>Catalog</h4>"; 
 			html += "<table>";
 			html += "<tr>";
@@ -58,7 +58,7 @@ Page.prototype.bindNavigation = function() {
 				html += "<td>"+ data[x].authorLastName + ", " + data[x].authorFirstName + "</td>";
 				html += "<td>"+ data[x].pages +"</td>";
 				html += "<td>"+ data[x].genre +"</td>";
-				html += "<td><a href=\"http://localhost:5000/reservation/user/{user}/book/" + data[x].bookId +"\" class=\"reserve-link\">Reserve</a></td>";
+				html += "<td><a href=\"http://localhost:5005/reservation/user/{user}/book/" + data[x].bookId +"\" class=\"reserve-link\">Reserve</a></td>";
 				html += "</tr>";
 			}
 			html += "</table>";

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 @RestController
 @EnableEurekaClient
-public class SpringMicroservicesLibraryCatalogApplication {
+public class CatalogLibraryMicroservice {
 
 	//https://github.com/LinnykOleh/scf-config-repository/blob/master/catalog-default.properties
 	@Value("${catalog.size}")
@@ -26,6 +26,6 @@ public class SpringMicroservicesLibraryCatalogApplication {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringMicroservicesLibraryCatalogApplication.class, args);
+		SpringApplication.run(CatalogLibraryMicroservice.class, args);
 	}
 }

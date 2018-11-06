@@ -1,12 +1,5 @@
 package com.oreilly.cloud;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,10 +9,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.*;
+
 @SpringBootApplication
 @RestController
 @EnableEurekaClient
-public class SpringMicroservicesLibraryReservationApplication {
+public class ReservationLibraryMicroservice {
 
 	@Value("${server.port}")
 	private String port;
@@ -42,7 +37,7 @@ public class SpringMicroservicesLibraryReservationApplication {
 	@CrossOrigin
 	@RequestMapping("/reservation/user/{username}")
 	public List<Reservation> reservationsByUser(@PathVariable("username") String username) {
-		List<Reservation> tmpReservations = new ArrayList<Reservation>();
+		List<Reservation> tmpReservations = new ArrayList<>();
 		for (Reservation reservation : this.reservations.values()) {
 			if (reservation.getUsername().equals(username)) {
 				tmpReservations.add(reservation);
@@ -52,6 +47,6 @@ public class SpringMicroservicesLibraryReservationApplication {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringMicroservicesLibraryReservationApplication.class, args);
+		SpringApplication.run(ReservationLibraryMicroservice.class, args);
 	}
 }
