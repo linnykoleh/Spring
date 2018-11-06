@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.learning.linnyk</groupId>
-    <artifactId>AuthorizationServer</artifactId>
+    <artifactId>AuthorizationResource</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>spring-microservices-oauth-server</name>
+    <name>spring-microservices-oauth-resource</name>
     <description>Demo project for Spring Boot</description>
 
     <parent>
@@ -38,12 +38,9 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-
-        <!--H2-->
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.196</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <dependency>
@@ -52,14 +49,20 @@
             <scope>test</scope>
         </dependency>
 
-	</dependencies>
+        <!--H2-->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.196</version>
+        </dependency>
+    </dependencies>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Camden.SR3</version>
+                <version>Camden.SR2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

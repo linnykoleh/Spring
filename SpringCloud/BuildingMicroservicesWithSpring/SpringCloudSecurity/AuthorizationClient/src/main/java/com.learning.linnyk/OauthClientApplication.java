@@ -49,7 +49,7 @@ public class OauthClientApplication {
     @RequestMapping("/execute")
     public String execute(Principal principal) throws URISyntaxException {
         final User user = (User) ((Authentication) principal).getPrincipal();
-        final URI uri = new URI("http://localhost:9090/resource/endpoint");
+        final URI uri = new URI("http://localhost:7070/resource/endpoint");
 
         final RequestEntity<String> requestEntity = new RequestEntity<>(HttpMethod.GET, uri);
         final AccessTokenRequest accessTokenRequest = oAuth2RestTemplate.getOAuth2ClientContext().getAccessTokenRequest();

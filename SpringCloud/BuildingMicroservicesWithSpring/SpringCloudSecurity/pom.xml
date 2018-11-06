@@ -12,7 +12,7 @@
     <modules>
         <module>AuthorizationServer</module>
         <module>AuthorizationClient</module>
-        <module>HSQLDBServer</module>
+        <module>AuthorizationResource</module>
     </modules>
 
 </project>
