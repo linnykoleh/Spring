@@ -5,18 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.learning.linnyk</groupId>
-    <artifactId>BuildingMicroservicesWithSpring</artifactId>
+    <artifactId>SpringCloudSampleProject</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>SpringCloudConfiguration</module>
-        <module>ServiceRegistryAndDiscoveryWithEureka</module>
-        <module>CircuitBreakingAndMonitoringWithHystrix</module>
-        <module>LoadBalancingWithRibbon</module>
-        <module>APIGatewayServiceWithZuul</module>
-        <module>SpringCloudSecurity</module>
-        <module>SpringCloudSampleProject</module>
+        <module>spring-microservices-library-catalog</module>
+        <module>spring-microservices-library-reservation</module>
+        <module>spring-microservices-library-ui</module>
+        <module>spring-microservices-library-config</module>
+        <module>spring-microservices-library-registry</module>
     </modules>
 
 </project>

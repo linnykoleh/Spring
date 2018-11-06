@@ -1,0 +1,22 @@
+#sidebar {
+	float: left;
+	margin: 0px 3px;
+	list-style: none;
+}
+
+h4 {
+	margin: 3px;
+}
+
+#content {
+	float: left;
+	padding: 0px 0px 0px 20px;
+}
+
+#my-reservations,#catalog{
+	cursor: pointer;
+}
+
+td{
+	padding: 0px 5px;
+}
