@@ -3154,6 +3154,16 @@ public void customize(ConfigurableEmbeddedServletContainer container) {
 	- If needed, specific autoconfiguration classes can be excluded explicitly
 	- `@EnableAutoConfiguration(exclude=DataSourceAutoConfiguration.class)`
 	
+### Spring actuator dependency
+
+- provides ready features to help monitor and manage application
+```xml
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+```	
+	
 ## Integration
 
 - Remoting and Web Services are ways of communicating between applications
@@ -3451,6 +3461,8 @@ public Queue userQueue(){
 </soapenv:Envelope>
 ```
 
+![alt text](images/integration/Screenshot_2.png)  
+
 - The XSD schema defines the web service domain and the operations that can be performed using web services
 - WSDL defines a network interface that consists of endpoints that get messages and then sometimes reply with messages. 
 - WSDL describes the endpoints, and the request and reply messages
@@ -3479,6 +3491,8 @@ public Queue userQueue(){
 - REST uses HTTP for all four CRUD (Create/Read/Update/Delete) operations
 
 ![alt text](images/pet-sitter/Screenshot_25.png) 
+
+![alt text](images/integration/Screenshot_3.png)  
 
 - URIs (Uniform Resource Identifiers) are used to identify resources
 - HTTP response: response codes, body, and headers are used to deliver the state to clients
