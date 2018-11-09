@@ -2,11 +2,11 @@
 
 [https://docs.spring.io/spring/docs/5.0.3.RELEASE](https://docs.spring.io/spring/docs/5.0.3.RELEASE/spring-framework-reference/index.html)
 
-## Spring Configuration
+# Spring Configuration
 
 
 
-### XML Spring Configuration
+## XML Spring Configuration
 
 ```
 In order to tell the Spring Container to create these objects and how to link them together, a configuration must be provided. 
@@ -17,7 +17,7 @@ In Spring, there are two types of dependency injection specific to XML: via **co
 
 For XML, the class **org.springframework.context.support.ClassPathXmlApplicationContext** is used.
 
-### Constructor Injection
+## Constructor Injection
 
 Constructor injection can be used to define beans when the bean type is a class that has a constructor with arguments defined.
 
@@ -135,7 +135,7 @@ then the attribute definition with c: should match the pattern c:nameConstructor
 while if you are using indexes, the attribute definition should match c:_{index}[-ref].
 ```
 
-### Setter Injection
+## Setter Injection
       
 - When creating a bean using setter injection, the bean is first `instantiated` by calling the constructor and then `initialized` by injecting the dependencies using setters.
 - `<property />` element defines the property to be set and the value to be set with and does so using a pair of attributes: **[name, ref]** or **[name,value]**.
@@ -197,7 +197,7 @@ public class ComplexBeanImpl implements ComplexBean {
 </beans>
 ```
 
-### Collections
+## Collections
 
 #### List
 
@@ -270,7 +270,7 @@ public class ComplexBeanImpl implements ComplexBean {
 </beans>
 ```
 
-### Using Bean Factories
+## Using Bean Factories
 
 #### factory-method
 
@@ -345,7 +345,7 @@ public class SpringFactoryBean implements FactoryBean<SimpleBean> {
 }    
 ```
 
-### Import configuration files
+## Import configuration files
 
 ![alt text](images/pet-sitter/Screenshot_1.png "Screenshot_1")
 
@@ -364,7 +364,7 @@ public class SpringFactoryBean implements FactoryBean<SimpleBean> {
 </beans>
 ```
 
-### Application Context and Bean Lifecycle 
+## Application Context and Bean Lifecycle 
 
 ![alt text](images/pet-sitter/Screenshot_3.png "Screenshot_3")
 
@@ -386,7 +386,7 @@ public class SpringFactoryBean implements FactoryBean<SimpleBean> {
 	- Annotating with `@PostConstruct` the method that is called right after the bean is instantiated and dependencies injected
 	- The equivalent of the `init-method` attribute when using Java Configuration `@Bean(initMethod="...")`.	
 	
-### Initializing beans priority	
+## Initializing beans priority	
 
 ```java
 public class TriangleLifecycle implements InitializingBean {
@@ -411,7 +411,7 @@ public class TriangleLifecycle implements InitializingBean {
 }
 ```
 
-### @PostConstruct
+## @PostConstruct
 
 - The `@PostConstruct` annotation is part of the JSR 25013 and is used on a method that needs to be executed after dependency injection is done to perform initialization
 - The bean that registers `@PostConstruct` is `org.springframework.context.annotation.CommonAnnotationBeanPostProcessor`
@@ -420,7 +420,7 @@ public class TriangleLifecycle implements InitializingBean {
  	- return void
  	- they can have any access right
 
-### context namespace
+## context namespace
 
 - `<context:annotation-config />` 
 	- Enables scanning of all the classes in the project for annotations, so using it on large applications might make them slow
@@ -434,7 +434,7 @@ public class TriangleLifecycle implements InitializingBean {
 
 [Context name space configuration example](/IOC/src/main/resources/jb/_3_annotation_event/spring.xml)
 
-### Destroying beans priority
+## Destroying beans priority
 
 - Destroying ways
 	- Set a method to be called before destruction using the `destroy-method` attribute of the <bean /> element.
@@ -471,7 +471,7 @@ public class TriangleLifecycle implements DisposableBean {
 	- The destroy method must not have any parameters.
 	- The destroy method must return `void`. 
 
-### Bean Scopes
+## Bean Scopes
 
 - Default scope for a bean is `singleton`
 
@@ -506,7 +506,7 @@ public class TriangleLifecycle implements DisposableBean {
 
 --- 
 
-### Java Spring Configuration and Annotations
+## Java Spring Configuration and Annotations
 
 ![alt text](images/pet-sitter/Screenshot_4.png "Screenshot_4")
 
@@ -565,7 +565,7 @@ public class DataSourceConfig {
 - `@Import` annotation to import the bean definition in one class into the other.
 - `@ComponentScan` works the same way as <context:component-scan /> for XML
 
-### Bean Naming
+## Bean Naming
 
 - When the name is not defined for a bean declared with `@Bean`, the Spring IoC names the bean with the annotated `method name`.
 
@@ -625,7 +625,7 @@ public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements Reques
 }
 ```
 
-### Field Injection
+## Field Injection
 
 - `@Autowire` can be used on fields, constructors, setters, and even methods.
 - In using `@Autowired` on constructors, it makes not sense to have more than one constructor annotated with it, and Spring will complain about it because it will not know what constructor to use to instantiate the bean.
@@ -639,7 +639,7 @@ public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements Reques
    @Autowired
    RequestRepo reqRepo;
 ```
-### Constructor Injection
+## Constructor Injection
 
 ```java
 @Repository("requestRepo")
@@ -652,7 +652,7 @@ public class JdbcRequestRepo  extends JdbcAbstractRepo<Request> implements Reque
  }
 ```
 
-### Setter Injection
+## Setter Injection
 
 ```java
 public class JdbcUserRepo extends JdbcAbstractRepo<User> implements UserRepo {
@@ -672,7 +672,7 @@ public class JdbcUserRepo extends JdbcAbstractRepo<User> implements UserRepo {
 }
 ```
 
-### Method Injection
+## Method Injection
 
 ```java
 @Configuration
@@ -686,7 +686,7 @@ public class MethodSecurityConfig {
 }
 ```
 
-### Generic Injection
+## Generic Injection
 
 - This is useful when you have classes that are organized in a hierarchy and they all inherit a certain class that is generic, 
   like the repositories in the project attached to the book, all of which extend `JdbcAbstractRepo<T>`
@@ -704,7 +704,7 @@ public class GenericQualifierTest {
 }
 ```
 
-### @Value annotation
+## @Value annotation
 
 - `@Value` - can be used to insert scalar values or can be used together with placeholders and `SpEL` in order to provide flexibility in configuring a bean
 - Is used to inject value either from system properties (using ${}) or SpEL (using #{})
@@ -725,7 +725,7 @@ public class GenericQualifierTest {
 	 @Value("#{dbProps.password}")String password
 ```
 
-### Spring Expression language
+## Spring Expression language
 - Acronym SpEL
 - can be used in @Value annotation values
 - enclosed in #{}
@@ -734,12 +734,12 @@ public class GenericQualifierTest {
 - Can reference systemProperties and systemEnvironment
 - Used in other spring projects such as Security, Integration, Batch, WebFlow,...
 
-### Bean Lifecycle 
+## Bean Lifecycle 
 
 - For a configuration using Java Configuration annotations, the classpath is scanned by a bean of type `org.springframework.context.annotation.ClassPathBeanDefinitionScanner`, and the bean definitions are registered by a bean of type `org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader`.
 - Java Configuration and all other annotations: a `org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor` bean is used to autowire dependencies
 
-### @Lazy
+## @Lazy
 
 - This annotation can be used to postpone the creation of a bean until it is first accessed, by adding this annotation to the bean definition
 
@@ -775,7 +775,7 @@ implements PetRepo {
 ```
 
 
-## Testing Spring Applications
+# Testing Spring Applications
 
 - `TDD` - This approach puts the design under question: if tests are difficult to write, the design should be reconsidered
 - Trying to write at least two tests for each method: one positive and one negative, for methods that can be tested
@@ -876,7 +876,7 @@ public class MockPetServiceTest {
     - final classes and final methods; sometimes there is need for an insurance that the code will not be misused or to make sure that an object is constructed correctly
     - private methods and fields
     
-### Testing Rest with Spring boot
+## Testing Rest with Spring boot
 
 ```java
 @RunWith(SpringRunner.class)
@@ -921,7 +921,7 @@ public class CustomerController {
 		
 ```
     
-### Testing JPA with Spring boot    
+## Testing JPA with Spring boot    
 
 ```java
 @RunWith(SpringRunner.class)
@@ -962,7 +962,7 @@ public class TestCustomerRepo {
 }	
 ```
 
-## Aspect Oriented Programming
+# Aspect Oriented Programming
     
 ```
 AOP is a type of programming that aims to help with separation of cross-cutting concerns to increase modularity; 
@@ -980,7 +980,7 @@ by applying advices to specific join points, specified by pointcuts.
 
 - The original library that provided components for creating aspects is named **AspectJ.**
 
-### AOP Terminology
+## AOP Terminology
     
 - **Aspect** - a class containing code specific to a cross-cutting concern. 
    A class declaration is recognized in Spring as an aspect if it is annotated with the `@Aspect` annotation.
@@ -1064,13 +1064,13 @@ public class AppConfig {
 	- enable aspects support by annotating a configuration class with `@EnableAspectJAutoProxy`
 	- (optional) add CGLIB as a dependency and enable aspects support using subclassed proxies by annotating a configuration class with `@EnableAspectJAutoProxy(proxyTargetClass = true)`
 	
-### Defining Pointcuts	
+## Defining Pointcuts	
 
 - The template that a pointcut expression follows can be defined as follows:
 
 ```java
 execution( [Modifiers] [ReturnType] [FullClassName].[MethodName] ([Arguments]) throws [ExceptionType])
-```  
+```
 
 - The expression can contain wildcards like + and * and can be made of multiple expressions concatenated by boolean operators such as &&, ||, etc. 
 	- The * wildcard replaces any group of characters
@@ -1102,15 +1102,15 @@ execution(public (public * com.ps.service.*.*Service+.*(..)
       && @annotation(org.springframework.security.access.annotation.Secured))
 ```
 
-### Implementing Advice
+## Implementing Advice
 
 #### Before
 
 ```java
 @Before("com.ps.aspects.PointcutContainer.serviceUpdate(id, pass)")
-   public void beforeServiceUpdate (Long id, String pass) throws Throwable {
+public void beforeServiceUpdate (Long id, String pass) throws Throwable {
 	//..
-   }
+}
 ```
 
 ![alt text](images/pet-sitter/Screenshot_8.png "Screenshot_8")
@@ -1172,19 +1172,19 @@ meaning that the advice decides whether the target method is called, and if so, 
 
 ```java
 @Around("execution(public * com.ps.repos.*.*Repo+.find*(..))")
-    public Object monitorFind( ProceedingJoinPoint joinPoint) throws Throwable {
-        long t1 = System.currentTimeMillis();
-		Thread.sleep(1000L);
-		return joinPoint.proceed();
-		long t2 = System.currentTimeMillis();
-		logger.info(" ---> Execution of " + methodName + " took: "   + (t2 - t1) / 1000 + " ms.");
+public Object monitorFind( ProceedingJoinPoint joinPoint) throws Throwable {
+	long t1 = System.currentTimeMillis();
+	Thread.sleep(1000L);
+	return joinPoint.proceed();
+	long t2 = System.currentTimeMillis();
+	logger.info(" ---> Execution of " + methodName + " took: "   + (t2 - t1) / 1000 + " ms.");
 }
 ```
 
 ![alt text](images/pet-sitter/Screenshot_12.png "Screenshot_12")
 
 
-### Advices 
+## Advices 
 
 **Aspect** = **PointCut**(Where the Aspect is applied) + **Advice**(What code is executed)
 
@@ -1203,7 +1203,7 @@ meaning that the advice decides whether the target method is called, and if so, 
 ![alt text](images/aop/Screenshot_6.png "Screenshot_6")
 
 
-### PointCuts 
+## PointCuts 
 
 ![alt text](images/aop/Screenshot_12.png "Screenshot_12")
 
@@ -1239,7 +1239,7 @@ meaning that the advice decides whether the target method is called, and if so, 
 
 ![alt text](images/aop/Screenshot_15.png "Screenshot_15")
 
-### @PointCut
+## @PointCut
 
 ![alt text](images/aop/Screenshot_16.png "Screenshot_16")
 
@@ -1273,7 +1273,7 @@ public void setters() {
 }
 ```
 
-### Data Access
+## Data Access
 
  - **DML** stands for `Data Manipulation Language`, and the database operations presented so far are part of it, 
     the commands `SELECT`, `INSERT`, `UPDATE`, and `DELETE` are database statements used to create, update, or delete data from existing tables.
@@ -1282,7 +1282,7 @@ public void setters() {
     tables, views, cursors, etc. The commands `CREATE`, `ALTER`, `DROP`
 
 
-### Java Config of DataSource and populating db
+## Java Config of DataSource and populating db
 
 ```java
 @Configuration
@@ -1309,8 +1309,7 @@ public class TestDataConfig {
 	private Resource dataScript;
         
     @Bean
-    public static PropertySourcesPlaceholderConfigurer
-        propertySourcesPlaceholderConfigurer() {
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
       return new PropertySourcesPlaceholderConfigurer();
     }
     
@@ -1332,8 +1331,7 @@ public class TestDataConfig {
     }
     
     @Bean
-    public DataSourceInitializer dataSourceInitializer
-              (final DataSource dataSource) {
+    public DataSourceInitializer dataSourceInitializer (final DataSource dataSource) {
         final DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(dataSource);
         initializer.setDatabasePopulator(databasePopulator());
@@ -1403,7 +1401,7 @@ public class TestDataConfig {
 
 ![alt text](images/pet-sitter/Screenshot_13.png "Screenshot_13")
 
-### Configure Transactions Support
+## Configure Transactions Support
 
 - Configure transaction management support
 	- add a declaration of a bean of type `org.springframework.jdbc.datasource.DataSourceTransactionManager`
@@ -1441,11 +1439,11 @@ public class AppConfig {
 	- Method that is to be executed in a transaction must be annotated with the Spring `@Transaction` annotation.
 
 ```java
-	@Transactional
-	@Override
-	public User findById(Long id) {
-		return userRepo.findById(id);
-	}
+@Transactional
+@Override
+public User findById(Long id) {
+	return userRepo.findById(id);
+}
 ```
 
 - The `@Transactional` annotation can be used at the class level too. 
@@ -1458,7 +1456,7 @@ In this case, Spring will look for a bean named transactionManager by default, a
 The @EnableTransactionManagement is more flexible; it looks for a bean of any type that implements the org.springframework.transaction.PlatformTransactionManager, so the name is not important.
 ```
 
-### @Transactional
+## @Transactional
 - `transactionManager` - the transaction manager used to manage the transaction in the context of which the annotated method is executed.
 - `readOnly` - should be used for transactions that involve operations that do not modify the database (example: searching, counting records)
 - `propagation` - org.springframework.transaction.annotation.Propagation
@@ -1466,7 +1464,7 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 - `timeout` - value represents the number of milliseconds after which a transaction is considered failed,
 - `rollbackFor` - when this type of exception is thrown during the execution of a transactional method, the transaction is rolled back
 
-### org.springframework.transaction.annotation.Propagation
+## org.springframework.transaction.annotation.Propagation
 
 - **REQUIRED**: an existing transaction will be used or a new one will be created to execute the method annotated with `@Transactional(propagation = Propagation.REQUIRED)`.
 - **REQUIRES_NEW**: a new transaction is created to execute the method annotated with `@Transactional(propagation = Propagation.REQUIRES_NEW)`. If a current transaction exists, it will be suspended.
@@ -1483,7 +1481,7 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
  - There are 7 levels of propagation
  - 2 Basic ones - REQUIRED and REQUIRES_NEW
 
-### org.springframework.transaction.annotation.Isolation
+## org.springframework.transaction.annotation.Isolation
 
 - **DEFAULT**: the default isolation level of the DBMS.
 - **READ_UNCOMMITED**: data changed by a transaction can be read by a different transaction while the first one is not yet committed, also known as dirty reads.
@@ -1491,7 +1489,7 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 - **REPEATABLE_READ**: this level of isolation does not allow dirty reads, and repeatedly querying a table row in the same transaction will always return the same result, even if a different transaction has changed the data while the reading is being done. The process of reading the same row multiple times in the context of a transaction and always getting the same result is called repeatable read.
 - **SERIALIZABLE**: this is the most restrictive isolation level, since transaction are executed in a serialized way. So no dirty reads, no repeatable reads, and no phantom reads are possible. A phantom read happens when in the course of a transaction, execution of identical queries can lead to different result sets being returned.
 
-### Isolation Levels
+## Isolation Levels
 
 - 4 isolation levels available (from least strict to the most strict)
 	- READ_UNCOMMITTED
@@ -1521,7 +1519,7 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
  - `@Transactional (isolation=Isolation.SERIALIZABLE)`
  - Prevents phantom reads
 
-### Testing transactional methods
+## Testing transactional methods
 
 - The `@Sql` annotation can be used to specify SQL scripts to be executed against a given database during integration tests.
 - The `@SqlGroup` annotation can be used on classes and methods to group together `@Sql` annotations.
@@ -1555,7 +1553,7 @@ public void testCount() {
 }   
 ```
 
-### jdbcTemplate
+## jdbcTemplate
 
 - `jdbcTemplate.update` uses for `insert` `update` `delete`
 
@@ -1572,15 +1570,14 @@ public void testCount() {
 	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" p:dataSource-ref="dataSource"/>
 ```
 
-- Inject into repository
+#### Inject into repository
 
 ```java
-@Autowired
-private JdbcTemplate jdbcTemplate;
-
+jdbcTemplate.update("insert INTO RIDE(NAME, DURATION) values (?, ?)",
+				ride.getName(), ride.getDuration());
 ```
 
-- Select
+#### Select
 
 ```java
 jdbcTemplate.query("SELECT * FROM MY_TABLE", new RowMapper());
@@ -1588,7 +1585,7 @@ jdbcTemplate.query("SELECT * FROM MY_TABLE", new RowMapper());
 jdbcTemplate.queryForObject("SELECT * FROM MY_TABLE WHERE ID = id", new RowMapper());
 ```
 
-- Insert
+#### Insert
 
 ```java
 jdbcTemplate.update(
@@ -1596,14 +1593,14 @@ jdbcTemplate.update(
 			obj.getName(), obj.getDuration());
 ```
 
-- Update
+#### Update
 
 ```java
 jdbcTemplate.update("UPDATE MY_TABLE set NAME = ?, DURATION = ? where id = ?",
 			obj.getName(), obj.getDuration(), obj.getId());
 ```
 
-- Delete
+#### Delete
 
 ```java
 jdbcTemplate.update("delete from MY_TABLE where id = ?", id);
@@ -1620,7 +1617,7 @@ public interface RowMapper<T> {
 }
 ```
 
-### In-Memory Database
+## In-Memory Database
 
 ```java
 @Bean
@@ -1653,14 +1650,14 @@ Initialise db
 </jdbc:initialize-database>
 ```
 
-### Spring and Hibernate
+## Spring and Hibernate
 
 - `org.springframework.orm.hibernate5.LocalSessionFactoryBuilder`
 - `org.hibernate.SessionFactory`
 - `org.hibernate.Session`
 - `org.springframework.orm.hibernate4.HibernateTransactionManager`
 
-### Hibernate proper
+## Hibernate proper
 
 - `hibernate.dialect` - the value is a dialect class matching the database used in the application
 - `hibernate.hbm2ddl.auto` - the value represents what Hibernate should do when the application starts
@@ -1668,7 +1665,7 @@ Initialise db
 - `hibernate.show_sql` - if true, all the generated SQL statements are printed to the console.
 - `hibernate.use_sql_comments` - if true, Hibernate will put a comment inside the SQL statement to tell the developer what that statement is trying to do.
 
-### Spring + Hibernate Java configuration
+## Spring + Hibernate Java configuration
 
 - Inject database params and use them when create beans
 
@@ -1755,7 +1752,7 @@ public class HibernateUserRepo implements UserRepo {
 }
 ```
 
-### Spring + Hibernate XML configuration
+## Spring + Hibernate XML configuration
 
 - Create `dataSource`
 
@@ -1816,7 +1813,7 @@ public class HibernateUserRepo implements UserRepo {
 }
 ```
 
-### Spring + JPA Java configuration
+## Spring + JPA Java configuration
 
 - Create `dataSource`
 
@@ -1888,7 +1885,7 @@ public class JpaUserRepo implements UserRepo {
 private EntityManager entityManager;
 ```
 
-### Spring + JPA XML configuration
+## Spring + JPA XML configuration
 
 - Add transaction management
 
@@ -1946,7 +1943,7 @@ public class JpaUserRepo implements UserRepo {
 private EntityManager entityManager;
 ```
 
-### Spring Data JPA
+## Spring Data JPA
 
 - Simplifies data access by reducing boilerplate code
 - The central interface of Spring Data is `Repository< T, ID extends Serializable>`
@@ -1954,7 +1951,7 @@ private EntityManager entityManager;
 - Create a new Repo interface that will extend the Spring Data MongoDB-specialized interface `MongoRepository<T,ID extends Serializable>`.
 - Create a configuration class and annotate it with `@EnableMongoRepositories` to enable creation of MongoDB repository instances.
 
-#### Spring data Repositories
+#### Spring Data Repositories
 
  - Spring searches for all interfaces extending `Repository<DomainObjectType, DomainObjectIdType>`
  - Repository is just marker interface and has no method on its own
@@ -1996,20 +1993,20 @@ public class GemfireConfig {...}
 @EnableMongoRepositories(basePackages="com.example.**.repository") 
 public class MongoDbConfig {...}
 ```
-### Spring Data Configuration
+## Spring Data Configuration
 
 - For Java configuration `@EnableJpaRepositories(basePackages="com.example.**.repository")` - Annotation to enable JPA repositories.
 - For XML configuration `<jpa:repositories base-package=""com.example.**.repository""/>` - Annotation to enable JPA repositories.
 
 ---
 
-![alt text](images/db/Screenshot_1.png "Screenshot_1")
+![alt text](images/db/Screenshot_1.png=100x200) 
 
 ![alt text](images/db/Screenshot_2.png "Screenshot_2")
 
 ![alt text](images/db/Screenshot_3.png "Screenshot_3")
 
-### Query DSL 
+## Query DSL 
 
 ![alt text](images/db/Screenshot_28.png "Screenshot_28")
 
@@ -2041,7 +2038,7 @@ public class MongoDbConfig {...}
 
 ![alt text](images/db/Screenshot_17.png "Screenshot_17")
 
-### Query Annotation
+## Query Annotation
 
 ![alt text](images/db/Screenshot_18.png "Screenshot_18")
 
@@ -2049,19 +2046,19 @@ public class MongoDbConfig {...}
 
 ![alt text](images/db/Screenshot_20.png "Screenshot_20")
 
-### Named Query
+## Named Query
 
 ![alt text](images/db/Screenshot_21.png "Screenshot_21")
 
-### Native Query
+## Native Query
 
 ![alt text](images/db/Screenshot_22.png "Screenshot_22")
 
-### Query Precedence
+## Query Precedence
 
 ![alt text](images/db/Screenshot_23.png "Screenshot_23")
 
-### Paging and Sorting
+## Paging and Sorting
 
 ![alt text](images/db/Screenshot_24.png "Screenshot_24")
 
@@ -2094,19 +2091,19 @@ public void testQueryByPriceRangeAndWoodTypePaging_SpringData() {
     // SG
 }
 ```
-### Custom Repositories
+## Custom Repositories
 
 ![alt text](images/db/Screenshot_25.png "Screenshot_25")
 
-### Auditing
+## Auditing
 
 ![alt text](images/db/Screenshot_26.png "Screenshot_26")
 
-### Locking
+## Locking
 
 ![alt text](images/db/Screenshot_27.png "Screenshot_27")
 
-### Spring data for updating data
+## Spring data for updating data
 
 ```java
 @Transactional
@@ -2115,7 +2112,7 @@ public void testQueryByPriceRangeAndWoodTypePaging_SpringData() {
 int setPageCount(int pageCount, String title);
 ```
 
-## Spring MVC
+# Spring MVC
 
 - A typical Java Web application architecture
 
@@ -2253,7 +2250,7 @@ public String show(@PathVariable("userId") Long id, Model model) {
 }
 ```
 
-### Views and Models
+## Views and Models
 
 - A handler method typically returns a string value representing a logical view name, and the view is populated with values in the Model object.
 - The model contains the data that will be used to populate a view
@@ -2309,7 +2306,7 @@ public ModelAndView passParametersWithModelAndView() {
 }
 ```
 
-### Spring MVC 
+## Spring MVC 
 
 #### Spring MVC XML Configuration
 
@@ -2492,7 +2489,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
 ![alt text](images/web/mvc/web_services.png)
    
-### Spring Security   
+## Spring Security   
 
 - Concepts
 	- `Principal` is the term that signifies a user, device, or system that could perform an action within the application.
@@ -2867,7 +2864,7 @@ public class UserServiceImpl implements UserService {
 
 ![alt text](images/web/security/Screenshot_5.png)	
 
-### Spring Security Tag Libraries
+## Spring Security Tag Libraries
 
 - Add taglib to JSP
 
@@ -2893,7 +2890,7 @@ public class UserServiceImpl implements UserService {
 </security:authorize>
 ```
 
-## Spring Boot
+# Spring Boot
 
 Start collect the project by [https://start.spring.io/](https://start.spring.io/)	
 
@@ -3138,7 +3135,7 @@ public void customize(ConfigurableEmbeddedServletContainer container) {
 }
 ```
 
-### @Conditional
+## @Conditional
 
 - Enables bean instantiatiation only when specific condition is met
 - Core concept of spring boot
@@ -3154,7 +3151,7 @@ public void customize(ConfigurableEmbeddedServletContainer container) {
 	- If needed, specific autoconfiguration classes can be excluded explicitly
 	- `@EnableAutoConfiguration(exclude=DataSourceAutoConfiguration.class)`
 	
-### Spring actuator dependency
+## Spring actuator dependency
 
 - provides ready features to help monitor and manage application
 ```xml
@@ -3162,9 +3159,9 @@ public void customize(ConfigurableEmbeddedServletContainer container) {
 	<groupId>org.springframework.boot</groupId>
 	<artifactId>spring-boot-starter-actuator</artifactId>
 </dependency>
-```	
+```
 	
-## Integration
+# Integration
 
 - Remoting and Web Services are ways of communicating between applications
 - The communication is done using a binary, XML, or JSON format
@@ -3193,9 +3190,9 @@ a web resource became able to be anything (object, entity) that can be accessed 
 - `JMX (Java Management Extensions)` is a Java technology that supplies tools for managing and monitoring applications, system objects, devices (such as printers) and service-oriented networks
 	- Those resources are represented by objects called `MBeans` (Managed Bean)
 	
-### Spring Remoting
+## Spring Remoting
 
-### Java Remote Method Invocation 
+## Java Remote Method Invocation 
 
 - `Java Remote Invocation` allows for an object running in one JVM to invoke methods on an object running in another JVM.
 - `RMI` (Remote Method Invocation) is Java’s version of `RPC` (Remote Procedure Call).
@@ -3211,13 +3208,13 @@ a web resource became able to be anything (object, entity) that can be accessed 
 	
 ![alt text](images/pet-sitter/Screenshot_17.png)
 
-### Spring Remote Method Invocation 
+## Spring Remote Method Invocation 
 
 - The abstract schema of client and server applications remoting using Spring
 
 ![alt text](images/pet-sitter/Screenshot_18.png)
 
-### Spring Remote Configuration
+## Spring Remote Configuration
 
 - Configure a bean extending `org.springframework.remoting.rmi.RmiServiceExporter`
 
@@ -3318,7 +3315,7 @@ public class RmiTests {
 }
 ```
 
-### Spring RMI services over HTTP
+## Spring RMI services over HTTP
 
 - Spring provides classes that allow exposing RMI services over HTTP, using a lightweight binary HTTP-based protocol.
 	- The classes to use are `HttpInvokerProxyFactoryBean` and `HttpInvokerServiceExporter`
@@ -3368,7 +3365,7 @@ public class HttpInvokerClientConfig {
 
 - Provide configuration via `web.xml` or via `implements WebApplicationInitializer`
 
-## Spring JMS
+# Spring JMS
 
 The basic building blocks of a JMS applications are:
 - messages
@@ -3379,7 +3376,7 @@ The basic building blocks of a JMS applications are:
 - connection factories
 - destinations
 
-### JMS Messages
+## JMS Messages
 
 ![alt text](images/pet-sitter/Screenshot_20.png)
 
@@ -3389,7 +3386,7 @@ The basic building blocks of a JMS applications are:
     
 ![alt text](images/pet-sitter/Screenshot_21.png)
 
-### JMS Destinations
+## JMS Destinations
 
 - The `javax.jms.Destination` interface is implemented on the client side and is used to specify the target of the messages produced by the client and the source of messages the client consumes
 - Depending on the messaging domain, the implementation differs:
@@ -3406,7 +3403,7 @@ public Queue userQueue(){
 }
 ```
 
-## Spring Web Services
+# Spring Web Services
 
 - `SOAP` is an acronym for Simple Object Access Protocol. It is a protocol specification for exchanging structured information in the implementation of web services in computer networks
 
@@ -3443,7 +3440,7 @@ public Queue userQueue(){
 </xs:element>
 ```
 
-### SOAP Messages
+## SOAP Messages
 
 - SOAP messages have a structure similar to JMS Messages: they have a header and a body that are enclosed in a special SOAP envelope that identifies the XML document as a SOAP message. 
 - SOAP message containing user information looks like the following XML snippet.
@@ -3481,7 +3478,7 @@ public Queue userQueue(){
 		
 - The main disadvantage of SOAP is only the use of XML, which is verbose and takes a lot of time to be parsed		
 
-## REST
+# REST
 
 - `REpresentational State Transfer`
 - REST is a lightweight alternative to mechanisms like `RPC (Remote Procedure Calls)` and `Web Services (SOAP, WSDL, etc)`
@@ -3558,7 +3555,7 @@ public class UserController {
 }
 ``` 
 
-### Exception Handling
+## Exception Handling
     
 ```java
 @RestController
@@ -3622,7 +3619,7 @@ public class RestExceptionProcessor {
 }
 ```
 
-### HTTP Message Converters
+## HTTP Message Converters
 
 - `@ResponseBody` introduced earlier is also used to facilitate understanding of the REST message format between client and server
 - `@ResponseBody` is applied to the response
@@ -3684,7 +3681,7 @@ public class PersonService {
     }
 }
 ```
-### RESTful  
+## RESTful  
 
 - **GET**: method used to retrieve a representation of a resource
 	- When resource is not found, a `404 (Not found)` status code is returned, `200(OK)` otherwise
@@ -3759,7 +3756,7 @@ public class StandaloneRestUserControllerTest {
 	- Because of the uniform interface, little or no documentation of the resources and basic operations API is necessary.
 	- Using REST does not imply specific libraries at client level in order to communicate with the server. With REST, all that is needed is a network connection.
 	
-## RESTful Spring Application with Spring Boot
+# RESTful Spring Application with Spring Boot
 
 - Spring Boot is very practical for writing RESTful applications, because it automatically configures the infrastructure beans necessary in the background, and all that is left for the developer to do is to create REST controller classes
 
@@ -3802,7 +3799,7 @@ public class RestUserController {
 }
 ```
 
-## Spring JMX
+# Spring JMX
 
 
 - JMX is an acronym for Java Management Extensions,  this technology provides the tools for building distributed, Web-based, modular, and dynamic solutions for managing and monitoring devices, applications, and service-driven networks
@@ -3811,7 +3808,7 @@ public class RestUserController {
 - It is not hard to use. You must create an interface that ends with MXBean or use the annotation
 - Using JMX, a given resource can be instrumented by one or more components called `Management Beans`, or simply `MBeans`.
 
-### JMX Architecture
+## JMX Architecture
 
 - **Instrumentation layer**: where resources are wrapped in MBeans.
 - **Agent layer**: the management infrastructure consisting of the MBean Server and agents that provide the following JMX services:
@@ -3840,7 +3837,7 @@ UserCounter mbean = new UserCounter();
 mbs.registerMBean(mbean, name);
 ```
 
-### Spring JMX
+## Spring JMX
 
 - JMX is a technology that enables you to instrument applications for management, monitoring, and configuration
 - JMX MBeans makes it possible for a JMX-based management tool such as JConsole or VisualVM to peer inside a running application to view the beans’ properties and invoke their methods.
@@ -3948,7 +3945,7 @@ public class JmxCounterImpl implements JmxCounter {
 
 ![alt text](images/pet-sitter/Screenshot_37.png)
 
-## Spring Microservices with Spring Cloud
+# Spring Microservices with Spring Cloud
 
 ![alt text](images/spring_cloud/diagram-distributed-systems.svg)
 
@@ -3982,7 +3979,7 @@ Each microservice is a really small unit of stateless functionality, a process t
 	- cluster state (cluster state request is routed to the master node, to ensure that the latest cluster state is returned)
 	- client-side load balancing
 	
-### Registration and Discovery Server
+## Registration and Discovery Server
 
 ![alt text](images/spring_cloud/Screenshot_1.png)
 
@@ -4044,7 +4041,7 @@ To use the Eureka Server in a project, the `spring-cloud-starter-eureka-server` 
 
 ![alt text](images/pet-sitter/Screenshot_39.png)
 
-### Microservices Registration
+## Microservices Registration
 
 - Each microservice is a spring boot app
 - To use the Eureka Client in a project, the `spring-cloud-starter-eureka` starter project must be included as a dependency of the project
@@ -4112,7 +4109,7 @@ Then call specific Microservice with the `restTemplate`
 User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.class, id);
 ```
 
-### Application Configuration server
+## Application Configuration server
 
 ![alt text](images/spring_cloud/Screenshot_6.png)
 
@@ -4154,7 +4151,7 @@ User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.c
 
 ![alt text](images/spring_cloud/Screenshot_19.png)
 
-### Intelligent Routing with Netflix Zuul
+## Intelligent Routing with Netflix Zuul
 
 ![alt text](images/spring_cloud/Screenshot_20.png)
 
@@ -4174,7 +4171,7 @@ User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.c
 
 ![alt text](images/spring_cloud/Screenshot_27.png)
 
-### Load Balancing with Netflix Ribbon
+## Load Balancing with Netflix Ribbon
 
 ![alt text](images/spring_cloud/Screenshot_28.png)
 
@@ -4204,7 +4201,7 @@ User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.c
 
 ![alt text](images/spring_cloud/Screenshot_37.png)
 
-### Circuit Breaker with Netflix Hystrix
+## Circuit Breaker with Netflix Hystrix
 
 - Multiple issues at play
 	- `Fault tolerance` problem
@@ -4254,13 +4251,13 @@ User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.c
 
 ![alt text](images/spring_cloud/Screenshot_56.png)
 
-### Bring all together
+## Bring all together
 
 ![alt text](images/spring_cloud/Screenshot_59.png)
 
 ![alt text](images/spring_cloud/Screenshot_57.png)
 
-### Spring Cloud Security
+## Spring Cloud Security
 
 ![alt text](images/spring_cloud/Screenshot_61.png)
 
