@@ -4,8 +4,6 @@
 
 # Spring Configuration
 
-
-
 ## XML Spring Configuration
 
 ```
@@ -2899,6 +2897,15 @@ Spring Boot is a set of preconfigured frameworks/technologies designed to reduce
 It’s goal is to allow developers to focus on implementation of the actual required functionality instead of how to configure an application, by providing out of the box ready-to-use infrastructure beans
 ```
 
+- Provide common non-functional features
+	- embedded servers (Tomcat, Jetty, Undertow)
+	- metrics
+	- health checks
+	- external configuration
+- Spring boot is NOT
+	- No code generation
+	- Neither an application server nor a web server
+
 ![alt text](images/web/boot/Screenshot_2.png)
 
 ![alt text](images/web/boot/Screenshot_3.png)
@@ -2926,6 +2933,7 @@ public class Application {
 - If the `war` we want to produce a deployable web archive that can be deployed on any application server and since the project does not contain a `web.xml` file, 
 it is mandatory to define a class extending `SpringBootServletInitializer` and override its `configure` method.
 
+```java
 @RestController
 @SpringBootApplication(scanBasePackages = {"com.ps.start"})
 public class Application extends SpringBootServletInitializer {
@@ -2948,8 +2956,9 @@ public class Application extends SpringBootServletInitializer {
     }
 
 }
+```
 
-![alt text](images/web/boot/Screenshot_4.png)	
+![alt text](images/web/boot/Screenshot_4.png)
 
 #### Configuration Using YAML
 

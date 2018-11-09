@@ -47,6 +47,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.4</version>
+        </dependency>
+
         <!--Monitoring -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
