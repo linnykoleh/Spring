@@ -2000,7 +2000,7 @@ public class MongoDbConfig {...}
 
 ---
 
-![alt text](images/db/Screenshot_1.png=100x200) 
+![alt text](images/db/Screenshot_1.png "Screenshot_1") 
 
 ![alt text](images/db/Screenshot_2.png "Screenshot_2")
 
