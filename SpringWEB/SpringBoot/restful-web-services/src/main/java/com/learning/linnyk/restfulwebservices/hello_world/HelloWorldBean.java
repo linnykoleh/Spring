@@ -1,4 +1,4 @@
-package com.learning.linnyk.restfulwebservices;
+package com.learning.linnyk.restfulwebservices.hello_world;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
