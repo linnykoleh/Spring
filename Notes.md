@@ -3692,6 +3692,8 @@ public class PersonService {
 ```
 ## RESTful  
 
+![alt text](images/web/rest/The-Richardson-Maturity-Model-Nordic-APIs.png)  
+
 - **GET**: method used to retrieve a representation of a resource
 	- When resource is not found, a `404 (Not found)` status code is returned, `200(OK)` otherwise
 
