@@ -1,4 +1,4 @@
-package com.learning.linnyk.restfulwebservices.versioning;
+package com.learning.linnyk.restfulwebservices.versioning.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -3,6 +3,10 @@ package com.learning.linnyk.restfulwebservices.versioning;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.learning.linnyk.restfulwebservices.versioning.dto.Name;
+import com.learning.linnyk.restfulwebservices.versioning.dto.PersonV1;
+import com.learning.linnyk.restfulwebservices.versioning.dto.PersonV2;
+
 @RestController
 public class PersonVersioningController {
 

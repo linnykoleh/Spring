@@ -18,29 +18,33 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.learning.linnyk.restfulwebservices.user.exception.UserNotFoundException;
+import com.learning.linnyk.restfulwebservices.user.model.Post;
+import com.learning.linnyk.restfulwebservices.user.model.User;
 
 @RestController
-public class UserController {
+public class UserJPAController {
 
-	private final UserService userService;
+	private final UserJPAService userJPAService;
 
 	@Autowired
-	public UserController(UserService userService) {
-		this.userService = userService;
+	public UserJPAController(UserJPAService userJPAService) {
+		this.userJPAService = userJPAService;
 	}
 
-	@GetMapping(path = "/users")
+	@GetMapping(path = "/jpa/users")
 	public List<User> retrieveAllUsers() {
-		return userService.findAll();
+		return userJPAService.findAll();
 	}
 
-	@GetMapping(path = "/users/{id}")
+	@GetMapping(path = "/jpa/users/{id}")
 	public Resource<User> retrieveUser(@PathVariable int id) {
-		final User user = userService.findOne(id);
+		final User user = userJPAService.findOne(id);
 		if (Objects.isNull(user)) {
 			throw new UserNotFoundException("There is no user with id: " + id);
 		}
@@ -52,9 +56,9 @@ public class UserController {
 		return resource;
 	}
 
-	@PostMapping(path = "/users")
+	@PostMapping(path = "/jpa/users")
 	public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-		final User savedUser = userService.save(user);
+		final User savedUser = userJPAService.save(user);
 
 		final URI location = ServletUriComponentsBuilder
 				.fromCurrentRequest()
@@ -65,14 +69,35 @@ public class UserController {
 		return ResponseEntity.created(location).body(savedUser);
 	}
 
-	@DeleteMapping(path = "/users/{id}")
-	public ResponseEntity<Object> createUser(@PathVariable int id) {
-		final boolean result = userService.deleteById(id);
+	@DeleteMapping(path = "/jpa/users/{id}")
+	public void deleteUser(@PathVariable int id) {
+		userJPAService.deleteById(id);
+	}
 
-		if (!result) {
+	@GetMapping(path = "/jpa/users/{id}/posts")
+	public List<Post> retrieveAllUsers(@PathVariable int id) {
+		final User user = userJPAService.findOne(id);
+		return user.getPosts();
+	}
+
+	@RequestMapping(path = "/jpa/users/{id}/posts", method = RequestMethod.POST)
+	public ResponseEntity<Post> createPost(@PathVariable int id, @RequestBody Post post) {
+		final User user = userJPAService.findOne(id);
+
+		if (Objects.isNull(user)) {
 			throw new UserNotFoundException("There is no user with id: " + id);
 		}
-		return ResponseEntity.noContent().build();
+
+		post.setUser(user);
+		userJPAService.save(post);
+
+		final URI location = ServletUriComponentsBuilder
+				.fromCurrentRequest()
+				.path("/{id}")
+				.buildAndExpand(post.getId())
+				.toUri();
+
+		return ResponseEntity.created(location).body(post);
 	}
 
 }
