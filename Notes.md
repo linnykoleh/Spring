@@ -4107,17 +4107,51 @@ eureka:
 - `@LoadBalanced` annotation, which marks the injected RestTemplate bean to be configured to use a `LoadBalancerClient` implementation.
 	- `RestTemplate` is thread-safe
 	
+### Rest clients
+
+#### `RestTemplate`	
+
+- Autowire `RestTemplate`
+
 ```java
 @Autowired
 @LoadBalanced
 private RestTemplate restTemplate;
 ```
 
-Then call specific Microservice with the `restTemplate`
+- Then call specific Microservice with the `restTemplate`
 
 ```java
 
 User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.class, id);
+```
+
+#### `Feign`
+
+- Define feign client proxy, this is a different microservice
+
+```java
+@FeignClient(name = "currency-exchange-service", url = "http://localhost:8000/")
+public interface CurrencyExchangeServiceProxy {
+
+    @GetMapping("/currency-exchange/from/{from}/to/{to}")
+    CurrencyConversionBean retrieveExchangeValue(@PathVariable("from") String from, @PathVariable("to") String to);
+
+}
+```
+
+- Then `@Autowire` the Proxy client
+
+```java
+ @Autowired
+    private CurrencyExchangeServiceProxy currencyExchangeServiceProxy;
+```
+
+- And call needed method
+
+```java
+final CurrencyConversionBean response = currencyExchangeServiceProxy.retrieveExchangeValue(from, to);
+final BigDecimal conversionMultiple = response.getConversionMultiple();
 ```
 
 ## Application Configuration server
@@ -4199,6 +4233,19 @@ User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.c
 - By default it uses **round-robbin algorithm** for distributing the load
 
 ![alt text](images/spring_cloud/Screenshot_33.png)
+
+- Another way is to use `@RbbonClient`
+
+```java
+@FeignClient(name = "currency-exchange-service")
+@RibbonClient(name = "currency-exchange-service")
+public interface CurrencyExchangeServiceProxy {
+
+    @GetMapping("/currency-exchange/from/{from}/to/{to}")
+    CurrencyConversionBean retrieveExchangeValue(@PathVariable("from") String from, @PathVariable("to") String to);
+
+}
+```
 
 #### Load Balancing Strategies
 
