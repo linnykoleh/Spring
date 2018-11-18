@@ -1,10 +1,10 @@
 package com.leaning.linnyk.cloud.limitsservice;
 
+import com.leaning.linnyk.cloud.limitsservice.bean.LimitConfiguration;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.leaning.linnyk.cloud.limitsservice.bean.LimitConfiguration;
 
 @RestController
 public class LimitsConfigurationController {
@@ -16,8 +16,19 @@ public class LimitsConfigurationController {
 		this.limitsConfiguration = limitsConfiguration;
 	}
 
-	@GetMapping("/limits")
+    @GetMapping("/limits")
 	public LimitConfiguration retrieveLimitsFromConfiguration(){
 		return new LimitConfiguration(limitsConfiguration.getMaximum(), limitsConfiguration.getMinimum());
 	}
+
+    @GetMapping("/fault-tolerance-example")
+    @HystrixCommand(fallbackMethod = "fallbackMethodGetLimitsConfiguration")
+    public LimitConfiguration getLimitsConfiguration() {
+        throw new RuntimeException("The service not available");
+    }
+
+    private LimitConfiguration fallbackMethodGetLimitsConfiguration() {
+        return new LimitConfiguration(12345, 12);
+    }
+
 }
