@@ -10,7 +10,6 @@ import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 @EnableZuulProxy
 public class NetflixZuulApiGatewayServerApplication {
 
-
     /**
      * Pattern:
      *      http://{zuul-host}:{zuul-port}/{microservice-name}/{rest-uri}
