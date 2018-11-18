@@ -16,6 +16,7 @@
         <module>currency-conversion-service</module>
         <module>netflix-eureka-server</module>
         <module>netflix-zuul-api-gateway-server</module>
+        <module>zipkin-distributed-tracing-server</module>
     </modules>
 
 </project>

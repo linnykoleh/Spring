@@ -1,11 +1,9 @@
 package com.learning.linnyk.cloud.netflixzuulapigatewayserver;
 
-import com.netflix.zuul.ZuulFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
-import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -25,8 +23,4 @@ public class NetflixZuulApiGatewayServerApplication {
         SpringApplication.run(NetflixZuulApiGatewayServerApplication.class, args);
     }
 
-    @Bean
-    public ZuulFilter zuulFilter() {
-        return new ZuulLoggingFilter();
-    }
 }
