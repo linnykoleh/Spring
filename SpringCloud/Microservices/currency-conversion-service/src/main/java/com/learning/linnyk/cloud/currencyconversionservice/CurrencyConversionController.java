@@ -17,6 +17,10 @@ public class CurrencyConversionController {
     @Autowired
     private CurrencyExchangeServiceProxy currencyExchangeServiceProxy;
 
+
+    /**
+     * Uses old direct call to microservice by RestTemplate
+     */
     @GetMapping("/currency-converter/from/{from}/to/{to}/quantity/{quantity}")
     public CurrencyConversionBean convertCurrency(
             @PathVariable String from, @PathVariable String to, @PathVariable BigDecimal quantity) {
@@ -33,6 +37,10 @@ public class CurrencyConversionController {
         return new CurrencyConversionBean(response.getId(), from, to, conversionMultiple, quantity, quantity.multiply(conversionMultiple), response.getPort());
     }
 
+    /**
+     * 1. Uses Feign, by name of the microservice look up it from Discovery Server and makes calls
+     * 2. Uses Ribbon for load balance requests and not hard coded url.
+     */
     @GetMapping("/currency-converter-feign/from/{from}/to/{to}/quantity/{quantity}")
     public CurrencyConversionBean convertCurrencyFeign(
             @PathVariable String from, @PathVariable String to, @PathVariable BigDecimal quantity) {
