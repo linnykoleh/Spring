@@ -21,7 +21,8 @@ public class Application {
 		final CustomerService customerServiceSetterInjection = context.getBean("customerServiceSetterInjection", CustomerService.class);
 		System.out.println(customerServiceSetterInjection.findAll());
 
-		final CustomerService customerServiceConstructorInjection = context.getBean("customerServiceConstructorInjection", CustomerService.class);
+		final CustomerService customerServiceConstructorInjection =
+				context.getBean("customerServiceConstructorInjection", CustomerService.class);
 		System.out.println(customerServiceConstructorInjection.findAll());
 
 		final CustomerService customerServiceImpl1 = context.getBean("customerServiceImpl", CustomerService.class);
@@ -35,8 +36,8 @@ public class Application {
 
 		System.out.println("Prototypes are different: " + (customRepository1 == customRepository2)); //false
 
-		System.out.println("Property timeout injection: " + ((CustomerServiceImpl)customerServiceImpl1).getTimeout()); //1000
-		System.out.println("Property dbUsername injection: " + ((HibernateCustomRepository)customRepository1).getDbUsername()); //derbyUsername
+		System.out.println("Property timeout injection: " + ((CustomerServiceImpl) customerServiceImpl1).getTimeout()); //1000
+		System.out.println("Property dbUsername injection: " + ((HibernateCustomRepository) customRepository1).getDbUsername()); //derbyUsername
 
 	}
 }

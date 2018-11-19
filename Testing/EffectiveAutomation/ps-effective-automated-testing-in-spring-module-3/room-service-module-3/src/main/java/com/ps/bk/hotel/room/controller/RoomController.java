@@ -16,33 +16,33 @@ import com.ps.bk.hotel.room.service.RoomService;
 public class RoomController {
 
 	private RoomService service;
-	
+
 	public RoomController(RoomService service) {
 		this.service = service;
 	}
 
 	@GetMapping
-	public ResponseEntity<Iterable<Room>> getAllRooms(){
+	public ResponseEntity<Iterable<Room>> getAllRooms() {
 		return ResponseEntity.ok(service.getAllRooms());
 	}
-	
+
 	@GetMapping("/{id}")
-	public ResponseEntity<Room> findRoomById(long id){
+	public ResponseEntity<Room> findRoomById(long id) {
 		return ResponseEntity.ok(service.findRoom(id));
 	}
-	
+
 	@PostMapping
-	public ResponseEntity<?> addRoom(Room room){
+	public ResponseEntity<?> addRoom(Room room) {
 		return ResponseEntity.ok().build();
 	}
-	
+
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateRoom(Room room){
+	public ResponseEntity<?> updateRoom(Room room) {
 		return ResponseEntity.ok().build();
 	}
-	
+
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteRoom(long id){
+	public ResponseEntity<?> deleteRoom(long id) {
 		return ResponseEntity.ok().build();
 	}
 }

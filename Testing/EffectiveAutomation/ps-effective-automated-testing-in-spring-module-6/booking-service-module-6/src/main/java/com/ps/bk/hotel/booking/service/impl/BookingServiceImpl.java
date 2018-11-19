@@ -62,7 +62,8 @@ public class BookingServiceImpl implements BookingService {
 				if (checkOut.before(checkIn) || checkOut.equals(checkIn)) {
 					errors.add("Check-out date must occur after check-in date");
 				}
-			} catch (ParseException e) {
+			}
+			catch (ParseException e) {
 			}
 		}
 
@@ -77,10 +78,11 @@ public class BookingServiceImpl implements BookingService {
 			Date date;
 			try {
 				date = dateFormat.parse(formattedDate);
-				if(date.getTime() < System.currentTimeMillis()) {
+				if (date.getTime() < System.currentTimeMillis()) {
 					errors.add(dateType + ": " + formattedDate + " is in the past.");
 				}
-			} catch (ParseException e) {
+			}
+			catch (ParseException e) {
 				errors.add(dateType + " date of: " + formattedDate
 						+ " is not a valid date or does not match date format of: MM/DD/YYYY");
 			}

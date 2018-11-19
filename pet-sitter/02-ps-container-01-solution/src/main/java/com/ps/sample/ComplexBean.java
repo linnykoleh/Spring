@@ -10,41 +10,42 @@ import org.springframework.beans.factory.annotation.Required;
  * order they are called in.
  */
 public class ComplexBean {
-    private Logger logger = LoggerFactory.getLogger(ComplexBean.class);
+	private Logger logger = LoggerFactory.getLogger(ComplexBean.class);
 
-    private SimpleBean simpleBean1;
-    private SimpleBean simpleBean2;
+	private SimpleBean simpleBean1;
+	private SimpleBean simpleBean2;
 
-    public ComplexBean(SimpleBean simpleBean1) {
-        logger.info(" --> Stage 1: Calling the constructor.");
-        this.simpleBean1 = simpleBean1;
-    }
+	public ComplexBean(SimpleBean simpleBean1) {
+		logger.info(" --> Stage 1: Calling the constructor.");
+		this.simpleBean1 = simpleBean1;
+	}
 
-    @Required
-    public void setSimpleBean2(SimpleBean simpleBean2) {
-        logger.info(" --> Stage 2: Calling the setter.");
-        this.simpleBean2 = simpleBean2;
-    }
+	@Required
+	public void setSimpleBean2(SimpleBean simpleBean2) {
+		logger.info(" --> Stage 2: Calling the setter.");
+		this.simpleBean2 = simpleBean2;
+	}
 
-    /**
-     * The initialization method.
-     * Just for fun: it instantiates the simpleBean2 only if the current time is even.
-     */
-    private void initMethod() {
-        logger.info(" --> Stage 3: Calling the initMethod.");
-        long ct = System.currentTimeMillis();
-        if (ct % 2 == 0) {
-            simpleBean2 = new SimpleBean();
-        }
-    }
-    /**
-     * Destroy method
-     */
-    private boolean destroyMethod() {
-        logger.info(" --> Calling the destroyMethod.");
-        simpleBean1 = null;
-        simpleBean2 = null;
-        return true;
-    }
+	/**
+	 * The initialization method.
+	 * Just for fun: it instantiates the simpleBean2 only if the current time is even.
+	 */
+	private void initMethod() {
+		logger.info(" --> Stage 3: Calling the initMethod.");
+		long ct = System.currentTimeMillis();
+		if (ct % 2 == 0) {
+			simpleBean2 = new SimpleBean();
+		}
+	}
+
+	/**
+	 * Destroy method
+	 */
+	private boolean destroyMethod() {
+		logger.info(" --> Calling the destroyMethod.");
+		simpleBean1 = null;
+		simpleBean2 = null;
+		return true;
+	}
 
 }

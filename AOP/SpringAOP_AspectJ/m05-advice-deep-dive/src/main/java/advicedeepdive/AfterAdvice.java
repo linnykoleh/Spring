@@ -5,6 +5,9 @@ import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 @Aspect
 public class AfterAdvice {
@@ -22,9 +25,9 @@ public class AfterAdvice {
   @After("execution(* *(..))")
 	public void exiting(JoinPoint joinPoint) {
 		afterCalled = true;
-      System.out.println("exiting " + joinPoint.getSignature());
+      log.info("exiting " + joinPoint.getSignature());
 		for (Object arg : joinPoint.getArgs()) {
-            System.out.println("Arg : " + arg);
+            log.info("Arg : " + arg);
 		}
 	}
 }

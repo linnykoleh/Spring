@@ -1,7 +1,5 @@
 package com.ewolff.demo;
 
-
-
 public class DemoClass {
 
 	public void advicedMethod() {
@@ -10,5 +8,5 @@ public class DemoClass {
 	public void callsTheAdvicedMethohd() {
 		advicedMethod();
 	}
-	
+
 }

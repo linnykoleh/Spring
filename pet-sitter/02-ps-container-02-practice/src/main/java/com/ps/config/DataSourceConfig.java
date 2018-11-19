@@ -16,28 +16,28 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 @PropertySource("classpath:db/datasource.properties")
 public class DataSourceConfig {
 
-    @Value("${driverClassName}")
-    private String driverClassName;
-    @Value("${url}")
-    private String url;
-    @Value("${username}")
-    private String username;
-    @Value("${password}")
-    private String password;
+	@Value("${driverClassName}")
+	private String driverClassName;
+	@Value("${url}")
+	private String url;
+	@Value("${username}")
+	private String username;
+	@Value("${password}")
+	private String password;
 
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+		return new PropertySourcesPlaceholderConfigurer();
+	}
 
-    @Lazy
-    @Bean(name = {"one", "two", "dataSource"})
-    public DataSource dataSource() throws SQLException {
-        DriverManagerDataSource ds = new DriverManagerDataSource();
-        ds.setDriverClassName(driverClassName);
-        ds.setUrl(url);
-        ds.setUsername(username);
-        ds.setPassword(password);
-        return ds;
-    }
+	@Lazy
+	@Bean(name = {"one", "two", "dataSource"})
+	public DataSource dataSource() {
+		DriverManagerDataSource ds = new DriverManagerDataSource();
+		ds.setDriverClassName(driverClassName);
+		ds.setUrl(url);
+		ds.setUsername(username);
+		ds.setPassword(password);
+		return ds;
+	}
 }

@@ -19,7 +19,7 @@ public class DrawingApp {
 		final AbstractApplicationContext beanFactory = new ClassPathXmlApplicationContext("jb/_2_scope_lifecycle/spring.xml");
 		beanFactory.registerShutdownHook(); // enable destroying beans (@PreDestroy, implements DisposableBean)
 
-		final Holder holder= beanFactory.getBean("holder", Holder.class);
+		final Holder holder = beanFactory.getBean("holder", Holder.class);
 		System.out.println(holder.getDependency().getName().equals("spring-oore"));  //true
 
 		final Triangle triangleSingleton1 = (Triangle) beanFactory.getBean("triangleSingleton");

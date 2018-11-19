@@ -1,41 +1,41 @@
 package com.ps.repos.impl;
 
+import javax.sql.DataSource;
+
 import com.ps.base.AbstractEntity;
 import com.ps.repos.AbstractRepo;
 
-import javax.sql.DataSource;
-
 public class JdbcAbstractRepo<T extends AbstractEntity> implements AbstractRepo<T> {
-    protected DataSource dataSource;
+	protected DataSource dataSource;
 
-    public JdbcAbstractRepo(){
-    }
+	public JdbcAbstractRepo() {
+	}
 
-    public JdbcAbstractRepo(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+	public JdbcAbstractRepo(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
 
-    @Override
-    public void save(T entity) {
+	@Override
+	public void save(T entity) {
 
-    }
+	}
 
-    @Override
-    public void delete(T entity) {
+	@Override
+	public void delete(T entity) {
 
-    }
+	}
 
-    @Override
-    public void deleteById(Long entityId) {
+	@Override
+	public void deleteById(Long entityId) {
 
-    }
+	}
 
-    @Override
-    public T findById(Long entityId) {
-        return null;
-    }
+	@Override
+	public T findById(Long entityId) {
+		return null;
+	}
 }

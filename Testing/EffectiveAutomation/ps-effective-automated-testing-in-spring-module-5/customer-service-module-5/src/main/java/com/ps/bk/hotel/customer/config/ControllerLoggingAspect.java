@@ -45,7 +45,8 @@ public class ControllerLoggingAspect {
 		if (log.isDebugEnabled()) {
 			try {
 				log.debug("Response: " + mapper.writeValueAsString(result));
-			} catch (JsonProcessingException e) {
+			}
+			catch (JsonProcessingException e) {
 				log.warn("An error occurred while attempting to write value as JSON: " + result.toString());
 				log.warn(e.getMessage(), e);
 			}

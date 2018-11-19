@@ -1,14 +1,14 @@
 package com.ps.services.impl;
 
-import com.ps.base.UserType;
-import com.ps.ents.User;
-import com.ps.exceptions.MailSendingException;
-import com.ps.repos.UserRepo;
-import com.ps.services.UserService;
+import static com.ps.util.RecordBuilder.buildUser;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.ps.util.RecordBuilder.buildUser;
+import com.ps.base.UserType;
+import com.ps.ents.User;
+import com.ps.repos.UserRepo;
+import com.ps.services.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {

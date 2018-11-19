@@ -89,11 +89,6 @@
             <version>1.11</version>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>com.linnik.wickiup</groupId>-->
-            <!--<artifactId>00-ps-core</artifactId>-->
-            <!--<version>${project.version}</version>-->
-        <!--</dependency>-->
     </dependencies>
 
     <build>

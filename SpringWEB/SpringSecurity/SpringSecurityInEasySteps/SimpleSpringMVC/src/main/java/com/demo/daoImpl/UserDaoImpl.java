@@ -5,22 +5,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import com.demo.dao.UserDao;
 import com.demo.to.User;
-import com.demo.web.HomeController;
 
 @Repository
 @Component

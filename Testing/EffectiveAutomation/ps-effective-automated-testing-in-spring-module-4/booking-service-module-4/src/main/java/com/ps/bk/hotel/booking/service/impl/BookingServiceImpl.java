@@ -6,7 +6,7 @@ import com.ps.bk.hotel.booking.service.BookingService;
 
 public class BookingServiceImpl implements BookingService {
 	private BookingRepo repo;
-	
+
 	public BookingServiceImpl(BookingRepo repo) {
 		this.repo = repo;
 	}
@@ -28,8 +28,7 @@ public class BookingServiceImpl implements BookingService {
 
 	@Override
 	public void updateBooking(Booking booking) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

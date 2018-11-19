@@ -10,21 +10,22 @@ import com.learning.linnyk.spring_ripper.part1.annotations.DeprecatedClass;
 /**
  * @author LinnykOleh
  */
-public class DeprecationHandlerBeanFactoryPostProcessor implements BeanFactoryPostProcessor{
+public class DeprecationHandlerBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		final String[] beanDefinitionNames = beanFactory.getBeanDefinitionNames();
-		for(String name : beanDefinitionNames){
+		for (String name : beanDefinitionNames) {
 			final BeanDefinition beanDefinition = beanFactory.getBeanDefinition(name);
 			final String beanClassName = beanDefinition.getBeanClassName();
 			try {
 				final Class<?> beanClass = Class.forName(beanClassName);
 				final DeprecatedClass annotation = beanClass.getAnnotation(DeprecatedClass.class);
-				if(annotation != null){
+				if (annotation != null) {
 					beanDefinition.setBeanClassName(annotation.newImpl().getName());
 				}
-			}catch (Exception e) {
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

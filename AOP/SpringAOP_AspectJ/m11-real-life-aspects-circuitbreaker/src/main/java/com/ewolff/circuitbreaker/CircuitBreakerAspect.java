@@ -14,29 +14,30 @@ import org.springframework.stereotype.Component;
 @Aspect("perthis(com.ewolff.circuitbreaker.CircuitBreakerAspect.circuitBreakerMethods())")
 public class CircuitBreakerAspect {
 
-  @Pointcut("execution(@com.ewolff.circuitbreaker.CircuitBreaker * *(..))")
-  public void circuitBreakerMethods() {
-  }
+	@Pointcut("execution(@com.ewolff.circuitbreaker.CircuitBreaker * *(..))")
+	public void circuitBreakerMethods() {
+	}
 
-  private AtomicInteger counter = new AtomicInteger();
-  private Throwable throwable;
+	private AtomicInteger counter = new AtomicInteger();
+	private Throwable throwable;
 
-  @Around("com.ewolff.circuitbreaker.CircuitBreakerAspect.circuitBreakerMethods()")
-  public Object retry(ProceedingJoinPoint joinPoint) throws Throwable {
-    try {
-      if (counter.get() == 0) {
-        return joinPoint.proceed();
-      }
-      if (counter.incrementAndGet() == 10) {
-        Object result = joinPoint.proceed();
-        counter.set(0);
-        return result;
-      }
-    } catch (Throwable throwable) {
-      this.throwable = throwable;
-      counter.set(1);
-    }
-    throw this.throwable;
-  }
+	@Around("com.ewolff.circuitbreaker.CircuitBreakerAspect.circuitBreakerMethods()")
+	public Object retry(ProceedingJoinPoint joinPoint) throws Throwable {
+		try {
+			if (counter.get() == 0) {
+				return joinPoint.proceed();
+			}
+			if (counter.incrementAndGet() == 10) {
+				Object result = joinPoint.proceed();
+				counter.set(0);
+				return result;
+			}
+		}
+		catch (Throwable throwable) {
+			this.throwable = throwable;
+			counter.set(1);
+		}
+		throw this.throwable;
+	}
 
 }

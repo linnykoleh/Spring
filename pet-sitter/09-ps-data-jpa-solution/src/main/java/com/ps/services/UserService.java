@@ -1,10 +1,9 @@
 package com.ps.services;
 
+import java.util.List;
+
 import com.ps.base.UserType;
 import com.ps.ents.User;
-import com.ps.exceptions.MailSendingException;
-
-import java.util.List;
 
 public interface UserService {
 

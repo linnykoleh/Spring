@@ -14,13 +14,13 @@ public class Application {
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
 		BookRepository repository = context.getBean(BookRepository.class);
 
-		List<Book> books = repository.findAll(new ArrayList<Long>(){{
+		List<Book> books = repository.findAll(new ArrayList<Long>() {{
 			add(1L);
 			add(3L);
 			add(7L);
 		}});
 
-		for(Book book : books){
+		for (Book book : books) {
 			log.info(book.toString());
 		}
 	}
