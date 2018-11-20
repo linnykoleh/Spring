@@ -8,7 +8,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 /**
  * @author LinnykOleh
  */
-public class MyBeanFactoryPostProcessor implements BeanFactoryPostProcessor{
+public class MyBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
 	/*
 	 Modify the application context's internal bean factory after its standard
@@ -19,18 +19,18 @@ public class MyBeanFactoryPostProcessor implements BeanFactoryPostProcessor{
 	 https://habrahabr.ru/post/222579/
 	*/
 
-	@Override
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		System.out.println("MyBeanFactoryPostProcessor::postProcessBeanFactory");
-		final String[] beanDefinitionNames = beanFactory.getBeanDefinitionNames();
-		for(String beanDefinitionName: beanDefinitionNames) {
-			final BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanDefinitionName);
-			System.out.println(beanDefinition);
-		}
-		System.out.println("===========================================");
-		System.out.println("===========================================");
-		System.out.println("===========================================");
-		System.out.println("===========================================");
-		System.out.println("===========================================");
-	}
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        System.out.println("MyBeanFactoryPostProcessor::postProcessBeanFactory");
+        final String[] beanDefinitionNames = beanFactory.getBeanDefinitionNames();
+        for (String beanDefinitionName : beanDefinitionNames) {
+            final BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanDefinitionName);
+            System.out.println(beanDefinition);
+        }
+        System.out.println("===========================================");
+        System.out.println("===========================================");
+        System.out.println("===========================================");
+        System.out.println("===========================================");
+        System.out.println("===========================================");
+    }
 }

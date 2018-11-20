@@ -387,19 +387,101 @@ The lifecycle of a Spring bean looks like this:
 - For each bean in the container:
 	- An instance of the bean is created using the bean metadata.
 	- Properties and dependencies of the bean are set.
-	- Any instances of `BeanPostProcessor` are given a chance to process the new bean instance before and after initialization.
-		- Any methods in the bean implementation class annotated with `@PostConstruct` are invoked. This processing is performed by a `BeanPostProcessor`.
-		- Any `afterPropertiesSet` method in a bean implementation class implementing the `InitializingBean` interface is invoked. 
-		  This processing is performed by a `BeanPostProcessor`. If the same initialization method has already been invoked, it will not be invoked again.
-		- Any custom bean initialization method is invoked. Bean initialization methods can be specified either in the value of the `init-method` attribute in the corresponding <bean> element in a Spring XML configuration or in the `initMethod` property of the `@Bean` annotation. 
-		  This processing is performed by a `BeanPostProcessor`. If the same initialization method has already been invoked, it will not be invoked again.
-		- The bean is ready for use.
+	- `BeanPostProcessor`'s `postProcessBeforeInitialization` are given a chance to process the new bean instance `before initialization`.
+    - Any methods in the bean implementation class annotated with `@PostConstruct` are invoked.
+    - Any `afterPropertiesSet` method in a bean implementation class implementing the `InitializingBean` interface is invoked. 
+    - Any custom bean initialization method is invoked. Bean initialization methods can be specified either in the value of the `init-method` attribute in the corresponding <bean> element in a Spring XML configuration or in the `initMethod` property of the `@Bean` annotation. 
+	- `BeanPostProcessor`'s `postProcessAfterInitialization` are given a chance to process the new bean instance `after initialization`.	
+	- The bean is ready for use.
 - When the Spring application context is to shut down, the beans in it will receive destruction callbacks in this order:
 	- Any methods in the bean implementation class annotated with `@PreDestroy` are invoked.
 	- Any destroy method in a bean implementation class implementing the `DisposableBean` interface is invoked. If the same destruction method has already been invoked, it will not be invoked	again.
 	- Any custom bean destruction method is invoked.
       Bean destruction methods can be specified either in the value of the `destroy-method` attribute in the corresponding <bean> element in a Spring XML configuration or in the `destroyMethod` property of the `@Bean` annotation.
       If the same destruction method has already been invoked, it will not be invoked again.
+
+### BeanFactoryPostProcessor
+
+- `BeanFactoryPostProcessor` is an interface that defines the property (a single method) of a type of
+container extension point that is allowed to modify Spring bean meta-data prior to instantiation of
+the beans in a container. A bean factory post processor may not create instances of beans, only
+modify bean meta-data. A bean factory post processor is only applied to the meta-data of the beans
+in the same container in which it is defined in.
+     - Example:
+          - `PropertySourcesPlaceholderConfigurer` - allows for injection of values from the current Spring environment the property sources of this environment.
+          - `DeprecatedBeanWarner` - logs warnings about beans which implementation class is annotated with the `@Deprecated` annotation.
+          - `PropertySourcesPlaceholderConfigurer` - is a `BeanFactoryPostProcessor` that resolves property
+             placeholders, on the ${PROPERTY_NAME} format, in Spring bean properties and Spring bean
+             properties annotated with the `@Value` annotation.
+    - Example how to define own BPFP
+
+```java
+public class DeprecationHandlerBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
+
+	@Override
+	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+		final String[] beanDefinitionNames = beanFactory.getBeanDefinitionNames();
+		for (String name : beanDefinitionNames) {
+			final BeanDefinition beanDefinition = beanFactory.getBeanDefinition(name);
+			final String beanClassName = beanDefinition.getBeanClassName();
+			try {
+				final Class<?> beanClass = Class.forName(beanClassName);
+				final DeprecatedClass annotation = beanClass.getAnnotation(DeprecatedClass.class);
+				if (annotation != null) {
+					beanDefinition.setBeanClassName(annotation.newImpl().getName());
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}
+```
+
+- `BeanFactoryPostProcessor` returning by `@Bean` methods this is a
+a special consideration must be taken for `@Bean` methods that return Spring `BeanFactoryPostProcessor` (BFPP) types. 
+Because BFPP objects must be instantiated very early in the container lifecycle, they can interfere with processing 
+of annotations such as `@Autowired`, `@Value`, and `@PostConstruct` within `@Configuration` classes. 
+To avoid these lifecycle issues, mark BFPP-returning `@Bean` methods as static. 
+   
+```java
+@Bean
+public static PropertySourcesPlaceholderConfigurer pspc() {
+  // instantiate, configure and return pspc ...
+}
+```
+	
+### BeanPostProcessor
+
+- `BeanPostProcessor` is an interface that defines callback methods that allow for modification of bean instances. 
+`BeanPostProcessor` tells spring there some processing that spring have to do after initialising a bean. 
+Spring execute these method for each bean. BeanPostProcessor used to extend spring's functionality.
+A `BeanPostProcessor` may even replace a bean instance with, for instance, an AOP proxy.
+    - Examples
+        - `AutowiredAnnotationBeanPostProcessor` - implements support for dependency injection with the `@Autowired` annotation.
+        - `PersistenceExceptionTranslationPostProcessor` - applies exception translation to Spring beans annotated with the `@Repository` annotation.
+    - Example how to define own BPP    
+
+```java
+public class DisplayNameBeanPostProcessor implements BeanPostProcessor {
+
+	@Override
+	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+		System.out.println("Called postProcessBeforeInitialization " + beanName);
+		return bean;
+	}
+
+	@Override
+	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+		System.out.println("Called postProcessAfterInitialization " + beanName);
+		return bean;
+	}
+}
+```
+
+- When defining a `BeanPostProcessor` using an `@Bean` annotated method, 
+ it is recommended that the method is static, in order for the post-processor to be  instantiated early in the Spring context creation process.
 	
 ## Initializing beans priority	
 
@@ -504,6 +586,13 @@ public class TriangleLifecycle implements DisposableBean {
 <bean id="complexBean" class="com.ps.sample.ComplexBean" scope="prototype"/>
 ```
 
+#### Lazy and eager beans
+
+- **Singleton** Spring beans in an application context are `eagerly` initialized by default, as the application context is created.
+- **Prototype** scoped bean is typically created `lazily` when requested. 
+    - An exception is when a prototype scoped bean is a dependency of a singleton scoped bean, 
+      in which case the prototype scoped bean will be `eagerly` initialized.
+
 #### Additional ways to create app context
 
 ```java
@@ -583,6 +672,7 @@ public class DataSourceConfig {
 - `@Bean` annotation together with the method are treated as a `bean definition`, and the method name becomes the bean `id`.
 - `@Bean ( initMethod = "init", destroyMethod = "destroy")` - for declare init and destroy methods
 - `@PropertySource` annotation will be used to read property values from a property file set as argument
+    - The annotation is applied to classes annotated with `@Configuration`.
 - `@ImportResource` for importing another configurations
 - `@Import` annotation to import the bean definition in one class into the other.
 - `@ComponentScan` works the same way as <context:component-scan /> for XML
