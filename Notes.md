@@ -362,27 +362,44 @@ public class SpringFactoryBean implements FactoryBean<SimpleBean> {
 </beans>
 ```
 
-## Application Context and Bean Lifecycle 
+## Application Context 
+
+The application context in a Spring application is a Java object that implements the `ApplicationContext` interface and is responsible for:
+- Instantiating beans in the application context.
+- Configuring the beans in the application context.
+- Assembling the beans in the application context.
+- Managing the life-cycle of Spring beans.
+
+Some commonly used implementations of the `ApplicationContext` interface are:
+- `AnnotationConfigApplicationContext` - Standalone application context used with configuration in the form of annotated classes.
+- `AnnotationConfigWebApplicationContext` - Same as `AnnotationConfigApplicationContext` but for web applications.
+- `ClassPathXmlApplicationContext` - Standalone application context used with XML configuration located on the classpath of the application.
+- `FileSystemXmlApplicationContext` - Standalone application context used with XML configuration located as one or more files in the file system.
+- `XmlWebApplicationContext` - Web application context used with XML configuration.
+
+## The lifecycle of a Spring bean
 
 ![alt text](images/pet-sitter/Screenshot_3.png "Screenshot_3")
 
-- Load Bean Definition step
-	1. The XML files/Configuration classes parse
-	2. The bean definitions load into the application context, indexed by ids
-	3. The bean definitions process by beans called bean definition post processors 
-- Bean creation step	
-	1. The beans are instantiated. This basically means that the bean factory is calling the constructor of each bean
-	2. The dependencies are injected. For beans that are defined having dependencies injected via setter, this stage is separate from the instantiation stage.
-	3. Bean post process beans are invoked before initialization
-	4. Beans are initialized
-	5. Bean post process beans are invoked after initialization
-	
-	
-- Ways of initializing a bean	
-	- Using the attribute `init-method` on a <bean/> XML definition to define a method to be called for initialization, covered previously.
-	- Implementing the `org.springframework.beans.factory.InitializingBean` interface and providing an implementation for the method `afterPropertiesSet` (not recommended, since it couples the application code with Spring infrastructure).
-	- Annotating with `@PostConstruct` the method that is called right after the bean is instantiated and dependencies injected
-	- The equivalent of the `init-method` attribute when using Java Configuration `@Bean(initMethod="...")`.	
+The lifecycle of a Spring bean looks like this:
+- Spring bean configuration is read and metadata in the form of a BeanDefinition object is created for each bean.
+- All instances of `BeanFactoryPostProcessor` are invoked in sequence and are allowed an opportunity to alter the bean metadata.
+- For each bean in the container:
+	- An instance of the bean is created using the bean metadata.
+	- Properties and dependencies of the bean are set.
+	- Any instances of `BeanPostProcessor` are given a chance to process the new bean instance before and after initialization.
+		- Any methods in the bean implementation class annotated with `@PostConstruct` are invoked. This processing is performed by a `BeanPostProcessor`.
+		- Any `afterPropertiesSet` method in a bean implementation class implementing the `InitializingBean` interface is invoked. 
+		  This processing is performed by a `BeanPostProcessor`. If the same initialization method has already been invoked, it will not be invoked again.
+		- Any custom bean initialization method is invoked. Bean initialization methods can be specified either in the value of the `init-method` attribute in the corresponding <bean> element in a Spring XML configuration or in the `initMethod` property of the `@Bean` annotation. 
+		  This processing is performed by a `BeanPostProcessor`. If the same initialization method has already been invoked, it will not be invoked again.
+		- The bean is ready for use.
+- When the Spring application context is to shut down, the beans in it will receive destruction callbacks in this order:
+	- Any methods in the bean implementation class annotated with `@PreDestroy` are invoked.
+	- Any destroy method in a bean implementation class implementing the `DisposableBean` interface is invoked. If the same destruction method has already been invoked, it will not be invoked	again.
+	- Any custom bean destruction method is invoked.
+      Bean destruction methods can be specified either in the value of the `destroy-method` attribute in the corresponding <bean> element in a Spring XML configuration or in the `destroyMethod` property of the `@Bean` annotation.
+      If the same destruction method has already been invoked, it will not be invoked again.
 	
 ## Initializing beans priority	
 
@@ -473,14 +490,15 @@ public class TriangleLifecycle implements DisposableBean {
 
 - Default scope for a bean is `singleton`
 
-| Scope         | Description |
-| ------------- |-------------|
-| **Singleton** | The Spring IoC creates a single instance of this bean, and any request for beans with an id or ids matching this bean definition results in this instance being returned.|
-| **Prototype** | Every time a request is made for this specific bean, the Spring IoC creates a new instance.      |
-| **Request**   | The Spring IoC creates a bean instance for each HTTP request. Only valid in the context of a web-aware Spring ApplicationContext.     |
-| **Session**   | The Spring IoC creates a bean instance for each HTTP session. Only valid in the context of a web-aware Spring ApplicationContext. |
-| **global-session**| The Spring IoC creates a bean instance for each global HTTP session. Only valid in the context of a web-aware Spring ApplicationContext.|
-| _Custom_      | Developers are provided the possibility to define their own scopes with their own rules.|
+| **Scope**           |**Description** |
+| --------------------|-------------|
+| **singleton**       | [Default] The Spring IoC creates a single instance of this bean, and any request for beans with an id or ids matching this bean definition results in this instance being returned.|
+| **prototype**       | Each time a bean is requested, a new instance is created. Every time a request is made for this specific bean, the Spring IoC creates a new instance.      |
+| **request**         | Single bean instance per HTTP `request`. Only in web-aware Spring application contexts. |
+| **session**         | Single bean instance per HTTP `session`. Only in web-aware Spring application contexts. |
+| **application**     | Single bean instance per ServletContext. Only in web-aware Spring application contexts.|
+| **websocket**       | Single bean instance per `WebSocket`. Only in web-aware Spring application contexts.|
+| _custom_            | Developers are provided the possibility to define their own scopes with their own rules.|
 
 ```xml
 <bean id="complexBean" class="com.ps.sample.ComplexBean" scope="prototype"/>
@@ -494,7 +512,6 @@ public class TriangleLifecycle implements DisposableBean {
 - new FileSystemXmlApplicationContext(“C:/Users/vojtech/app-config.xml”);
 - new FileSystemXmlApplicationContext(“./app-config.xml”);
 ```
-
 
 #### Depends-on
 
@@ -513,13 +530,20 @@ public class TriangleLifecycle implements DisposableBean {
 - Scope can be defined by `@Scope`(eg. `@Scope(BeanDefinition.SCOPE_SINGLETON)`) annotation on the class-level of bean class
 - Stereotypes annotations are used to mark classes according to their purpose:
     - `@Component`: template for any Spring-managed component(bean).
-    - `@Repository`: template for a component used to provide data access, specialization of the `@Component` annotation for the the `Dao layer`.
+    - `@Repository`: indicates that a class is a repository (persistence). template for a component used to provide data access, specialization of the `@Component` annotation for the the `Dao layer`.
     - `@Service`: template for a component that provides service execution, specialization of the `@Component` annotation for the `Service layer`.
-    - `@Controller`: template for a web component, specialization of the `@Component` annotation for the `Web layer`.
-    - `@Configuration`: configuration class containing bean definitions (methods annotated with @Bean).
+    - `@Controller`: indicates that a class is a web controller. Template for a web component, specialization of the `@Component` annotation for the `Web layer`.
+    - `@RestController`: indicates that a class is a specialized web controller for a REST service. Combines the `@Controller` and `@ResponseBody` annotations.
+    - `@Configuration`: configuration class containing bean definitions (methods annotated with `@Bean`).
     
 - Autowiring and initialization annotations are used to define which dependency is injected and what the bean looks like. For example:
-    - `@Autowired`: core annotation for this group; is used on dependencies to instruct Spring IoC to take care of injecting them. Can be used on fields, constructors, and setters. Use with @Qualifier from Spring to specify name of the bean to inject.
+    - `@Autowired`: core annotation for this group; is used on dependencies to instruct Spring IoC to take care of injecting them.
+     	- Can be used on fields, constructors, setters and methods. 
+     	- Use with `@Qualifier` from Spring to specify name of the bean to inject.
+     	- If a bean class contains one single constructor, then annotating it with `@Autowired` is not required
+          in order for the Spring container to be able to autowire dependencies. If a bean class contains more
+          than one constructor and autowiring is desired, at least one of the constructors need to be annotated
+          with `@Autowired` in order to give the container a hint on which constructor to use.
     - `@Inject`: equivalent annotation to `@Autowired` from javax.inject package. Use with `@Qualifier` from javax.inject to specify name of the bean to inject.
     - `@Resource`: equivalent annotation to `@Autowired` from javax.annotation package. Provides a name attribute to specify name of the bean to inject.
     - `@Required`: Spring annotation that marks a dependency as mandatory, used on setters.
@@ -563,6 +587,20 @@ public class DataSourceConfig {
 - `@Import` annotation to import the bean definition in one class into the other.
 - `@ComponentScan` works the same way as <context:component-scan /> for XML
 
+- `@ComponentScan` - The default component scanning behavior is to detect classes annotated with `@Component` or an annotation that itself is annotated with `@Component`. 
+	Note that the `@Configuration` annotation is annotated with the `@Component` annotation and thus are Spring Java configuration classes also candidates for auto-detection using component scanning.
+
+```java
+@ComponentScan(
+	basePackages = "comlearnig",
+	basePackageClasses = CalculatorService.class,
+	excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*Repository"),
+	includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = MyService.class)
+)
+public class SpringApplication {
+
+}
+```
 ## Bean Naming
 
 - When the name is not defined for a bean declared with `@Bean`, the Spring IoC names the bean with the annotated `method name`.
@@ -789,7 +827,9 @@ implements PetRepo {
   - If no value is provided `@ContextConfiguration`, config file `${classname}-context.xml` in the same package is imported
   - XML config files are loaded by providing string value to annotation - `@ContextConfiguration("classpath:com/example/test-config.xml")`
   - Java @Configuration files are loaded from classes attribute - `@ContextConfiguration(classes={TestConfig.class, OtherConfig.class})`
-  
+
+#### JUnit 4 Example 
+ 
 ```java
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={TestConfig.class, OtherConfig.class})
@@ -798,6 +838,47 @@ public final class FooTest  {
     @Autowired
     private MyService myService;
     
+    @Test
+    public void test() {
+    	
+    }
+    //...
+}
+```
+
+#### JUnit 5 Example
+
+```java
+@SpringJUnitConfig(classes={TestConfig.class, OtherConfig.class})
+public final class FooTest  {
+ 
+    @Autowired
+    private MyService myService;
+    
+    @Test
+    public void test() {
+    	
+    }
+    //...
+}
+```
+
+#### Web Application Context
+
+```java
+@SpringJUnitConfig(classes={TestConfig.class, OtherConfig.class})
+@WebAppConfiguration
+public final class FooTest  {
+ 
+    @Autowired
+    private MyService myService;
+    @Autowired
+    protected WebApplicationContext mWebApplicationContext;
+    
+    @Test
+    public void test() {
+    	
+    }
     //...
 }
 ```
