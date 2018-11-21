@@ -5,9 +5,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.learning.linnyk.jb._1_di.beans.Point;
 import com.learning.linnyk.jb._2_scope_lifecycle.beans.Triangle;
+import com.learning.linnyk.jb._2_scope_lifecycle.beans.TriangleAware;
 import com.learning.linnyk.jb._2_scope_lifecycle.beans.TriangleInheritance;
 import com.learning.linnyk.jb._2_scope_lifecycle.beans.TriangleLifecycle;
-import com.learning.linnyk.jb._2_scope_lifecycle.dependency.Holder;
+import com.learning.linnyk.jb._2_scope_lifecycle.beans.dependency.Holder;
 
 /**
  * @author LinnykOleh

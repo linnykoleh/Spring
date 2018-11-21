@@ -1,4 +1,4 @@
-package com.learning.linnyk.jb._2_scope_lifecycle.dependency;
+package com.learning.linnyk.jb._2_scope_lifecycle.beans.dependency;
 
 public class Dependency {
 

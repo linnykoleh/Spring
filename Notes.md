@@ -389,16 +389,18 @@ The lifecycle of a Spring bean looks like this:
 	- Properties and dependencies of the bean are set.
 	- `BeanPostProcessor`'s `postProcessBeforeInitialization` are given a chance to process the new bean instance `before initialization`.
     - Any methods in the bean implementation class annotated with `@PostConstruct` are invoked.
-    - Any `afterPropertiesSet` method in a bean implementation class implementing the `InitializingBean` interface is invoked. 
+    - Any `afterPropertiesSet` method in a bean implementation class implementing the `InitializingBean` interface is invoked (this method is not recommended by the Spring). 
     - Any custom bean initialization method is invoked. Bean initialization methods can be specified either in the value of the `init-method` attribute in the corresponding <bean> element in a Spring XML configuration or in the `initMethod` property of the `@Bean` annotation. 
 	- `BeanPostProcessor`'s `postProcessAfterInitialization` are given a chance to process the new bean instance `after initialization`.	
 	- The bean is ready for use.
 - When the Spring application context is to shut down, the beans in it will receive destruction callbacks in this order:
 	- Any methods in the bean implementation class annotated with `@PreDestroy` are invoked.
-	- Any destroy method in a bean implementation class implementing the `DisposableBean` interface is invoked. If the same destruction method has already been invoked, it will not be invoked	again.
+	- Any destroy method in a bean implementation class implementing the `DisposableBean` interface is invoked. If the same destruction method has already been invoked, it will not be invoked	again. (this method is not recommended by the Spring)
 	- Any custom bean destruction method is invoked.
       Bean destruction methods can be specified either in the value of the `destroy-method` attribute in the corresponding <bean> element in a Spring XML configuration or in the `destroyMethod` property of the `@Bean` annotation.
       If the same destruction method has already been invoked, it will not be invoked again.
+
+![alt text](images/core_spring_in_detail/Screenshot_1.png "Screenshot_1")
 
 ### BeanFactoryPostProcessor
 
@@ -524,6 +526,12 @@ public class TriangleLifecycle implements InitializingBean {
 	- Activates various annotations to be detected in bean classes: Spring's @Required and
       @Autowired, as well as JSR 250's `@PostConstruct`, `@PreDestroy` and `@Resource`
     - JPA's `@PersistenceContext` and `@PersistenceUnit` (if available).
+    - Register post-processors:
+     	- `AutowiredAnnotationBeanPostProcessor`
+     	- `CommonAnnotationBeanPostProcessor` - is automatically registered in the application context and no
+           additional configuration is necessary to enable `@PostConstruct` and `@PreDestroy`.
+     	- `PersistenceAnnotationBeanPostProcessor`
+     	- `RequiredAnnotationBeanPostProcessor`
 - `<context:component-scan />` 
 	- Scans the classpath for annotated components that will be auto-registered as Spring beans. 
     - By default, the Spring-provided `@Component`, `@Repository`, `@Service`, `@Controller`, `@RestController`, `@ControllerAdvice`, and `@Configuration` stereotypes  will be detected.                                                               
@@ -559,6 +567,16 @@ public class TriangleLifecycle implements DisposableBean {
 		System.out.println("TriangleLifecycle destroyMethod : " + toString());
 	}
 	
+}
+```
+
+- Set the `destroyMethod` element of the `@Bean` annotation
+
+```java
+@Bean(destroyMethod = "destroyMethod")
+public MyBeanClass myBeanWithACloseMethodNotToBeInvokedAsLifecycleCallback() {
+	final MyBeanClass theBean = new MyBeanClass();
+	return theBean;
 }
 ```
 
@@ -753,12 +771,21 @@ public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements Reques
 
 ## Field Injection
 
+- Dependency injection, regardless of whether on fields, constructors or methods, is performed by the `AutowiredAnnotationBeanPostProcessor`.
 - `@Autowire` can be used on fields, constructors, setters, and even methods.
 - In using `@Autowired` on constructors, it makes not sense to have more than one constructor annotated with it, and Spring will complain about it because it will not know what constructor to use to instantiate the bean.
-- Out of the box, Spring will try to `autowire by type`
+- Out of the box, Spring will try to **autowire by type**
+- If there are multiple matching bean candidates and one of them is annotated with `@Primary`,
+  then this bean is selected and injected into the field or parameter.
+- If there is no other resolution mechanism, such as the `@Primary` or `@Qualifier` annotations, and there are multiple matching beans, the Spring container will try to resolve the
+  appropriate bean by trying to match the bean name to the name of the field or parameter. This is the default bean resolution mechanism used when autowiring dependencies.
+- If still no unique match for the field or parameter can be determined, an exception will be thrown.  
 - If Spring cannot decide which bean to autowire based on type (because there are more beans of the same type in the application), it defaults to `autowiring by name`.
 - `@Qualifier` - in case Spring finds more than candidate for autowiring to qualify which bean to inject
 - `@Autowired` annotation by default requires the dependency to be mandatory, but this behavior can be changed, by setting the required attribute to true (`@Autowired(required=false)`)
+- If the type that is autowired is an array-type, then the Spring container will collect all beans matching the value-type of the array in an array and inject the array.
+- If the type that is autowired is a map with the key type being String, then the Spring container will collect all beans matching the value type of the map and 
+  insert these into the map with the bean name as key and inject the map.
 
 ```java
    @Qualifier("requestRepo")
@@ -766,6 +793,19 @@ public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements Reques
    RequestRepo reqRepo;
 ```
 ## Constructor Injection
+
+- Constructors in Spring bean classes can be annotated with the @Autowired annotation in order for
+  the Spring container to look up Spring beans with the same types as the parameters of the
+  constructor and supply these beans (as parameters) when creating an instance of the bean with the `@Autowired` -annotated constructor.
+- If there is only one single constructor with parameters in a Spring bean class, then there is no need
+  to annotate this constructor with @Autowired – the Spring container will perform dependence injection anyway.
+- If there are multiple constructors in a Spring bean class and autowiring is desired, `@Autowired` may
+  be applied to one of the constructors in the class. Only one single constructor may be annotated with `@Autowired`.  
+- Constructors annotated with `@Autowired` does not have to be public in order for Spring to be able
+  to create a bean instance of the class in question, but can have any visibility.  
+- If a constructor is annotated with `@Autowired`, then all the parameters of the constructor are required. Individual parameters of such constructors can be declared using the Java 8 `Optional`
+  container object, annotated with the `@Nullable` annotation or annotated with `@Autowired(required=false)` to indicate that the parameter is not required. Such parameters will be
+  set to null, or `Optional.EMPTY` if the parameter is of the type Optional.  
 
 ```java
 @Repository("requestRepo")
@@ -779,6 +819,11 @@ public class JdbcRequestRepo  extends JdbcAbstractRepo<Request> implements Reque
 ```
 
 ## Setter Injection
+
+- Methods with any visibility.
+  Example: Setter-methods annotated with `@Autowired` can be private – the Spring container will still detect and invoke them.
+- If a method annotated with `@Autowired`, regardless of whether required is true or false, has parameters wrapped by the Java 8 Optional, then this method will always be invoked with the
+  parameters for which dependencies can be resolved having a value wrapped in an `Optional` object. All parameters for which no dependencies can be resolved will have the value `Optional.EMPTY`.  
 
 ```java
 public class JdbcUserRepo extends JdbcAbstractRepo<User> implements UserRepo {
@@ -799,6 +844,13 @@ public class JdbcUserRepo extends JdbcAbstractRepo<User> implements UserRepo {
 ```
 
 ## Method Injection
+
+- Methods with more than one parameter.
+- Methods with any visibility.
+ Example: Setter-methods annotated with `@Autowired` can be private – the Spring container will still detect and invoke them.
+- If a method annotated with `@Autowired`, regardless of whether required is true or false, has parameters wrapped by the Java 8 Optional, then this method will always be invoked with the
+  parameters for which dependencies can be resolved having a value wrapped in an `Optional` object. All parameters for which no dependencies can be resolved will have the value `Optional.EMPTY`.  
+ 
 
 ```java
 @Configuration

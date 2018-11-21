@@ -40,7 +40,7 @@
 	<!--============================================-->
 	<!-- Application Context Aware, Bean Name Aware -->
 	<!--============================================-->
-	<bean id="triangleAware" class="com.learning.linnyk.jb._2_scope_lifecycle.TriangleAware">
+	<bean id="triangleAware" class="com.learning.linnyk.jb._2_scope_lifecycle.beans.TriangleAware">
 		<constructor-arg name="type" value="Equilateral"/>
 		<constructor-arg name="color" value="Black"/>
 	</bean>
@@ -122,13 +122,23 @@
 	<!--======================================================-->
 	<!--              Dependency holder                       -->
 	<!--======================================================-->
-	<bean id="dependency" class="com.learning.linnyk.jb._2_scope_lifecycle.dependency.Dependency">
+	<bean id="dependency" class="com.learning.linnyk.jb._2_scope_lifecycle.beans.dependency.Dependency">
 		<constructor-arg name="name" value="spring-core"/>
 	</bean>
 
-	<bean id="holder" class="com.learning.linnyk.jb._2_scope_lifecycle.dependency.Holder">
+	<bean id="holder" class="com.learning.linnyk.jb._2_scope_lifecycle.beans.dependency.Holder">
 		<property name="dependency" ref="dependency"/>
 	</bean>
 
+
+	<!--=========================-->
+	<!--    Autowiring beans     -->
+	<!--=========================-->
+	<bean class="com.learning.linnyk.jb._2_scope_lifecycle.beans.autowired.Shop"/>
+
+	<bean class="com.learning.linnyk.jb._2_scope_lifecycle.beans.autowired.Person" />
+	<bean class="com.learning.linnyk.jb._2_scope_lifecycle.beans.autowired.Item"/>
+	<bean class="com.learning.linnyk.jb._2_scope_lifecycle.beans.autowired.Food"/>
+	<bean class="com.learning.linnyk.jb._2_scope_lifecycle.beans.autowired.Building"/>
 
 </beans>

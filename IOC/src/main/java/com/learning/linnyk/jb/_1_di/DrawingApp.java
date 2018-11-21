@@ -47,7 +47,8 @@ public class DrawingApp {
 		final TriangleAutowiringByType triangleAutowiringByType = (TriangleAutowiringByType) beanFactory.getBean("triangleAutowiringByType");
 		triangleAutowiringByType.draw();
 
-		final TriangleAutowiringByConstructor triangleAutowiringByConstructor = (TriangleAutowiringByConstructor) beanFactory.getBean("triangleAutowiringByConstructor");
+		final TriangleAutowiringByConstructor triangleAutowiringByConstructor =
+				(TriangleAutowiringByConstructor) beanFactory.getBean("triangleAutowiringByConstructor");
 		triangleAutowiringByConstructor.draw();
 	}
 }
