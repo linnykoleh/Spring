@@ -632,6 +632,24 @@ public MyBeanClass myBeanWithACloseMethodNotToBeInvokedAsLifecycleCallback() {
 
 ![alt text](images/pet-sitter/Screenshot_4.png "Screenshot_4")
 
+#### @Configuration
+    
+- Classes annotated with `@Configuration` contain bean definitions.  
+- Not allowed to annotate a final class with `@Configuration`
+    - The Spring container will create a subclass of each class annotated with `@Configuration` when
+      creating an application context using `CGLIB`. Final classes cannot be subclassed, thus classes
+      annotated with `@Configuration` cannot be declared as final.
+- Singleton beans are supported by the Spring container by subclassing classes annotated with
+  `@Configuration` and overriding the `@Bean` annotated methods in the class. Invocations to the
+  `@Bean` annotated methods are intercepted and, if a bean is a singleton bean and no instance of the
+  singleton bean exists, the call is allowed to continue to the `@Bean` annotated method, in order to
+  create an instance of the bean. If an instance of the singleton bean already exists, the existing
+  instance is returned
+
+![alt text](images/core_spring_in_detail/Screenshot_3.png "Screenshot_3")
+
+#### Annotations
+
 - Spring manages lifecycle of beans, each bean has its scope
 - Default scope is `singleton` - one instance per application context
 - Scope can be defined by `@Scope`(eg. `@Scope(BeanDefinition.SCOPE_SINGLETON)`) annotation on the class-level of bean class
@@ -655,9 +673,7 @@ public MyBeanClass myBeanWithACloseMethodNotToBeInvokedAsLifecycleCallback() {
     - `@Resource`: equivalent annotation to `@Autowired` from javax.annotation package. Provides a name attribute to specify name of the bean to inject.
     - `@Required`: Spring annotation that marks a dependency as mandatory, used on setters.
     - `@Lazy`: dependency will be injected the first time it is used.    
-    
-- Classes annotated with `@Configuration` contain bean definitions.    
-
+ 
 ```java
 @Configuration
 @PropertySource("classpath:db/datasource.properties")
@@ -755,6 +771,11 @@ public class FactoryMethodComponent {
 	- The default bean name is the name of the method annotated with the `@Bean` annotation and it will be used if there are no other name specified for the bean.
 		- This functionality can be overridden, however, with the `name` attribute
 	- To add a description to a `@Bean` the `@Description` annotation can be used
+- Why `@Bean` method cannot be final?
+    - Spring container subclass classes `@Configuration` classes and overrides the methods
+      annotated with the `@Bean` annotation, in order to intercept requests for the beans. If the bean is a
+      singleton bean, subsequent requests for the bean will not yield new instances, but the existing
+      instance of the bean.	
 	
 ```java
 @Bean(name = "myFoo", initMethod = "init", destroyMethod = "cleanup")
@@ -1088,6 +1109,50 @@ implements PetRepo {
     }
 }
 ```
+
+### @Profile
+
+- Bean definition profiles is a mechanism that allows for registering different beans depending on different conditions. 
+    - Testing and development
+       Certain beans are only to be created when running tests. When developing, an in-memory
+       database is to be used, but when deploying a regular database is to be used.
+    - Performance monitoring.
+    - Application customization for different markets, customers 
+- One or more beans can be configured to be registered when one or more profiles are active using the @Profile annotation.
+- The beans in the below configuration class will be registered if the “dev” or “qa” profile is active.
+
+```java
+@Profile({"dev", "qa"})
+@Configuration
+public class ConfigurationClass {
+    
+}
+```
+
+- Profile names in the `@Profile` annotation can be prefixed with **!**, indicating that the bean(s) are to be registered when the the profile with specified name is not active.
+
+```java
+@Profile("!prod")
+@Configuration
+public class ConfigurationClass {
+    
+}
+```
+
+- The `@Profile` annotation can be applied at the following locations:
+    - At class level in `@Configuration` classes.
+    - On methods annotated with the `@Bean` annotation.
+- Activating Profile(s)
+   - Programmatic registration of active profiles when the Spring application context is created.
+    ```java
+    applicationContext.getEnvironment().setActiveProfiles("dev1", "dev2");
+    ```
+   - Using the spring.profiles.active property
+   ```
+   java -Dspring.profiles.active=dev1,dev2 -jar myApp.jar
+   ```
+   - In tests, the `@ActiveProfiles` annotation may be applied at class level to the test class
+     specifying which the profile(s) that are to be activated when the tests in the class are run.
 
 
 # Testing Spring Applications
