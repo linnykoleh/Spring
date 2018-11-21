@@ -709,6 +709,143 @@ public class SpringApplication {
 
 }
 ```
+
+### @Qualifier
+
+- `@Qualifier` annotation can aid in selecting one single bean to be dependency-injected into a field or parameter annotated with `@Autowired` when there are multiple candidates.
+- The most basic use of the `@Qualifier` annotation is to specify the name of the Spring bean to be selected the bean to be dependency-injected.
+- The `@Qualifier` annotation can be used at three different locations:
+	- At injection points.
+	- At bean definitions.
+	- At annotation definitions. This creates a custom qualifier annotation.
+	
+```java
+@Autowired
+@Qualifier("userServiceImpl")
+private UserService userService;
+```
+
+#### @Qualifier at Bean Definitions
+
+- Qualifiers can also be applied on bean definitions by annotating a method annotated with `@Bean` in a configuration class with `@Qualifier` and supplying a value in the `@Qualifier` annotation.
+
+```java
+@Component
+public class FactoryMethodComponent {
+
+    @Bean
+    @Qualifier("public")
+    public TestBean publicInstance() {
+        return new TestBean("publicInstance");
+    }
+    
+    @Bean
+    protected TestBean protectedInstance( @Qualifier("public") TestBean spouse) {
+        //...
+    }
+}
+```
+
+### @Bean
+
+- `@Bean` annotation tells the Spring container that the method annotated with the `@Bean` annotation will instantiate, configure and initialize an object that is to be managed by the Spring container.
+	- Configure autowiring of dependencies; whether by name or type.
+	- Configure a method to be called during bean initialization - `initMethod` - this method will be called after all the properties have been set on the bean but before the bean is taken in use.
+	- Configure a method to be called on the bean before it is discarded - `destroyMethod`
+	- The default bean name is the name of the method annotated with the `@Bean` annotation and it will be used if there are no other name specified for the bean.
+		- This functionality can be overridden, however, with the `name` attribute
+	- To add a description to a `@Bean` the `@Description` annotation can be used
+	
+```java
+@Bean(name = "myFoo", initMethod = "init", destroyMethod = "cleanup")
+@Description("Provides a basic example of a bean")
+public Foo foo() {
+	return new Foo();
+}
+
+```
+
+### Lookup method injection
+
+- lookup method injection is an advanced feature that you should use rarely. It is useful in cases where a `singleton`-scoped bean has a dependency on a `prototype`-scoped bean
+- examples
+
+- Configuration example
+
+```java
+@Configuration
+public class LMIConfiguration {
+
+	@Bean
+	@Qualifier("myCommand")
+	@Scope("prototype")
+	public Command command() {
+		return new Command();
+	}
+
+	@Bean
+	public CommandManager commandManager() {
+		return new CommandManager() {
+			
+			@Override
+			Command createCommand() {
+				return command();
+			}
+		};
+	}
+}
+```
+
+- Beans example
+
+```java
+public class Command {
+
+	public void execute() {
+		System.out.println("Command: " + this.hashCode());
+	}
+
+}
+
+public abstract class CommandManager {
+
+	@Lookup
+	abstract Command createCommand();
+
+	public void process() {
+		System.out.println("CommandManager: " + this.hashCode());
+		final Command command = createCommand();
+		command.execute();
+	}
+
+}
+
+```
+
+- Application example. `Prototype` beans is different every time, but `Singelton` is unique
+
+```java
+public class App {
+
+	public static void main(String[] args) {
+		ApplicationContext context = new AnnotationConfigApplicationContext(LMIConfiguration.class);
+		final CommandManager commandManager = context.getBean(CommandManager.class);
+
+		commandManager.process();
+		// CommandManager: 81412691
+		// Command: 717176949
+
+		commandManager.process();
+	    // CommandManager: 81412691
+		// Command: 1997353766
+
+		commandManager.process();
+		// CommandManager: 81412691
+		// Command: 1288235781
+	}
+}
+```
+      
 ## Bean Naming
 
 - When the name is not defined for a bean declared with `@Bean`, the Spring IoC names the bean with the annotated `method name`.
@@ -969,6 +1106,9 @@ implements PetRepo {
   - If no value is provided `@ContextConfiguration`, config file `${classname}-context.xml` in the same package is imported
   - XML config files are loaded by providing string value to annotation - `@ContextConfiguration("classpath:com/example/test-config.xml")`
   - Java @Configuration files are loaded from classes attribute - `@ContextConfiguration(classes={TestConfig.class, OtherConfig.class})`
+  
+- To customize property values in a test, the `@TestPropertySource` annotation allows using either a test-specific property file or customizing individual property values.  
+- `ReflectionTestUtils` make it possible to access private properties,
 
 #### JUnit 4 Example 
  
@@ -1223,27 +1363,43 @@ by applying advices to specific join points, specified by pointcuts.
 - **Introduction** - declaring additional methods, fields, interfaces being implemented, annotations on behalf of another type.
 - **AOP proxy** - the object created by AOP to implement the aspect contracts. In SprJdbcTemplateUserRepoing, proxy objects can be `JDK dynamic proxies` or `CGLIB proxies`    
 
-#### Spring Proxies
+## Proxies
+
+![alt text](images/core_spring_in_detail/Screenshot_2.png "Screenshot_2")
+
 - Two types of proxies
-- `JDK dynamic` proxies
+- `JDK dynamic proxies` - creates a proxy object that implements all the interfaces implemented by the object to beproxied.
 	- Can only proxy by interface
 	- Proxied bean must implement java interface
 	- Part of JDK
 	- All interfaces implemented by the class are proxied
 	- Based on proxy implementing interfaces
-- `CGLib` proxies
+- `CGLib proxies` - creates a subclass of the class of the object to be proxied.
 	- Can create a proxy by subclassing. In this scenario the proxy becomes a subclass of the target class. No need for interfaces.
 	- Is not part of JDK, included in spring
 	- Used when class implements no interface
 	- Cannot be applied to final classes or methods
 	- Based on proxy inheriting the base class
-
+- The default type of proxy used by the Spring framework is the `JDK dynamic proxy`.
+- Limitations
+	- Limitations of `JDK dynamic proxies` are:
+		- Requires the proxied object to implement at least one interface.
+		- Only methods found in the implemented interface(s) will be available in the proxy object.
+		- Proxy objects must be referenced using an interface type and cannot be referenced using a type of a superclass of the proxied object type.
+			This unless of course the superclass implements interface(s) in question. Requires care as far as types returned from @Bean methods and dependency-injected types are concerned.
+		- Does not support self-invocations. Self-invocation is where one method of the object invokes another method on the same object.
+	- Limitations of `CGLIB proxies` are:
+		- Requires the class of the proxied object to be non-final. Subclasses cannot be created from final classes.
+		- Requires methods in the proxied object to be non-final. Final methods cannot be overridden.
+		- Does not support self-invocations. Self-invocation is where one method of the object invokes another method on the same object.
+		- Requires a third-party library. Not built into the Java language and thus require a library.
+		
 ```java
 @Aspect
 @Component
 public class UserRepoMonitor {
     
-     @Before("execution(public com.ps.repos.˙JdbcTemplateUserRepo+.findById(..))")
+    @Before("execution(public com.ps.repos.˙JdbcTemplateUserRepo+.findById(..))")
     public void beforeFindById(JoinPoint joinPoint) {
         String methodName = joinPoint.getSigTestJdbcTemplateUserReponature().getName();
         System.out.println(" ---> Method " + methodName + " is about to be called");

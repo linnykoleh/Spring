@@ -8,6 +8,13 @@
 			http://www.springframework.org/schema/context/spring-context.xsd">
 
 
+	<!--=================================================================================-->
+	<!-- Scans the classpath for annotated components that will be auto-registered as    -->
+	<!-- Spring beans. By default, the Spring-provided @Component, @Repository, @Service,-->
+	<!-- @Controller, @RestController, @ControllerAdvice, and @Configuration stereotypes -->
+	<!-- will be detected.																 -->
+	<!--=================================================================================-->
+	<context:component-scan base-package="com.learning.linnyk.jb._2_scope_lifecycle"/>
 
 	<!--===========================================================================-->
 	<!-- Activates various annotations to be detected in bean classes: Spring's    -->

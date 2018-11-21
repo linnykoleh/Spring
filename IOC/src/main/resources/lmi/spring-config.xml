@@ -7,13 +7,13 @@
     <context:annotation-config/>
     <context:component-scan base-package="com.learning.linnyk.lmi"/>
 
-    <bean id="message" class="com.learning.linnyk.lmi.components.Message" scope="prototype">
+    <bean id="message" class="com.learning.linnyk.lmi.xml.components.Message" scope="prototype">
         <property name="target" value="A"/>
         <property name="destination" value="B"/>
         <property name="body" value="My message"/>
     </bean>
 
-    <bean id="messageService" class="com.learning.linnyk.lmi.components.MessageService" scope="singleton">
+    <bean id="messageService" class="com.learning.linnyk.lmi.xml.components.MessageService" scope="singleton">
         <lookup-method name="getMessage" bean="message"/>
     </bean>
 

@@ -1,4 +1,4 @@
-package com.learning.linnyk.lmi.components;
+package com.learning.linnyk.lmi.xml.components;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,7 @@
-package com.learning.linnyk.lmi;
+package com.learning.linnyk.lmi.xml;
 
 
-import com.learning.linnyk.lmi.components.MessageService;
+import com.learning.linnyk.lmi.xml.components.MessageService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
