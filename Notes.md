@@ -1587,26 +1587,36 @@ public class LoggingAspect {
 	- Part of JDK
 	- All interfaces implemented by the class are proxied
 	- Based on proxy implementing interfaces
-- `CGLib proxies` - creates a subclass of the class of the object to be proxied.
+	
+![alt text](images/core_spring_in_detail/Screenshot_10.png "Screenshot_10")
+	
+- `CGLib proxies` - creates a subclass of the class of the object to be proxied. 
+	- third-party library
+	- The CGLIB proxy mechanism will be used by Spring AOP when the Spring bean for which to create a proxy does not implement any interfaces.
 	- Can create a proxy by subclassing. In this scenario the proxy becomes a subclass of the target class. No need for interfaces.
 	- Is not part of JDK, included in spring
 	- Used when class implements no interface
 	- Cannot be applied to final classes or methods
 	- Based on proxy inheriting the base class
+	
+![alt text](images/core_spring_in_detail/Screenshot_11.png "Screenshot_11")	
+	
 - The default type of proxy used by the Spring framework is the `JDK dynamic proxy`.
-- Limitations
-	- Limitations of `JDK dynamic proxies` are:
-		- Requires the proxied object to implement at least one interface.
-		- Only methods found in the implemented interface(s) will be available in the proxy object.
-		- Proxy objects must be referenced using an interface type and cannot be referenced using a type of a superclass of the proxied object type.
-			This unless of course the superclass implements interface(s) in question. Requires care as far as types returned from @Bean methods and dependency-injected types are concerned.
-		- Does not support self-invocations. Self-invocation is where one method of the object invokes another method on the same object.
-	- Limitations of `CGLIB proxies` are:
-		- Requires the class of the proxied object to be non-final. Subclasses cannot be created from final classes.
-		- Requires methods in the proxied object to be non-final. Final methods cannot be overridden.
-		- Does not support self-invocations. Self-invocation is where one method of the object invokes another method on the same object.
-		- Requires a third-party library. Not built into the Java language and thus require a library.
-		
+- Proxies limitations:
+	- `JDK Dynamic Proxies`
+		- Invocation of advised methods on self.
+		- Class for which a proxy is to be created must implement an interface.
+		- Only public methods in implemented interfaces will be proxied.
+	- `CGLIB Proxies`
+		- Invocation of advised methods on self.
+		- Class for which a proxy is to be created must not be final.
+		- Method(s) in class for which a proxy is to be created must not be final.
+		- Only public and protected methods will be proxied.
+
+- To enable detection of Spring beans implementing advice which implementation classes are <br/>
+  annotated with the `@Aspect` annotation, the `@EnableAspectJAutoProxy` annotation should be <br/>
+  applied to a `@Configuration` class and aspects must be annotated with `@Component`	
+  
 ```java
 @Aspect
 @Component
@@ -1694,7 +1704,20 @@ execution(public (public * com.ps.service.*.*Service+.*(..)
 
 ## Implementing Advice
 
+**Aspect** = **PointCut**(Where the Aspect is applied) + **Advice**(What code is executed)
+
+![alt text](images/aop/Screenshot.png "Screenshot")
+
 #### Before
+
+- Executed before a join point. Cannot prevent proceeding to the join point unless the advice throws an exception.
+	- Examples: 
+		- Access control (security) <br/>
+		  Authorization can be implemented using before advice, throwing an exception if the current user is not authorized.
+		- Statistics  <br/>
+		  Counting the number of invocations of a join point.  
+
+![alt text](images/aop/Screenshot_1.png "Screenshot_1")
 
 ```java
 @Before("com.ps.aspects.PointcutContainer.serviceUpdate(id, pass)")
@@ -1711,11 +1734,17 @@ public void beforeServiceUpdate (Long id, String pass) throws Throwable {
 
 #### After Returning
 
-This type of advice is executed only if the target method executed successfully and does not end by throwing an exception.
+- This type of advice is executed only if the target method executed successfully and does not end by throwing an exception.
+	- Examples: 
+		- Statistics <br/>
+		  Counting the number of successful invocations of a join point.
+		- Data validation <br/>
+		  Validating the data produced by the advised method.
+
+![alt text](images/aop/Screenshot_4.png "Screenshot_4")
 
 ```java
-@AfterReturning(value="execution (* com.ps.services.*Service+.update*(..))",
-      returning = "result")
+@AfterReturning(value="execution (* com.ps.services.*Service+.update*(..))", returning = "result")
 public void afterServiceUpdate(JoinPoint joinPoint, int result) throws Throwable {
 	//..
 }
@@ -1723,15 +1752,17 @@ public void afterServiceUpdate(JoinPoint joinPoint, int result) throws Throwable
 
 ![alt text](images/pet-sitter/Screenshot_9.png "Screenshot_9")
 
-
 #### After Throwing
 
-The after throwing advice is similar to the after returning. The only difference is that its criterion of execution is exactly the opposite. </br> 
-That is, this advice is executed only when when the target method ends by throwing an exception
+- Executed after execution of a join point that resulted in an exception being thrown.
+	- Examples:
+		- Error handling
+		- Statistics
+
+![alt text](images/aop/Screenshot_3.png "Screenshot_3")
 
 ```java
-@AfterThrowing(value="execution
-      (* com.ps.services.*Service+.updateUsername(..))", throwing = "e")
+@AfterThrowing(value="execution(* com.ps.services.*Service+.updateUsername(..))", throwing = "e")
 public void afterBadUpdate(JoinPoint joinPoint, Exception e) throws Throwable {
 	//..
 }
@@ -1741,24 +1772,34 @@ public void afterBadUpdate(JoinPoint joinPoint, Exception e) throws Throwable {
 
 #### After
 
-The after advice is executed after the target method regardless of how its execution ended, whether successfully or with an exception, and because of this, </br> 
-it is most suitable to use for auditing or logging.
+- The after advice is executed after the target method regardless of how its execution ended, whether successfully or with an exception, and because of this, </br> 
+  it is most suitable to use for auditing or logging.
+   - Examples:
+  		- Releasing resources <br/>
+  		As with finally-blocks in try-finally, the after (finally) advice is always executed after the
+        completion of the join point and can thus ensure that resources are always released.
+
+![alt text](images/aop/Screenshot_2.png "Screenshot_2")
 
 ```java
- 	@After("execution(public * com.ps.repos.*.JdbcTemplateUserRepo+.updateUsername(..))")
-    public void afterFindById(JoinPoint joinPoint) throws Throwable {
-		//..
-    }
+@After("execution(public * com.ps.repos.*.JdbcTemplateUserRepo+.updateUsername(..))")
+public void afterFindById(JoinPoint joinPoint) throws Throwable {
+	//..
+}
 ```
 
 ![alt text](images/pet-sitter/Screenshot_11.png "Screenshot_11")
 
-
 #### Around
 
+- Executed before and after (around) a join point.
 - The around advice is the most powerful type of advice, because it encapsulates the target method and has control over its execution, </br>
-meaning that the advice decides whether the target method is called, and if so, when.
+  meaning that the advice decides whether the target method is called, and if so, when.
 - The type `ProceedingJoinPoint` inherits from JoinPoint and adds the `proceed()` method that is used to call the target method
+
+![alt text](images/aop/Screenshot_5.png "Screenshot_5")
+
+![alt text](images/aop/Screenshot_6.png "Screenshot_6")
 
 ```java
 @Around("execution(public * com.ps.repos.*.*Repo+.find*(..))")
@@ -1770,28 +1811,6 @@ public Object monitorFind( ProceedingJoinPoint joinPoint) throws Throwable {
 	logger.info(" ---> Execution of " + methodName + " took: "   + (t2 - t1) / 1000 + " ms.");
 }
 ```
-
-![alt text](images/pet-sitter/Screenshot_12.png "Screenshot_12")
-
-
-## Advices 
-
-**Aspect** = **PointCut**(Where the Aspect is applied) + **Advice**(What code is executed)
-
-![alt text](images/aop/Screenshot.png "Screenshot")
-
-![alt text](images/aop/Screenshot_1.png "Screenshot_1")
-
-![alt text](images/aop/Screenshot_2.png "Screenshot_2")
-
-![alt text](images/aop/Screenshot_3.png "Screenshot_3")
-
-![alt text](images/aop/Screenshot_4.png "Screenshot_4")
-
-![alt text](images/aop/Screenshot_5.png "Screenshot_5")
-
-![alt text](images/aop/Screenshot_6.png "Screenshot_6")
-
 
 ## PointCuts 
 
