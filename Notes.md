@@ -596,7 +596,7 @@ public MyBeanClass myBeanWithACloseMethodNotToBeInvokedAsLifecycleCallback() {
 | **prototype**       | Each time a bean is requested, a new instance is created. Every time a request is made for this specific bean, the Spring IoC creates a new instance.      |
 | **request**         | Single bean instance per HTTP `request`. Only in web-aware Spring application contexts. |
 | **session**         | Single bean instance per HTTP `session`. Only in web-aware Spring application contexts. |
-| **application**     | Single bean instance per ServletContext. Only in web-aware Spring application contexts.|
+| **application**     | Single bean instance per `ServletContext`. Only in web-aware Spring application contexts.|
 | **websocket**       | Single bean instance per `WebSocket`. Only in web-aware Spring application contexts.|
 | _custom_            | Developers are provided the possibility to define their own scopes with their own rules.|
 
@@ -1043,12 +1043,27 @@ public class GenericQualifierTest {
 ## @Value annotation
 
 - `@Value` - can be used to insert scalar values or can be used together with placeholders and `SpEL` in order to provide flexibility in configuring a bean
-- Is used to inject value either from system properties (using ${}) or SpEL (using #{})
+	- Such values can originate from environment variables, property files, Spring beans etc.
+- Is used to inject value 
+	- system properties **using ${}** - these expressions are evaluated by the `PropertySourcesPlaceholderConfigurer` Spring bean prior
+      to bean creation and can only be used in @Value annnotations.
+	- SpEL **using #{}** - Spring Expression Language expressions parsed by a SpEL expression parser and evaluated by a SpEL expression instance.
 - Can be on fields, constructor parameters or setter parameters
 - On constructors and setters must be combined with @Autowired on method level, for fields @Value alone is enough
 - Can specify default values
 	- `${minAmount:100}"`
+	- `${personservice.retry-count:${services.default.retry-count}}`
+- `@Value` injection using SpEL
 	- `#{environment['minAmount'] ?: 100}`
+	- `#{ T(java.lang.Math).random() * 50.0 }`
+	- `#{@systemProperties['os.name']}`
+- The `@Value`a annotation can be applied to:
+    - Fields
+  	- Methods. Typically setter methods
+    - Method parameters. Including constructor parameters. Note that when annotating a parameter in a method other
+  than a constructor, automatic dependency injection will not occur. If automatic injection of
+  the value is desired, the @Value annotation should be moved to the method instead.
+  	- Definition of annotations. In order to create a custom annotation.	
 
 
 ```java 
@@ -1061,15 +1076,68 @@ public class GenericQualifierTest {
 	 @Value("#{dbProps.password}")String password
 ```
 
-## Spring Expression language
-- Acronym SpEL
+## Spring Expression language (SpEL)
+
+- Acronym `SpEL`
 - can be used in @Value annotation values
 - enclosed in #{}
-- ${} is for properties, #{} is for SpEL
+- ${} is for properties, #{} is for `SpEL`
 - Access property of bean #{beanName.property}
 - Can reference systemProperties and systemEnvironment
 - Used in other spring projects such as Security, Integration, Batch, WebFlow,...
+- SpEL has support for:
+	- Literal expressions.
+		- Example string: 'Hello World'
+	- Properties, arrays, lists and maps.	
+	- Example create a list of integers: {1, 2, 3, 4, 5}
+		- Example create a map: {1 : "one", 2 : "two", 3 : "three", 4 : "four"}
+		- Example retrieve third item in list referenced by variable theList: #theList[3]
+		- Example retrieve value from map in variable personsMap that has key “ivan”: #personsMap['ivan']
+	- Method invocation.	
+		- Example invoke a method on a Java object stored in variable javaObject: #javaObject.firstAndLastName()
+	- Operators.
+		- Creating Java objects using new operator.
+		- Ternary operator: <condition> ? <true-expression> : <false-expression>
+        - The Elvis operator: <variable-to-test-for-null> ?: <value-to-assign-if-variable-is-null>
+        - Safe navigation operator: <object-reference-that-may-be-null>?.<field-in-object>
+        - Regular expression “matches” operator: '168' matches '\\d+'
+    - User defined functions..
+    	- Implemented as static methods.
+    - Referencing Spring beans in a bean factory (application context).	 
+    	- @mySuperComponent.injectedValue
+    - Collection selection expressions.
+    	- Creates a new collection by selecting a subset of elements from a collection.	Syntax: .?[<selection-expression>]
+    - Collection projection.	
+    	- Creates a new collection by applying an expression to each element in a collection. Syntax: .![<expression>]
+- The following entities can be referenced from Spring Expression Language (SpEL) expressions.
+	- Static methods and static properties/fields.
+		- `T(se.ivankrizsan.spring.MyBeanClass).myStaticMethod()`
+		- `T(se.ivankrizsan.spring.MyBeanClass).myClassVariable`
+	- Properties and methods in Spring beans. A Spring bean is references using its name prefixed with **@** in SpEL.
+		- Example accessing property on Spring bean: `@mySuperComponent.injectedValue`
+		- Example invoking method on Spring bean: `@mySuperComponent.toString()`
+	- Properties and methods in Java objects with references stored in SpEL variables. 
+	  References and values stored in variables are referenced using the variable name prefixed with **#** in SpEL.
+	  	- Example accessing property on Java object: `#javaObject.firstName`
+	  	- Example invoking method on Java object: `#javaObject.firstAndLastName()`
+	- (JVM) System properties. Available through the systemProperties reference, which is available by default.
+		- Example retrieving OS name property: `@systemProperties['os.name']`
+	- System environment properties.	
+		- Example KOTLIN_HOME environment variable: `@systemEnvironment['KOTLIN_HOME']`
+	- Spring application environment. Available through the environment reference, also available by default.
+		- Example retrieve name of first default profile: `@environment['defaultProfiles'][0]`
+    	
 
+## Environment
+
+- The Environment is a part of the application container. The Environment contains profiles and properties, two important parts of the application environment.
+  
+![alt text](images/core_spring_in_detail/Screenshot_4.png "Screenshot_4")  
+
+![alt text](images/core_spring_in_detail/Screenshot_5.png "Screenshot_5")  
+
+![alt text](images/core_spring_in_detail/Screenshot_6.png "Screenshot_6")  
+  
 ## Bean Lifecycle 
 
 - For a configuration using Java Configuration annotations, the classpath is scanned by a bean of type `org.springframework.context.annotation.ClassPathBeanDefinitionScanner`, and the bean definitions are registered by a bean of type `org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader`.
