@@ -1459,7 +1459,7 @@ public class TestCustomerRepo {
 # Aspect Oriented Programming
     
 ```
-AOP is a type of programming that aims to help with separation of cross-cutting concerns to increase modularity; 
+AOP is a type of programming paradigm that aims to help with separation of cross-cutting concerns to increase modularity; 
 it implies declaring an aspect class that will alter the behavior of base code, 
 by applying advices to specific join points, specified by pointcuts.
 ```    
@@ -1471,16 +1471,32 @@ by applying advices to specific join points, specified by pointcuts.
 	- Memory management
 	- Performance monitoring
 	- Synchronization
+	- Logging
+	- Transaction management
+	- Security
 
 - The original library that provided components for creating aspects is named **AspectJ.**
 
 ## AOP Terminology
     
-- **Aspect** - a class containing code specific to a cross-cutting concern. 
+- **Aspect** - an aspect brings together one or more **pointcuts** with one or more **advice**.
    A class declaration is recognized in Spring as an aspect if it is annotated with the `@Aspect` annotation.
 -  **Weaving** - a synonym for this word is interlacing, but in software, the synonym is linking, <br/> 
-   and it refers to aspects being combined with other types of objects to create an advised object.  
-- **Join point** - a point during the execution of a program. In Spring AOP, a joint point is always a method execution.   
+   and it refers to aspects being combined with other types of objects to create an advised object. 
+   - Compile time weaving. <br/> 
+     Byte code of classes is modified at compilation time at selected join points to execute advice
+     code. The AspectJ compiler uses compile time weaving. 
+   - Load time weaving. <br/> 
+     Byte code of classes is modified at class loading time when the application is run.  
+   - Runtime weaving. <br/> 
+     Proxy objects are created at runtime when the application is run. The proxy objects are used
+     instead of the original objects and divert method invocations to advice code.
+     Spring AOP uses runtime weaving exclusively.  
+- **Join point** - a point during the execution of a program. In Spring AOP, a joint point is always a method execution. 
+	- Spring AOP only supports public method invocation join points. Compare to AspectJ which supports all of the above listed join point types and more.
+
+![alt text](images/core_spring_in_detail/Screenshot_7.png "Screenshot_7")
+  
 - **Target object** - object to which the aspect applies.
 - **Target method** - the advised method.
 - **Advice** - action taken by an aspect at a join point. In Spring AOP there are multiple advice types:
@@ -1491,10 +1507,74 @@ by applying advices to specific join points, specified by pointcuts.
 	- **After (finally) advice** - methods annotated with `@After` that will execute after a join point execution, no matter how the execution ended.
 	- **Around advice** - methods annotated with `@Around` intercept the target method and surround the join point. 
 	  This is the most powerful type of advice, since it can perform custom behavior before and after the invocation
-- **Pointcut** - a predicate used to identify join points.  Advice definitions are associated with a pointcut expression and the advice will execute on any join point matching the pointcut expression.
+- **Pointcut** - a pointcut selects one or more join points out of the set of all join points in an application.
     Pointcut expressions can be defined as arguments for Advice annotations or as arguments for the `@Pointcut` annotation. 
+    
+![alt text](images/core_spring_in_detail/Screenshot_8.png "Screenshot_8")    
+
+```java
+@Aspect
+@Component
+public class LoggingAspect {
+	
+	/**
+	* Pointcut that selects join points being method executions in the se package
+	* and sub-packages in classes which name ends with "Service" having arbitrary
+	* number of parameters.
+	*/
+	@Pointcut("execution(* se..*.*Service.*(..))")
+	public void applicationServiceMethodPointcut() {}
+	
+	/**
+	* Pointcut that selects join points being public method executions.
+	*/
+	@Pointcut("execution(public * *(..))")
+	public void publicMethodPointcut() {}
+	
+	/**
+	* Pointcut that selects join points within the package se.ivankrizsan.spring
+	* and sub-packages.
+	*/
+	@Pointcut("within(se.ivankrizsan.spring..*)")
+	public void inSpringPackagePointcut() {}
+	
+	/**
+	* Pointcut that selects join points on the Spring bean with the
+	* name "mySuperService".
+	*/
+	@Pointcut("bean(mySuperService)")
+	public void mySuperServiceSpringBeanPointcut() {}
+	
+	/**
+	* Pointcut that combines all the above pointcuts to select join points
+	* that match all the pointcuts.
+	*/
+	@Pointcut("publicMethodPointcut() && inSpringPackagePointcut() && applicationServiceMethodPointcut() && mySuperServiceSpringBeanPointcut()")
+	public void publicServiceMethodInSpringPackagePointcut() {}
+	
+	/**
+	* Around advice that prints a string before and after execution of a
+	* join point (typically a method).
+	*
+	* @param inProceedingJoinPoint Join point advised by around advice.
+	* @return Result from the join point invocation.
+	* @throws Throwable If exception thrown when executing join point.
+	*/
+	@Around("publicServiceMethodInSpringPackagePointcut()")
+	public Object loggingAdvice(final ProceedingJoinPoint inProceedingJoinPoint) throws Throwable {
+		System.out.printf("* Before service method '%s' invocation.%n", inProceedingJoinPoint.getSignature().toShortString());
+		
+		/* Invoke the join point. */
+		final Object theResult = inProceedingJoinPoint.proceed();
+		System.out.printf("* After service method '%s' invocation.%n", inProceedingJoinPoint.getSignature().toShortString());
+		
+		return theResult;
+	}
+}
+```
+    
 - **Introduction** - declaring additional methods, fields, interfaces being implemented, annotations on behalf of another type.
-- **AOP proxy** - the object created by AOP to implement the aspect contracts. In SprJdbcTemplateUserRepoing, proxy objects can be `JDK dynamic proxies` or `CGLIB proxies`    
+- **AOP proxy** - the object created by AOP to implement the aspect contracts.
 
 ## Proxies
 
