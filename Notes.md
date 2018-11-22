@@ -1672,9 +1672,10 @@ public class AppConfig {
 execution( [Modifiers] [ReturnType] [FullClassName].[MethodName] ([Arguments]) throws [ExceptionType])
 ```
 
-- The expression can contain wildcards like + and * and can be made of multiple expressions concatenated by boolean operators such as &&, ||, etc. 
+- The expression can contain wildcards like + and * and can be made of multiple expressions concatenated by boolean operators such as &&(and), ||(or), !(not) etc. 
 	- The * wildcard replaces any group of characters
 	- The + wildcard is used to specify that the method to advise can also be found in subclasses identified by [FullClassName] criteria. 
+	- `!within(se.ivankrizsan.spring..*)` - will result in join points that are NOT within the package se.ivankrizsan.spring or any of its subpackages being selected.
 
 - There is also a list of designators that can be used to define the reach of the pointcut; for example, the `within(...)` designator can be used to limit the pointcut to a package	
 
@@ -1685,8 +1686,7 @@ public * com.ps.repos.*.JdbcTemplateUserRepo+.findById(..)) && +underlinewithin(
 - Pointcut expression can identify only methods defined in a class annotated with a specific annotation:
 
 ```java
-execution(@org.springframework.transaction.annotation.Transactional
-    public * com.ps.repos.*.*Repo+.findById(..)))
+execution(@org.springframework.transaction.annotation.Transactional public * com.ps.repos.*.*Repo+.findById(..)))
 ```
 
 - Pointcut expression can even identify methods that return values with a specific annotation:
@@ -1698,9 +1698,64 @@ execution(public (@org.springframework.stereotype.Service *) *(..))
 - by using the `@annotation()` designator, only methods annotated with a specific annotation can be taken into consideration:
 
 ```java
-execution(public (public * com.ps.service.*.*Service+.*(..)
-      && @annotation(org.springframework.security.access.annotation.Secured))
+execution(public (public * com.ps.service.*.*Service+.*(..) && @annotation(org.springframework.security.access.annotation.Secured))
 ```
+
+### Pointcut Designators
+
+- Pointcut designator: **execution**
+    - The `execution` pointcut designator matches method execution join points.
+        - Method visibility <br/>
+         Can be one of private, protected, public. Can be negated using !. May be omitted, in which
+         case all method visibilities will match.
+        - Return type <br/>
+          Object or primitive type. Can be negated with !. Wildcard * can be used, in which case all
+          return types will be matched.     
+        - Package <br/>
+          Package in which class(es) is/are located. May be omitted. Wildcard “..” may be used last in
+          package name to include all sub-packages. Wildcard * may be used in package name.  
+        - Class <br/>
+          Class in which method(s) to be selected is/are located. May be omitted. Includes subclasses
+          of the specified class. Wildcard * may be used.  
+        - Method <br/>
+          Name of method(s) in which join points to be selected are located. Whole or partial method
+          name. Wildcard * may be used, for example “gree*” will match a method named greet and
+          any other methods which names start with “gree”.  
+        - Parameters <br/>
+          Object or primitive types of parameters. A parameter-type can be negated with !, that is !int
+          will match any type except for int. The wildcard “..” can be used to match zero or more
+          subsequent parameters.  
+        - Exceptions <br/>
+          Type(s) of exception(s) that matching method(s) throws. An exception type can be negated using !.     
+          
+```java
+execution(public String se.ivankrizsan.spring.aopexamples.MySuperServiceImpl.*(String))
+
+Pattern 
+[method visibility] [return type] [package].[class].[method]([parameters] [throws exceptions])
+```
+
+- Pointcut designator: **within**
+    - The `within` pointcut designator matches join points located in one or more classes, optionally
+      specifying the package(s) in which the class(es) is/are located.
+        - Package <br/>
+          Package in which class(es) to be selected is/are located. May be omitted. Wildcard “..” may
+          be used last in package name to include all sub-packages. Wildcard * may be used in
+          package name.
+        - Class <br/>
+          Class(es) in which join points are to be selected. Wildcard * may be used. Join points in
+          subclasses of the specified class will also be matched.
+
+
+```java
+within(se..MySuperServiceImpl)
+
+Pattern
+[package].[class]
+```
+
+
+
 
 ## Implementing Advice
 
