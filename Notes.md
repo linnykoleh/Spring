@@ -2042,14 +2042,78 @@ public void setters() {
 }
 ```
 
-## Data Access
+# Data Access
 
- - **DML** stands for `Data Manipulation Language`, and the database operations presented so far are part of it, 
-    the commands `SELECT`, `INSERT`, `UPDATE`, and `DELETE` are database statements used to create, update, or delete data from existing tables.
-    
- - **DDL** stands for `Data Definition Language`, and database operations that are part of it are used to manipulate database objects: 
-    tables, views, cursors, etc. The commands `CREATE`, `ALTER`, `DROP`
+- **DML** stands for `Data Manipulation Language`, and the database operations presented so far are part of it, 
+the commands `SELECT`, `INSERT`, `UPDATE`, and `DELETE` are database statements used to create, update, or delete data from existing tables.
+- **DDL** stands for `Data Definition Language`, and database operations that are part of it are used to manipulate database objects: 
+tables, views, cursors, etc. The commands `CREATE`, `ALTER`, `DROP`
+- `DataAccessException` class and all of its subclasses in the Spring Framework. All the exceptions in this exception hierarchy are unchecked.
+- The javax.sql.DataSource interface is the interface from which all data-source classes related to SQL stem.
+	- DelegatingDataSource
+    - AbstractDataSource
+    - SmartDataSource
+    - EmbeddedDatabase
+- `DataSource` in a standalone application    
 
+```java
+@Bean
+public DataSource dataSource() {
+	final BasicDataSource theDataSource = new BasicDataSource();
+	theDataSource.setDriverClassName("org.hsqldb.jdbcDriver");
+	theDataSource.setUrl("jdbc:hsqldb:hsql://localhost:1234/mydatabase");
+	theDataSource.setUsername("ivan");
+	theDataSource.setPassword("secret");
+	return theDataSource;
+}
+```
+
+- If the application uses Spring Boot, then it is not necessary to create a DataSource bean. Setting the values of a few properties are sufficient:
+```xml
+spring.datasource.url= jdbc:hsqldb:hsql://localhost:1234/mydatabase
+spring.datasource.username=ivan
+spring.datasource.password=secret
+```
+
+- DataSource in an application deployed to a server
+	- If the application is deployed to an application server then a way to obtain a data-source is by performing a JNDI lookup
+
+```java
+@Bean
+public DataSource dataSource() {
+	final JndiDataSourceLookup theDataSourceLookup = new JndiDataSourceLookup();
+	final DataSource theDataSource =
+	theDataSourceLookup.getDataSource("java:comp/env/jdbc/MyDatabase");
+	return theDataSource;
+}
+```
+
+- Spring Boot applications need only to rely on setting one single property:
+
+```xml
+spring.datasource.jndi-name=java:comp/env/jdbc/MyDatabase
+```
+
+- **JdbcTemplate** class is a Spring class that simplifies the use of JDBC by implementing common workflows for querying, updating, statement execution
+	- Instances of `JdbcTemplate` are thread-safe after they have been created and configured.
+	- **JdbcTemplate** acquire and release a database connection for every method called.
+	- **JdbcTemplate** callback	
+		- `ResultSetExtractor` - allows for processing of an entire result set, possibly consisting multiple rows of data, at once.
+			- Note that the `extractData` method in this interface returns a Java object.
+		- `RowCallbackHandler` - allows for processing rows in a result set one by one typically accumulating some type of result.
+			- Note that the `processRow` method in this interface has a void return type.
+		- `RowMapper` - allows for processing rows in a result set one by one and creating a Java object for each row.
+			- Note that the `mapRow` method in this interface returns a Java object.
+	- **JdbcTemplate** methods
+		- batchUpdate
+		- execute
+		- query
+		- queryForList
+		- queryForMap
+		- queryForObject
+		- queryForRowSet
+		- update
+		- ...
 
 ## Java Config of DataSource and populating db
 
@@ -2152,15 +2216,18 @@ public class TestDataConfig {
 
 #### ACID
 
-- **Atomicity** is the main attribute of a transaction and is the characteristic mentioned earlier, that if an operation in a transaction fails, the entire transaction fails, and the database is left unchanged. When all operations in a transaction succeed, all changes are saved into the database when the transaction is committed. Basically it is “all or nothing.”
-- **Consistency** implies that every transaction should bring the database from one valid state to another.
-- **Isolation** implies that when multiple transactions are executed in parallel, they won’t hinder one another or affect each other in any way. The state of the database after a group of transactions is executed in parallel should be the same as if the transactions in the group had been executed sequentially.
+- **Atomicity** The changes within a transaction are either all applied or none applied. “All or nothing”
+- **Consistency** Any integrity constraints, for instance of a database, are not violated.
+- **Isolation** Transactions are isolated from each other and do not affect each other.
 - **Durability** is the property of a transaction that should persist even in cases of power off, crashes, and other errors on the underlying system
-
 
 #### Transactional Environment
 
-- In a transactional environment, transactions have to be managed. 
+- A transaction is an operation that consists of a number of tasks that takes place as a single unit – either all tasks are performed or no tasks are performed.
+  If a task that is part of a transaction do not complete successfully, the other tasks in the transaction will either not be performed or, 
+  for tasks that have already been performed, be reverted.
+  	
+- In a transactional environment, transactions have to be managed. <br/>
   In Spring, this is done by an infrastructure bean called the `transaction manager`.
   
 - Configuring transactional behavior is done declaratively by annotating methods with `@Transactional` 
