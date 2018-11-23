@@ -32,7 +32,7 @@ public class FirstFailureDataCaptureAspect {
 		getCallContext().before(joinPoint);
 	}
 
-	@AfterReturning(pointcut="SystemArchitecture.Service()", returning="result")
+	@AfterReturning(pointcut = "SystemArchitecture.Service()", returning = "result")
 	public void afterReturning(Object result) {
 		getCallContext().afterReturning(result);
 	}

@@ -13,7 +13,8 @@ public class RetryAspect {
 	public Object retry(ProceedingJoinPoint joinPoint) throws Throwable {
 		try {
 			return joinPoint.proceed();
-		} catch (Throwable e) {
+		}
+		catch (Throwable e) {
 			return joinPoint.proceed();
 		}
 	}

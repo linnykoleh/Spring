@@ -18,7 +18,8 @@ public class PerformanceAspect extends CallTracker {
 		trackCall();
 		try {
 			proceedingJP.proceed();
-		} finally {
+		}
+		finally {
 			stopWatch.stop();
 			System.out.println(stopWatch.shortSummary());
 		}

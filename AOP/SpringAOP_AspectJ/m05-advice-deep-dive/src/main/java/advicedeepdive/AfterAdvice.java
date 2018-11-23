@@ -12,22 +12,22 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 public class AfterAdvice {
 
-  private boolean afterCalled = false;
+	private boolean afterCalled = false;
 
-  public void reset() {
-    afterCalled = false;
-  }
+	public void reset() {
+		afterCalled = false;
+	}
 
-  public boolean isAfterCalled() {
-    return afterCalled;
-  }
+	public boolean isAfterCalled() {
+		return afterCalled;
+	}
 
-  @After("execution(* *(..))")
+	@After("execution(* *(..))")
 	public void exiting(JoinPoint joinPoint) {
 		afterCalled = true;
-      log.info("exiting " + joinPoint.getSignature());
+		log.info("exiting " + joinPoint.getSignature());
 		for (Object arg : joinPoint.getArgs()) {
-            log.info("Arg : " + arg);
+			log.info("Arg : " + arg);
 		}
 	}
 }

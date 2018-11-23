@@ -7,10 +7,10 @@ import annotation.Trace;
 @Service
 public class SimpleService {
 
-  public void doSomething() {
-  }
+	public void doSomething() {
+	}
 
-  @Trace
-  public void annotated() {
-  }
+	@Trace
+	public void annotated() {
+	}
 }

@@ -15,9 +15,9 @@ public class Account {
 	}
 
 	private int id;
-	
+
 	private String name;
-	
+
 	private String firstname;
 
 	public Account(String firstname, String name, int id) {
@@ -46,29 +46,34 @@ public class Account {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		Account other = (Account) obj;
-		if (id != other.id)
+		if (id != other.id) {
 			return false;
+		}
 		if (firstname == null) {
-			if (other.firstname != null)
+			if (other.firstname != null) {
 				return false;
-		} else if (!firstname.equals(other.firstname))
+			}
+		} else if (!firstname.equals(other.firstname)) {
 			return false;
+		}
 		if (name == null) {
-			if (other.name != null)
+			if (other.name != null) {
 				return false;
-		} else if (!name.equals(other.name))
+			}
+		} else if (!name.equals(other.name)) {
 			return false;
+		}
 		return true;
 	}
-	
-	
-	
-	
+
 }

@@ -8,29 +8,31 @@ import org.springframework.stereotype.Component;
 @Component
 @Aspect
 public class ClassNameAspect {
-	
-	private int called=0;
+
+	private int called = 0;
 
 	@Around("execution(* *..*Service.*(..))")
-	public void trace(ProceedingJoinPoint proceedingJP ) throws Throwable {
-		String methodInformation = 
+	public void trace(ProceedingJoinPoint proceedingJP) throws Throwable {
+		String methodInformation =
 				proceedingJP.getSignature().toString();
 		System.out.println("Entering " + methodInformation);
 		called++;
 		try {
 			proceedingJP.proceed();
-		} catch (Throwable ex) {
+		}
+		catch (Throwable ex) {
 			System.out.println("Exception in " + methodInformation + ex);
 			throw ex;
-		} finally {
-			System.out.println("Exiting "+methodInformation);
+		}
+		finally {
+			System.out.println("Exiting " + methodInformation);
 		}
 	}
 
 	public void resetCalled() {
-		called=0;
+		called = 0;
 	}
-	
+
 	public int getCalled() {
 		return called;
 	}

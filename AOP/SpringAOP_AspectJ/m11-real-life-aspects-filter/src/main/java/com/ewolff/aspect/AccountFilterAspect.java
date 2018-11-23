@@ -13,7 +13,7 @@ import com.ewolff.domain.Customer;
 public class AccountFilterAspect {
 
 	private ThreadLocal<Customer> currentCustomer = new ThreadLocal<Customer>();
-	
+
 	private Customer getCurrentCustomer() {
 		return currentCustomer.get();
 	}

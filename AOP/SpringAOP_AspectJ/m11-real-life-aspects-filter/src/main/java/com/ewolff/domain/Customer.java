@@ -1,9 +1,9 @@
 package com.ewolff.domain;
 
 public class Customer {
-	
+
 	private String name;
-	
+
 	private String firstname;
 
 	public Customer(String firstname, String name) {
@@ -32,23 +32,30 @@ public class Customer {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		Customer other = (Customer) obj;
 		if (firstname == null) {
-			if (other.firstname != null)
+			if (other.firstname != null) {
 				return false;
-		} else if (!firstname.equals(other.firstname))
+			}
+		} else if (!firstname.equals(other.firstname)) {
 			return false;
+		}
 		if (name == null) {
-			if (other.name != null)
+			if (other.name != null) {
 				return false;
-		} else if (!name.equals(other.name))
+			}
+		} else if (!name.equals(other.name)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -56,8 +63,5 @@ public class Customer {
 	public String toString() {
 		return "Customer [name=" + name + ", firstname=" + firstname + "]";
 	}
-	
-	
-	
-	
+
 }

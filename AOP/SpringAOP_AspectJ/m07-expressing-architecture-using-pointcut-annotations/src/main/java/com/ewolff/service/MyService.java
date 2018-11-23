@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 public class MyService {
 
 	public void doIt() {
-		
+
 	}
-	
+
 }

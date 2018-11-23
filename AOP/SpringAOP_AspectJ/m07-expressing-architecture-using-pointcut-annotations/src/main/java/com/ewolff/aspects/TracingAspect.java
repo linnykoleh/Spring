@@ -11,16 +11,17 @@ public class TracingAspect extends CallTracker {
 
 	@Around("SystemArchitecture.Repository() || SystemArchitecture.Service()")
 	public void trace(ProceedingJoinPoint proceedingJP) throws Throwable {
-		
-		String methodInformation = proceedingJP.getStaticPart().getSignature().toString();
+		final String methodInformation = proceedingJP.getStaticPart().getSignature().toString();
 		System.out.println("Entering " + methodInformation);
 		trackCall();
 		try {
 			proceedingJP.proceed();
-		} catch (Throwable ex) {
+		}
+		catch (Throwable ex) {
 			System.out.println("Exception in " + methodInformation + ex);
 			throw ex;
-		} finally {
+		}
+		finally {
 			System.out.println("Exiting " + methodInformation);
 		}
 	}

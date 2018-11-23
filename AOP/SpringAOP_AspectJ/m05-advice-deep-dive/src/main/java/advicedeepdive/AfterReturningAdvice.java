@@ -17,14 +17,14 @@ public class AfterReturningAdvice {
 		afterReturningCalled = false;
 	}
 
-  	boolean isAfterReturningCalled() {
-    return afterReturningCalled;
-  }
+	boolean isAfterReturningCalled() {
+		return afterReturningCalled;
+	}
 
-  	@AfterReturning(pointcut = "execution(* *(..))", returning = "string")
+	@AfterReturning(pointcut = "execution(* *(..))", returning = "string")
 	public void logResult(String string) {
 		afterReturningCalled = true;
-	  	log.info("result " + string);
+		log.info("result " + string);
 	}
 
 }

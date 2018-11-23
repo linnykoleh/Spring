@@ -1754,8 +1754,69 @@ Pattern
 [package].[class]
 ```
 
+- Pointcut designator: **this**
+	- The this pointcut designator matches all join points where the currently executing object is of specified type (class or interface).
+	- The pattern specifying which join points to select only consists of a single type. Wildcards can not be used in type names.
 
+```java
+this(MySuperService)
+```
 
+- Pointcut designator: **target**
+	- The target pointcut designator matches all join point where the target object, for instance the object on which a method call is being made, is of specified type (class or interface).
+
+```java
+target(MySuperServiceImpl)
+```
+
+- Pointcut designator: **args**
+	- The args pointcut designator matches join points, in Spring AOP method execution, where the argument(s) are of the specified type(s).
+		- The .. wildcard may be used to specify zero or more parameters of arbitrary type.
+        - The * wildcard can be used to specify one parameter of any type.
+        - Package information may be included in the pattern specifying which join points to select.
+        
+```java
+args(long, long)
+
+args(java.util.*)
+```
+
+- Pointcut designator: **@target**
+	- The @target pointcut designator matches join points in classes annotated with the specified annotation(s).
+
+```java
+@target(org.springframework.stereotype.Service)
+```
+
+- Pointcut designator: **@args**
+	- The @args pointcut designator matches join points where an argument type (class) is annotated with
+      the specified annotation. Note that it is not the argument that is to be annotated, but the class.
+
+```java
+@args(se.ivankrizsan.spring.aopexamples.CleanData)
+```
+
+- Pointcut designator: **@within**
+	- The @within pointcut designator matches join points in classes annotated with specified annotation.
+
+```java
+@within(org.springframework.stereotype.Service)
+```
+
+- Pointcut designator: **@annotation**
+	- The @annotation pointcut designator matches join points in methods annotated with specified annotation.
+
+```java
+@annotation(se.ivankrizsan.spring.aopexamples.MySuperSecurityAnnotation)
+```
+	
+- Pointcut designator: **bean**
+	- This pointcut designator selects all join points within a Spring bean.
+		- The wildcard * may be used in the pattern, making it possible to match a set of Spring beans with one pointcut expression.
+	
+```java
+bean(mySuperService)
+```
 
 ## Implementing Advice
 
@@ -1866,6 +1927,50 @@ public Object monitorFind( ProceedingJoinPoint joinPoint) throws Throwable {
 	logger.info(" ---> Execution of " + methodName + " took: "   + (t2 - t1) / 1000 + " ms.");
 }
 ```
+
+### JoinPoint
+
+- JoinPoint can be added to methods implementing the following types of advice:
+	- Before
+    - After returning
+    - After throwing
+    - After 
+- The parameter must, if present, be the first parameter of the advice method.
+- When the advice is invoked, the parameter will hold a reference to an object that holds static information about the join point as well as state information.
+- Examples of static information:
+	- Kind (type) of join point
+	- Signature at the join point
+- Examples of dynamic information available from the JoinPoint object:	
+	- Target object - `JoinPoint.getTarget`
+	- Currently executing object
+
+### ProceedingJoinPoint
+
+- `ProceedingJoinPoint` class as a parameter to an around advice.
+- `ProceedingJoinPoint` parameter, it will be impossible to invoke the next advice method or target method in such a case.
+- `ProceedingJoinPoint` class is a subclass of the JoinPoint class it contains all the information described in the above section on the JoinPoint class.
+- `ProceedingJoinPoint` class contains these two additional methods:
+	- proceed() <br/>
+      Proceed to invoke the next advice method or the target method without passing any
+      parameters. Will return an Object. May throw a Throwable exception.
+    - proceed(Object[] args) <br/>
+      Proceed to invoke the next advice method or the target method passing an array of objects as
+      argument to the method to be invoked.  
+
+```java
+@Around("publicServiceMethodInSpringPackagePointcut()")
+public Object loggingAdvice(
+	final ProceedingJoinPoint inProceedingJoinPoint) throws Throwable {
+	System.out.printf("* Before service method '%s' invocation.%n", inProceedingJoinPoint.getSignature().toShortString());
+	
+	/* Invoke the join point. */
+	final Object theResult = inProceedingJoinPoint.proceed();
+	System.out.printf("* After service method '%s' invocation.%n", inProceedingJoinPoint.getSignature().toShortString());
+	return theResult;
+}
+```
+
+
 
 ## PointCuts 
 

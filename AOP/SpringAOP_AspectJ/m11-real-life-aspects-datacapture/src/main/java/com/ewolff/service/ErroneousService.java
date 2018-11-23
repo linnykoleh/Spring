@@ -15,7 +15,7 @@ public class ErroneousService {
 			throwException = true;
 		}
 	}
-	
+
 	public int returnInt() {
 		return 42;
 	}

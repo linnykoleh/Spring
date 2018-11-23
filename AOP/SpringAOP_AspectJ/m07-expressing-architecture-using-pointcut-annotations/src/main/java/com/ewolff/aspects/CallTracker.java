@@ -9,11 +9,11 @@ public class CallTracker {
 	}
 
 	public void resetCalled() {
-		called=false;
+		called = false;
 	}
-	
+
 	protected void trackCall() {
-		called=true;
+		called = true;
 	}
 
 }

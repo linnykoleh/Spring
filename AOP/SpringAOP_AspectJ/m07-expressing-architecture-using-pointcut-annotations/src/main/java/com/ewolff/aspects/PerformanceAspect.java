@@ -12,13 +12,15 @@ public class PerformanceAspect extends CallTracker {
 
 	@Around("SystemArchitecture.Repository()")
 	public void trace(ProceedingJoinPoint proceedingJP) throws Throwable {
-		String methodInformation = proceedingJP.getStaticPart().getSignature().toString();
-		StopWatch stopWatch = new StopWatch(methodInformation);
+		final String methodInformation = proceedingJP.getStaticPart().getSignature().toString();
+		final StopWatch stopWatch = new StopWatch(methodInformation);
+
 		stopWatch.start();
 		trackCall();
 		try {
 			proceedingJP.proceed();
-		} finally {
+		}
+		finally {
 			stopWatch.stop();
 			System.out.println(stopWatch.shortSummary());
 		}

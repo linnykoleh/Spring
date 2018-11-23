@@ -9,22 +9,21 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import configuration.SystemConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=SystemConfiguration.class)
+@ContextConfiguration(classes = SystemConfiguration.class)
 public class RetryTest {
-	
+
 	@Autowired
 	ErroneousService erroneousService;
-	
+
 	@Test
 	public void withSpringErroneousServiceIsRetriedNoExceptionThrown() {
 		erroneousService.throwException();
 	}
 
-	@Test(expected=RuntimeException.class)
+	@Test(expected = RuntimeException.class)
 	public void withoutSpringErroneousServiceThrowsException() {
-		ErroneousService erroneousService= new ErroneousService();
+		ErroneousService erroneousService = new ErroneousService();
 		erroneousService.throwException();
 	}
 
-	
 }

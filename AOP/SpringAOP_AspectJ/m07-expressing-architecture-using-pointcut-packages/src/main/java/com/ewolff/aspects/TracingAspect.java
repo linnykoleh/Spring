@@ -16,10 +16,12 @@ public class TracingAspect extends CallTracker {
 		trackCall();
 		try {
 			proceedingJP.proceed();
-		} catch (Throwable ex) {
+		}
+		catch (Throwable ex) {
 			System.out.println("Exception in " + methodInformation + ex);
 			throw ex;
-		} finally {
+		}
+		finally {
 			System.out.println("Exiting " + methodInformation);
 		}
 	}

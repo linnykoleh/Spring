@@ -1,7 +1,8 @@
 package com.ewolff.filter;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +24,7 @@ public class FilterTest {
 
 	@Autowired
 	private AccountFilterAspect accountFilterAspect;
-	
+
 	@Autowired
 	private AccountRepository accountRepository;
 
@@ -31,7 +32,7 @@ public class FilterTest {
 	public void setUp() {
 		accountFilterAspect.clearCurrentCustomer();
 	}
-	
+
 	@Test
 	public void springBeanFiltersEverythingIfNoCustomerSet() {
 		assertThat(accountRepository.getAccount(42), nullValue());
@@ -40,13 +41,12 @@ public class FilterTest {
 
 	@Test
 	public void springBeanFiltersOtherAccountIfCustomerSet() {
-		accountFilterAspect.setCurrentCustomer(new Customer("Eberhard","Wolff"));
+		accountFilterAspect.setCurrentCustomer(new Customer("Eberhard", "Wolff"));
 		assertThat(accountRepository.getAccount(42), equalTo(new Account(
 				"Eberhard", "Wolff", 42)));
 		assertThat(accountRepository.getAccount(1), nullValue());
 	}
 
-	
 	@Test
 	public void plainObjectWontFilter() {
 		AccountRepository plainAccountRepository = new AccountRepository();

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @Configuration
 @EnableAspectJAutoProxy
-@ComponentScan(basePackages="com.ewolff")
+@ComponentScan(basePackages = "com.ewolff")
 public class SystemConfiguration {
 
 }

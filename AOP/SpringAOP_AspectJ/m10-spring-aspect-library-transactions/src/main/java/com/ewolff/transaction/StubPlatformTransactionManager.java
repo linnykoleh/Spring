@@ -5,8 +5,7 @@ import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 
-public class StubPlatformTransactionManager extends
-		AbstractPlatformTransactionManager {
+public class StubPlatformTransactionManager extends AbstractPlatformTransactionManager {
 
 	private int commit = 0;
 	private int rollback = 0;
@@ -15,8 +14,7 @@ public class StubPlatformTransactionManager extends
 	private boolean rollbackOnly;
 
 	@Override
-	protected boolean isExistingTransaction(Object transaction)
-			throws TransactionException {
+	protected boolean isExistingTransaction(Object transaction) throws TransactionException {
 		return active;
 	}
 
@@ -40,20 +38,17 @@ public class StubPlatformTransactionManager extends
 	}
 
 	@Override
-	protected void doBegin(Object transaction, TransactionDefinition definition)
-			throws TransactionException {
+	protected void doBegin(Object transaction, TransactionDefinition definition) throws TransactionException {
 		active = true;
 	}
 
 	@Override
-	protected void doSetRollbackOnly(DefaultTransactionStatus status)
-			throws TransactionException {
+	protected void doSetRollbackOnly(DefaultTransactionStatus status) throws TransactionException {
 		rollbackOnly = true;
 	}
 
 	@Override
-	protected void doCommit(DefaultTransactionStatus status)
-			throws TransactionException {
+	protected void doCommit(DefaultTransactionStatus status) throws TransactionException {
 		if (rollbackOnly) {
 			doRollback(status);
 			rollbackOnly = false;
@@ -64,8 +59,7 @@ public class StubPlatformTransactionManager extends
 	}
 
 	@Override
-	protected void doRollback(DefaultTransactionStatus status)
-			throws TransactionException {
+	protected void doRollback(DefaultTransactionStatus status) throws TransactionException {
 		rollback++;
 		total++;
 	}
