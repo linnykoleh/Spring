@@ -2262,13 +2262,15 @@ public class TestDataConfig {
 }
 ```
 
+- Apply the `@EnableTransactionManagement` annotation to exactly one `@Configuration` class in the application.
+  
 ```java
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = {"com.ps.repos.impl", "com.ps.services.impl"})
 public class AppConfig {
+    
 }
-
 ```
 
 - Declare transactional methods
@@ -2293,14 +2295,57 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 ```
 
 ## @Transactional
+
+**@Transactional** annotation is used for `declarative transaction management` and can be applied to methods and classes.
+
 - `transactionManager` - the transaction manager used to manage the transaction in the context of which the annotated method is executed.
 - `readOnly` - should be used for transactions that involve operations that do not modify the database (example: searching, counting records)
-- `propagation` - org.springframework.transaction.annotation.Propagation
-- `isolation` - org.springframework.transaction.annotation.Isolation
+- `propagation` - transaction propagation. `org.springframework.transaction.annotation.Propagation`
+- `isolation` - the transaction isolation level. `org.springframework.transaction.annotation.Isolation`
 - `timeout` - value represents the number of milliseconds after which a transaction is considered failed,
 - `rollbackFor` - when this type of exception is thrown during the execution of a transactional method, the transaction is rolled back
+- `rollbackForClassName` - name of exception class(es) that are to cause a transaction rollback.
+- `noRollbackFor` - exception class(es) that never are to cause a transaction rollback.
+- `noRollbackForClassName` - names of exception class(es) that never are to cause a transaction rollback.
 
-## org.springframework.transaction.annotation.Propagation
+ Spring allows for using the JPA `javax.transaction.Transactional` annotation as a replacement for the <br/>
+ Spring `@Transactional` annotation, though it does not have as many configuration options.
+
+### PlatformTransactionManager
+
+- `PlatformTransactionManager` is the base interface for all transaction managers that can be used in
+  the Spring framework’s transaction infrastructure.
+    - PlatformTransactionManager interface contain the following methods:
+        - void commit(TransactionStatus)
+        - void rollback(TransactionStatus)
+        - TransactionStatus getTransaction(TransactionDefinition)
+
+### @EnableTransactionManagement
+
+- `@EnableTransactionManagement` annotation is to annotate exactly one configuration class in
+  an application in order to enable annotation-driven transaction management using the `@Transactional` annotation.
+    - Components registered when the `@EnableTransactionManagement` annotation is used are:
+        - `TransactionInterceptor`. <br/>
+          Intercepts calls to `@Transactional` methods creating new transactions as necessary etc.
+        - A JDK Proxy or AspectJ advice. <br/>
+          This advice intercepts methods annotated with `@Transactional` (or methods that are located in a class annotated with `@Transactional`).  
+    - `@EnableTransactionManagement` annotation have the following three optional elements:      
+        - mode <br/>
+          Allows for selecting the type of advice that should be used with transactions. Possible values
+          are `AdviceMode.ASPECTJ` and `AdviceMode.PROXY` with the latter being the default.
+        - order <br/>  
+          Precedence of the transaction advice when more than one advice is applied to a join-point. Default value is `Ordered.LOWEST_PRECEDENCE`.
+        - proxyTargetClass <br/>
+          True of `CGLIB proxies` are to be used, false if `JDK interface-based proxies` are to be used in the application 
+          
+## Transaction Propagation
+
+ - Happens when code from one transaction calls another transaction
+ - Transaction propagation says whether everything should be run in single transaction or nested transactions should be used
+ - There are 7 levels of propagation
+ - 2 Basic ones - REQUIRED and REQUIRES_NEW
+
+### org.springframework.transaction.annotation.Propagation
 
 - **REQUIRED**: an existing transaction will be used or a new one will be created to execute the method annotated with `@Transactional(propagation = Propagation.REQUIRED)`.
 - **REQUIRES_NEW**: a new transaction is created to execute the method annotated with `@Transactional(propagation = Propagation.REQUIRES_NEW)`. If a current transaction exists, it will be suspended.
@@ -2310,30 +2355,34 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 - **NOT_SUPPORTED**: no transaction is used to execute the method annotated with `@Transactional(propagation = Propagation.NOT_SUPPORTED)`. If a transaction exists, it will be suspended.
 - **SUPPORTS**: an existing transaction will be used to execute the method annotated with `@Transactional(propagation = Propagation.SUPPORTS)`. If no transaction exists, the method will be executed anyway, without a transactional context.
 
-#### Transaction Propagation
+## Isolation Levels
 
- - Happens when code from one transaction calls another transaction
- - Transaction propagation says whether everything should be run in single transaction or nested transactions should be used
- - There are 7 levels of propagation
- - 2 Basic ones - REQUIRED and REQUIRES_NEW
+- Transaction isolation in database systems determine how the changes within a transaction are
+  visible to other users and systems accessing the database prior to the transaction being committed.
+- 4 isolation levels available (from least strict to the most strict)
+	- **READ_UNCOMMITTED**
+	- **READ_COMMITTED**
+	- **REPEATABLE_READ**
+	- **SERIALIZABLE**
+- Not all isolation levels may be supported in all databases
+- Different databases may implement isolation is slightly different ways
 
-## org.springframework.transaction.annotation.Isolation
+### org.springframework.transaction.annotation.Isolation
 
 - **DEFAULT**: the default isolation level of the DBMS.
 - **READ_UNCOMMITED**: data changed by a transaction can be read by a different transaction while the first one is not yet committed, also known as dirty reads.
-- **READ_COMMITTED**: dirty reads are not possible when a transaction is used with this isolation level. This is the default strategy for most databases. But a different phenomenon could happen here: repeatable read: when the same query is executed multiple times, different results might be obtained. (Example: a user is extracted repeatedly within the same transaction. In parallel, a different transaction edits the user and commits. If the first transaction has this isolation level, it will return the user with the new properties after the second transaction is committed.)
-- **REPEATABLE_READ**: this level of isolation does not allow dirty reads, and repeatedly querying a table row in the same transaction will always return the same result, even if a different transaction has changed the data while the reading is being done. The process of reading the same row multiple times in the context of a transaction and always getting the same result is called repeatable read.
-- **SERIALIZABLE**: this is the most restrictive isolation level, since transaction are executed in a serialized way. So no dirty reads, no repeatable reads, and no phantom reads are possible. A phantom read happens when in the course of a transaction, execution of identical queries can lead to different result sets being returned.
-
-## Isolation Levels
-
-- 4 isolation levels available (from least strict to the most strict)
-	- READ_UNCOMMITTED
-	- READ_COMMITTED
-	- REPEATABLE_READ
-	- SERIALIZABLE
-- Not all isolation levels may be supported in all databases
-- Different databases may implement isolation is slightly different ways
+    `Dirty reads may occur.`
+- **READ_COMMITTED**: dirty reads are not possible when a transaction is used with this isolation level. 
+    This is the default strategy for most databases. But a different phenomenon could happen here: repeatable read: when the same query is executed multiple times, 
+    different results might be obtained. (Example: a user is extracted repeatedly within the same transaction. In parallel, a different transaction edits the user and commits. 
+    If the first transaction has this isolation level, it will return the user with the new properties after the second transaction is committed.) 
+    `Phantom reads and non-repeatable reads can occur`.
+- **REPEATABLE_READ**: this level of isolation does not allow dirty reads, and repeatedly querying a table row in the same transaction will always return the same result, 
+    even if a different transaction has changed the data while the reading is being done. The process of reading the same row multiple times in the context of a transaction and 
+    always getting the same result is called repeatable read. 
+    `Phantom reads can occur`.
+- **SERIALIZABLE**: this is the most restrictive isolation level, since transaction are executed in a serialized way. So no dirty reads, no repeatable reads, 
+    and no phantom reads are possible. A phantom read happens when in the course of a transaction, execution of identical queries can lead to different result sets being returned.
 
 #### READ_UNCOMMITTED
  - `@Transactional (isolation=Isolation.READ_UNCOMMITTED)`

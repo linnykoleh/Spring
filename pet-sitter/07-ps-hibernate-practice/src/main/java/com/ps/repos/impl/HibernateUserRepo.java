@@ -1,19 +1,20 @@
 package com.ps.repos.impl;
 
-import static com.ps.ents.User.FIND_BY_USERNAME_EXACT;
-import static com.ps.ents.User.FIND_BY_USERNAME_LIKE;
-
-import java.util.List;
-import java.util.Set;
-
+import com.ps.ents.User;
+import com.ps.repos.UserRepo;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import com.ps.ents.User;
-import com.ps.repos.UserRepo;
+import java.util.List;
+import java.util.Set;
+
+import static com.ps.ents.User.FIND_BY_USERNAME_EXACT;
+import static com.ps.ents.User.FIND_BY_USERNAME_LIKE;
 
 @Repository
 @Transactional
@@ -31,15 +32,20 @@ public class HibernateUserRepo implements UserRepo {
 		session().flush();
 	}
 
-	@Override
-	public List<User> findAll() {
-		return session().createQuery("from User u").list();
-	}
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public List<User> findAll() {
+        System.out.println(TransactionSynchronizationManager.getCurrentTransactionName());
+        return session().createQuery("from User u").list();
+    }
 
-	@Override
-	public User findById(Long id) {
-		return session().get(User.class, id);
-	}
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public User findById(Long id) {
+        findAll();
+        System.out.println(TransactionSynchronizationManager.getCurrentTransactionName());
+        return session().get(User.class, id);
+    }
 
 	@Override
 	public void save(User user) {
