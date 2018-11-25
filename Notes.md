@@ -2296,20 +2296,34 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 
 ## @Transactional
 
-**@Transactional** annotation is used for `declarative transaction management` and can be applied to methods and classes.
+- **@Transactional** annotation is used for `declarative transaction management` and can be used on class and method level both in classes and interfaces.
+- When using Spring AOP proxies, only `@Transactional` annotations on public methods will have any effect – 
+  applying the `@Transactional` annotation to protected or private methods or
+  methods with package visibility will not cause errors but will not give the desired transaction management,
 
-- `transactionManager` - the transaction manager used to manage the transaction in the context of which the annotated method is executed.
-- `readOnly` - should be used for transactions that involve operations that do not modify the database (example: searching, counting records)
-- `propagation` - transaction propagation. `org.springframework.transaction.annotation.Propagation`
-- `isolation` - the transaction isolation level. `org.springframework.transaction.annotation.Isolation`
-- `timeout` - value represents the number of milliseconds after which a transaction is considered failed,
-- `rollbackFor` - when this type of exception is thrown during the execution of a transactional method, the transaction is rolled back
-- `rollbackForClassName` - name of exception class(es) that are to cause a transaction rollback.
-- `noRollbackFor` - exception class(es) that never are to cause a transaction rollback.
-- `noRollbackForClassName` - names of exception class(es) that never are to cause a transaction rollback.
-
- Spring allows for using the JPA `javax.transaction.Transactional` annotation as a replacement for the <br/>
- Spring `@Transactional` annotation, though it does not have as many configuration options.
+- Parameters:
+    - `transactionManager` - the transaction manager used to manage the transaction in the context of which the annotated method is executed.
+    - `readOnly` - should be used for transactions that involve operations that do not modify the database (example: searching, counting records)
+    - `propagation` - transaction propagation. `org.springframework.transaction.annotation.Propagation`
+    - `isolation` - the transaction isolation level. `org.springframework.transaction.annotation.Isolation`
+    - `timeout` - value represents the number of milliseconds after which a transaction is considered failed,
+    - `rollbackFor` - when this type of exception is thrown during the execution of a transactional method, the transaction is rolled back
+    - `rollbackForClassName` - name of exception class(es) that are to cause a transaction rollback.
+    - `noRollbackFor` - exception class(es) that never are to cause a transaction rollback.
+    - `noRollbackForClassName` - names of exception class(es) that never are to cause a transaction rollback.
+- Spring allows for using the JPA `javax.transaction.Transactional` annotation as a replacement for the <br/>
+  Spring `@Transactional` annotation, though it does not have as many configuration options.
+- If one `@Transactional` method call another `@Transactional` method,  <br/>
+  the method will execute in the same transaction context as the first.
+- Declarative transaction management
+    - This is accomplished using annotations or Spring XML configuration.
+- Rollback police
+    - The default rollback policy of Spring transaction management is that automatic rollback only takes
+      place in the case of an unchecked exception being thrown.
+    - The types of exceptions that are to cause a rollback can be configured using the `rollbackFor`
+      element of the `@Transactional` annotation. In addition, the types of exceptions that not are to cause
+      rollbacks can also be configured using the `noRollbackFor` element.  
+              
 
 ### PlatformTransactionManager
 
@@ -2406,6 +2420,9 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 
 ## Testing transactional methods
 
+- If a test-method annotated with `@Test` is also annotated with `@Transactional`, then the test-method will be executed in a transaction.
+  Such a transaction will automatically be rolled back after the completion of the test-method.
+- The rollback policy of a test can be changed using the `@Rollback` annotation and setting the value to false.  
 - The `@Sql` annotation can be used to specify SQL scripts to be executed against a given database during integration tests.
 - The `@SqlGroup` annotation can be used on classes and methods to group together `@Sql` annotations.
 - The `@SqlConfig` is used to specify the configuration of the SQL script.
@@ -2700,9 +2717,60 @@ public class HibernateUserRepo implements UserRepo {
 
 ## Spring + JPA Java configuration
 
-- Create `dataSource`
+- The following steps are needed if you want to work with JPA in a Spring application:
+    - Declare the appropriate dependencies.  <br/>
+    In a Maven application, this is accomplished by creating dependencies in the pom.xml file.
+    The dependencies in question are typically the ORM framework dependency, a database driver dependency and a transaction manager dependency.
+    - Implement entity classes with mapping metadata in the form of annotations.  <br/>
+    As a minimum, entity classes need to be annotated with the `@Entity` annotation on class
+    level and the `@Id` annotation annotating the field or property that is to be the primary key of the entity.
+    It is possible to separate mapping metadata from the implementation of entity classes by
+    using an orm.xml file, but that is outside of the scope of this book.
+    - Define an `EntityManagerFactory` bean.
+    The JPA support in the Spring framework offer three alternatives when creating an `EntityManagerFactoryBean`:
+        - `LocalEntityManagerFactoryBean` <br/>
+        Use this option, which is the simplest option, in applications that only use JPA for
+        persistence and in integration tests.
+        - Obtain an `EntityManagerFactory` using JNDI <br/>
+        Use this option if the application is run in a JavaEE server.
+        - `LocalContainerEntityManagerFactoryBean` <br/>
+        Gives the application full JPA capabilities.
+    - Define a `DataSource` bean.
+    - Define a `TransactionManager` bean. <br/>
+    Typically using the JpaTransactionManager class from the Spring Framework.
+    - Implement repositories.
+
+- `@PersistenceContext`- The annotation is applied to a instance variable of the type EntityManager or
+   a setter method, taking a single parameter of the EntityManager type, into which an entity manager is to be injected.
 
 ```java
+@PersistenceContext
+private EntityManager entityManager;
+```
+
+- `EntityManagerFactory` - An entity manager factory is used to interact with a persistence unit.
+
+```java
+@Bean
+public EntityManagerFactory entityManagerFactory() {
+    LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
+    factoryBean.setPackagesToScan("com.ps.ents");
+    factoryBean.setDataSource(dataSource());
+    factoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+    factoryBean.setJpaProperties(hibernateProperties());
+    factoryBean.afterPropertiesSet();
+    return factoryBean.getNativeEntityManagerFactory();
+}
+```
+
+- `PlatformTransactionManager`
+
+```java
+@Bean
+public PlatformTransactionManager txManager(){
+    return new DataSourceTransactionManager(dataSource());
+}
+
 @Bean
 public DataSource dataSource() {
 	final DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -2714,6 +2782,8 @@ public DataSource dataSource() {
 	return dataSource;
 }
 ```
+
+---
 
 - Create `hibernateProperties`
 
@@ -2835,6 +2905,12 @@ private EntityManager entityManager;
 - Create a domain object class that will be mapped to a MongoDB object. The class must have an identified field that will be annotated with the Spring Data special annotation `@Id` from the package `org.springframework.data.annotation`
 - Create a new Repo interface that will extend the Spring Data MongoDB-specialized interface `MongoRepository<T,ID extends Serializable>`.
 - Create a configuration class and annotate it with `@EnableMongoRepositories` to enable creation of MongoDB repository instances.
+
+- How are Spring Data repositories implemented by Spring at runtime?
+    - For a Spring Data repository a JDK dynamic proxy is created which intercepts all calls to the
+  repository. The default behavior is to route calls to the default repository implementation, which in
+  Spring Data JPA is the `SimpleJpaRepository` class. It is possible to customize either the
+  implementation of one specific repository type or customize the implementation used for all repositories.
 
 #### Spring Data Repositories
 
