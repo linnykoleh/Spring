@@ -3431,7 +3431,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
 ![alt text](images/web/mvc/workflow.png)
 
-#### Spring Rest 
+## Spring Rest 
 
 - `Uniform Resource Identifier (URI)` is a string of characters designed for unambiguous identification of resources and extensibility via the URI scheme.
 - HTTP methods (GET, POST, PUT, DELETE) are actions performed on resource (like CRUD)
@@ -3450,13 +3450,18 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
 ![alt text](images/web/mvc/web_services.png)
    
-## Spring Security   
+# Spring Security   
 
 - Concepts
 	- `Principal` is the term that signifies a user, device, or system that could perform an action within the application.
 	- `Credentials` are identification keys that a principal uses to confirm its identity.
 	- `Authentication` is the process of verifying the validity of the principal’s credentials.
+	    - authentication must always come before authorization
+	    - An example is the login of a computer system; a user enters a user name and a password.
+	    - other ways of authenticating a user of a computer system such as PIN numbers, security questions, id cards, fingerprints
 	- `Authorization` is the process of making a decision whether an authenticated user is allowed to perform a certain action within the application
+	    - For instance, the only type of users that can create and delete users in a computer system is users is users in the administrator role.
+          Thus the only users that have access to the create and delete functions of the application are users in the administrator role.
 	- `Secured` item is the term used to describe any resource that is being secured.
 
 - Common user roles 
@@ -3519,6 +3524,19 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         </authentication-provider>
 </authentication-manager>
 ```
+
+### Spring Security Core Components
+
+- `SecurityContextHolder` - Contains and provides access to the `SecurityContext` of the application. Default behavior is to associate the SecurityContext with the current thread.
+- `SecurityContext` - Default and only implementation in Spring Security holds an Authentication object. May also hold additional request-specific information.
+- `Authentication` - Represents token for authentication request or authenticated principal after the request has been granted. Also contains the authorities in the application that an authenticated principal has been granted.
+- `GrantedAuthority` - Represents an authority granted to an authenticated principal.
+- `UserDetails` - Holds user information, such as user-name, password and authorities of the user. 
+    This information is used to create an Authentication object on successful authentication. May be extended to contain application-specific user information.
+- `UserDetailsService` - Given a user-name this service retrieves information about the user in a UserDetails object. 
+    Depending on the implementation of the user details service used, the information may be stored in a database, in memory or elsewhere if a custom implementation is used.
+
+![alt text](images/core_spring_in_detail/Screenshot_12.png)	
 
 #### Spring XML Configuration without web.xml
 
