@@ -3873,7 +3873,33 @@ It’s goal is to allow developers to focus on implementation of the actual requ
 
 ![alt text](images/web/boot/Screenshot_3.png)
 
-- project must have as a parent the `spring-boot-starter-parent`
+- Project must have as a parent the `spring-boot-starter-parent`
+- Spring Boot Starters
+	- Spring Boot starters are dependency descriptors for different technologies that can be used in Spring
+	  Boot applications. For example, if you want to use Apache Artemis for JMS messaging in your Spring Boot application, then you simply add the `spring-boot-starter-artemis` dependency to your
+	  application and rest assured that you have the appropriate dependencies to get you started using Artemis in your Spring Boot application.
+- Advantages of using Spring Boot
+	- Automatic configuration of “sensible defaults” reducing boilerplate configuration.
+	- A Spring Boot project can produce an executable stand-alone JAR-file.
+	- Provides a set of managed dependencies that have been verified to work together
+	- Provides a set of managed Maven plug-ins configured to produce certain artifacts.
+	- Provides non-functional features commonly needed in projects. <br/>
+      Some such features are security, externalized configuration, metrics and health-checks.
+    - Does not generate code.
+    - Does not require XML configuration.
+    - Popular in the developer community.
+- How does it work? How does it know what to configure?
+	- Spring Boot detects the dependencies available on the classpath and configures Spring beans accordingly. There are a number of annotations, examples are `@ConditionalOnClass`,
+      `@ConditionalOnBean`, `@ConditionalOnMissingBean` and `@ConditionalOnMissingClass`, that allows for applying conditions to Spring configuration classes or Spring bean declaration methods in such classes.
+    	- A Spring bean is to be created only if a certain dependency is available on the classpath. Use `@ConditionalOnClass` and supply a class contained in the dependency in question.
+    	- A Spring bean is to be created only if there is no bean of a certain type or with a certain name created. Use `@ConditionalOnMissingBean` and specify name or type of bean to check.
+- Properties controlling the behavior of Spring Boot applications can be defined using:
+	- Property files
+	- YAML files
+	- Environment variables	
+	- Command-line arguments (`java -jar myspringbootapp.jar –server.port=8081`)
+- The default properties of a Spring Boot application are stores in the application’s JAR in a file named “application.properties”. <br/>     	
+  When developing, this file is found in the src/main/resources directory.
 
 ![alt text](images/web/boot/Screenshot_1.png)	
 
@@ -3923,11 +3949,11 @@ public class Application extends SpringBootServletInitializer {
 
 ![alt text](images/web/boot/Screenshot_4.png)
 
-#### Configuration Using YAML
+### Configuration Using YAML
 
-```
-YAML is a superset of JSON and has a very convenient syntax for storing external properties in a hierarchical format
-```
+- `YAML` is a superset of JSON and has a very convenient syntax for storing external properties in a hierarchical format
+- `YML` files are files containing properties in the YAML format. YAML stands for YAML Ain’t Markup Language.
+
 
 ![alt text](images/web/boot/Screenshot_5.png)	
 
@@ -3950,7 +3976,7 @@ Server:
     context:  /ps-boot
 ```
 
-#### @ConfigurationProperties
+### @ConfigurationProperties
 
 - To use YAML, the `application.properties` must be replaced with `application.yml` file`
 - To get YAML data need to use `@ConfigurationProperties` with defined prefix for the properties (see above)
@@ -4001,6 +4027,44 @@ public class Application extends SpringBootServletInitializer {
 
 - YAML files can not be loaded via the `@PropertySource` annotation. This annotation is specific to properties files.
 
+### Common Spring Boot Annotations
+
+```java
+- @SpringBootApplication - is a convenience-annotation that can be applied to Spring Java configuration classes. 
+						The @SpringBootApplication is equivalent to the three annotations  @Configuration, @EnableAutoConfiguration and @ComponentScan
+- @EnableAutoConfiguration - is a  annotation enables Spring Boot auto-configuration. As earlier, Spring Boot autoconfiguration attempts to create and configure Spring beans based on the
+                           dependencies available on the class-path to allow developers to quickly get started with different technologies in a Spring Boot application and reducing boilerplate code and configuration.
+- @Conditional[yyy] - Class of Spring Boot annotations that enable conditional creation of Spring beans. Commonly used in auto-configuration modules.
+- @EnableConfigurationProperties - Enables support for Spring beans annotated with @ConfigurationProperties
+- @ConfigurationProperties - Allows for binding a selected group of configuration properties to a class.
+- @WebMvcTest - Annotation used in Spring MVC tests testing only Spring MVC components.
+- @EntityScan - Specifies which packages to scan when scanning for entity classes.
+- @SpringBootConfiguration - Alternative to @Configuration for Spring Boot applications.
+- @ServletComponentScan - Enables scanning for servlets, WebFilter filters, WebServlet servlets and WebListener listeners when using an embedded web server.
+- @LocalServerPort - Alternative to @Value("${local.server.port}")
+- @JsonComponent - Specialization of the @Component annotation for components that provides a Jackson JSON serializer or deserializer.
+- @TestConfiguration - Alternative to @Configuration for test configuration classes.
+- @Endpoint - Identifies a class as being an actuator endpoint that provides information about the Spring Boot application.
+- @ReadOperation - Marks a method in a class annotated with @Endpoint as being a read operation.
+- @MockBean - Used to add a mock bean to the Spring application context.
+- @SpyBean - Applies Mockito spies to one or more Spring beans.
+- @SpringBootTest - Annotates test classes that run Spring Boot based tests.
+- @TestComponent - Component annotation for beans that only are to be used in tests.
+- @OverrideAutoConfiguration - Used to override th @EnableAutoConfiguration.
+- @ImportAutoConfiguration - Import an apply specified auto-configuration classes.
+- @AutoConfigureTestEntityManager - Enable auto-configuration of a test entity manager in tests.
+- @DataJpaTest - Used with @RunWith(SpringRunner.class) in tests that only tests JPA components.
+- @PropertyMapping - Maps attributes from a test annotation into a PropertySource.
+- @AutoConfigureRestDocs - Enable auto-configuration of Spring REST Docs in tests.
+- @AutoConfigureMockRestServiceServer - Enable auto-configuration of a single mock REST service server in tests.
+- @RestClientTest - Used with @RunWith(SpringRunner.class) in tests that use a Spring REST client.
+- @AutoConfigureWebClient - Enables auto-configuration of web clients in test classes.
+- @AutoConfigureWebTestClient - Enables a web test client in WebFlux application tests.
+- @WebFluxTest - Used with @RunWith(SpringRunner.class) in tests that only tests Spring WebFlux components.
+- @AutoConfigureMockMvc - Enables auto-configuration of MockMvc in test-classes.
+- @WebMvcTest - Used with @RunWith(SpringRunner.class) in tests that focuses on Spring MVC components.
+```
+ 
 #### Testing with Spring Boot
 
 - `@SpringBootTest` - this annotation should be used on a test class that runs Spring Boot-based tests
@@ -4013,8 +4077,7 @@ public class Application extends SpringBootServletInitializer {
     
 ```java
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = {"app.port=9090"})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {"app.port=9090"})
 public class CtxControllerTest {
 ...
 }
@@ -4049,7 +4112,9 @@ public class FooServiceTest {
 
 #### Logging
 
-- By default Logback over SLF4J
+- As per default, messages written with the ERROR, WARN and INFO levels will be output in a Spring Boot application. To enable DEBUG or TRACE logging for the entire application, use the --
+  debug or --trace flags or set the properties debug=true or trace=true in the application.properties file.
+- By default `Logback` over `SLF4J`
 - By default logs to console, but can define log file
 
 ```properties
@@ -4060,6 +4125,23 @@ logging.level.com.example=INFO
 logging.file=logfile.log
 #OR spring.log file in to configured path
 logging.path=/log
+```
+
+- Overriding default log patterns
+
+```properties
+# Logging pattern for the console
+logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %msg%n
+ 
+# Logging pattern for file
+logging.pattern.file=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+```
+
+- Color-coding of Log Levels
+	- Where the color can be one of blue, cyan, faint, green, magenta, red or yellow.
+
+```properties
+logging.pattern.console=%clr(%d{yyyy-MM-dd HH:mm:ss}){yellow}
 ```
 
 #### DataSource
@@ -4123,6 +4205,29 @@ public void customize(ConfigurableEmbeddedServletContainer container) {
 	- If needed, specific autoconfiguration classes can be excluded explicitly
 	- `@EnableAutoConfiguration(exclude=DataSourceAutoConfiguration.class)`
 	
+```
+- @ConditionalOnClass - Presence of class on classpath.
+- @ConditionalOnMissingClass - Absence of class on classpath.
+- @ConditionalOnBean - Presence of Spring bean or bean type (class).
+- @ConditionalOnMissingBean - Absence of Spring bean or bean type (class).
+- @ConditionalOnProperty - Presence of Spring environment property.
+- @ConditionalOnResource - Presence of resource such as file.
+- @ConditionalOnWebApplication - If the application is considered to be a web application, that is uses the Spring WebApplicationContext, defines a session scope or has a StandardServletEnvironment.
+- @ConditionalOnNotWebApplication - If the application is not considered to be a web application.
+- @ConditionalOnExpression - Bean or configuration active based on the evaluation of a SpEL expression.
+- @ConditionalOnCloudPlatform - If specified cloud platform, Cloud Foundry, Heroku or SAP, is active.
+- @ConditionalOnEnabledEndpoint - Specified endpoint is enabled.
+- @ConditionalOnEnabledHealthIndicator - Named health indicator is enabled.
+- @ConditionalOnEnabledInfoContributor - Named info contributor is enabled.
+- @ConditionalOnEnabledResourceChain - Spring resource handling chain is enabled.
+- @ConditionalOnInitializedRestarter - Spring DevTools RestartInitializer has been applied with non-null URLs.
+- @ConditionalOnJava - Presence of a JVM of a certain version or within a version range.
+- @ConditionalOnJndi - Availability of JNDI InitialContext and specified JNDI locations exist.
+- @ConditionalOnManagementPort - Spring Boot Actuator management port is either: Different from server port, same as server port or disabled.
+- @ConditionalOnRepositoryType - Specified type of Spring Data repository has been enabled.
+- @ConditionalOnSingleCandidate - Spring bean of specified type (class) contained in bean factory and single candidate can be determined.
+```
+		
 ## Spring actuator dependency
 
 - provides ready features to help monitor and manage application
@@ -4132,7 +4237,7 @@ public void customize(ConfigurableEmbeddedServletContainer container) {
 	<artifactId>spring-boot-starter-actuator</artifactId>
 </dependency>
 ```
-	
+
 # Integration
 
 - Remoting and Web Services are ways of communicating between applications
