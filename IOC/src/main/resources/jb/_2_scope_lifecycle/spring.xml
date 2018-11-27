@@ -16,10 +16,10 @@
 	<!--=================================================================================-->
 	<context:component-scan base-package="com.learning.linnyk.jb._2_scope_lifecycle"/>
 
-	<!--===========================================================================-->
-	<!-- Activates various annotations to be detected in bean classes: Spring's    -->
-	<!-- @Component, @Required, @Autowired, @PostConstruct, @PreDestroy, @Resource -->
-	<!--===========================================================================-->
+	<!--==================================================================================-->
+	<!-- Activates various JSR 250's annotations to be detected in bean classes: Spring's -->
+	<!-- @Component, @Required, @Autowired, @PostConstruct, @PreDestroy, @Resource        -->
+	<!--==================================================================================-->
 	<context:annotation-config/>
 
 

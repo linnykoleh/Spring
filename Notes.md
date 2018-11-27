@@ -528,8 +528,7 @@ public class TriangleLifecycle implements InitializingBean {
     - JPA's `@PersistenceContext` and `@PersistenceUnit` (if available).
     - Register post-processors:
      	- `AutowiredAnnotationBeanPostProcessor`
-     	- `CommonAnnotationBeanPostProcessor` - is automatically registered in the application context and no
-           additional configuration is necessary to enable `@PostConstruct` and `@PreDestroy`.
+     	- `CommonAnnotationBeanPostProcessor` - is automatically registered in the application context and no additional configuration is necessary to enable `@PostConstruct` and `@PreDestroy`.
      	- `PersistenceAnnotationBeanPostProcessor`
      	- `RequiredAnnotationBeanPostProcessor`
 - `<context:component-scan />` 
@@ -1615,7 +1614,8 @@ public class LoggingAspect {
 
 - To enable detection of Spring beans implementing advice which implementation classes are <br/>
   annotated with the `@Aspect` annotation, the `@EnableAspectJAutoProxy` annotation should be <br/>
-  applied to a `@Configuration` class and aspects must be annotated with `@Component`	
+  applied to a `@Configuration` class and aspects must be annotated with `@Component` <br/>
+  similar to functionality found in Spring's <aop:aspectj-autoproxy> XML element.
   
 ```java
 @Aspect
