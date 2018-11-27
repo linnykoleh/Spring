@@ -3497,22 +3497,45 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 - `<form-login ../>` - configuration element is used to define the request URL for the login form where the user can provide its credentials.
 - `<logout ../> ` - configuration element is used to define the request URL for the logout form.
 - `<intercept-url …/>` - The paths defined as values for the pattern attribute are pieces of URLs defined 
+	- `<intercept-url>` element in Spring Security 5 XML configuration is used to specify an
+      URL pattern in the application and information deciding who will be able to access the resource(s) which URLs match the URL pattern.
+    - `<intercept-url>` element has the following attributes:
+    	- access - Access attributes, commonly role names, specifying the user(s) that has access
+      	- filters - Omitted or having the value “none”. In the latter case the Spring Security filter chain for the URL pattern will be bypassed.
+      	- method - HTTP method used with URL pattern and, optionally, servlet path to match requests. If omitted all HTTP methods will match.
+      	- pattern - URL path pattern for which the Spring Security filter chain will be applied.
+      	- request-matcher-ref - Reference to RequestMatcher bean used to determine if this <intercept-url> will be used.
+      	- requires-channel - Possible values are “http”, “https” and “any”. The first two are for access over HTTP and
+      		HTTPS respectively. Omitting this attribute or using the value “any” matches both HTTP and HTTPS.
+      	- servlet-path - Servlet path used in combination with method and pattern to match requests. Optional.  
+    - Multiple `<intercept-url>` elements may be defined and they will be evaluated in the order in which they are defined. When an `<intercept-url>` element with a matching pattern is found, evaluation
+      stops. It is therefore recommended to define more `<intercept-url>` elements with more specific pattern earlier and more general patterns later.  	
+    - There are two wildcards that can be used in URL patterns:
+    	- #### * <br/>
+    	Matches any path on the level at which the wildcard occur.  <br/>
+        Example: /services/* matches /services/users and /services/orders but not /services/orders/123/items.	
+        - #### ** <br/>
+        Matches any path on the level at the wildcard occurs and all levels below. If only /** or ** then will match any request.  <br/>
+        Example: /services/** matches /services, /services/, /services/users and /services/orders and also /services/orders/123/items etc.
+        
+    	  
+      
 ```xml
 <beans:beans  ...>
         <http>
-              <intercept-url pattern="/users/edit"
-                   access="ROLE_ADMIN"/>
-              <intercept-url pattern="/users/list"
-                   access="ROLE_USER"/>
-              <intercept-url pattern="/users/**"
-                   access="IS_AUTHENTICATED_FULLY"/>
+              <intercept-url pattern="/users/edit" access="ROLE_ADMIN"/>
+              <intercept-url pattern="/users/list" access="ROLE_USER"/>
+              <intercept-url pattern="/users/**" access="IS_AUTHENTICATED_FULLY"/>
         </http>
 </beans:beans> 
 ```
+
+- `mvcMatchers` API is newer than the `antMatchers` API.
 - ` <csrf disabled="true"/>` - using CSFR tokens in Spring forms to prevent cross-site request forgery
 - `authentication-failure-url` - is used to define where the user should be redirected when there is an authentication failure
 - `default-target-url` -  is used to define where the user will be redirected after a successful authentication
-- Configuring authentication for UserDetailsService 
+- Configuring authentication for `UserDetailsService`
+ 
 ```xml
 <authentication-manager>
         <authentication-provider>
@@ -3537,6 +3560,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     Depending on the implementation of the user details service used, the information may be stored in a database, in memory or elsewhere if a custom implementation is used.
 
 ![alt text](images/core_spring_in_detail/Screenshot_12.png)	
+
+![alt text](images/core_spring_in_detail/Screenshot_13.png)	
 
 #### Spring XML Configuration without web.xml
 
@@ -3725,6 +3750,28 @@ public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 }
 ```
 
+- `Password Hashing` <br/>
+
+Password hashing is the process of calculating a hash-value for a password. The hash-value is stored, for instance in a database, instead of storing the password itself. Later when a user attempts
+to log in, a hash-value is calculated for the password supplied by the user and compared to the stored hash-value. If the hash-values does not match, the user has not supplied the correct password.
+
+```
+hash("hello") = 2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
+hash("hbllo") = 58756879c05c68dfac9866712fad6a93f8146f337a69afe7dd238f3364946366
+```
+
+- `Salting` <br/>
+
+A salt used when calculating the hash-value for a password is a sequence of random bytes that are used in combination with the cleartext password to calculate a hash-value. The salt is stored in
+cleartext alongside the password hash-value and can later be used when calculating hash-values for user-supplied passwords at login.
+The reason for salting is to avoid always having the same hash-value for a certain word, which
+would make it easier to guess passwords using a dictionary of hash-values and their corresponding passwords.
+
+```
+hash("hello" + "QxLUF1bgIAdeQX") = 9e209040c863f84a31e719795b2577523954739fe5ed3b58a75cff2127075ed1
+hash("hello" + "bv5PehSMfV11Cd") = d1d3ec2e6f20fd420d50e2642992841d8338a314b8ea157c9e18477aaef226ab
+```
+
 #### Login and Logout
 
 ```java
@@ -3741,21 +3788,25 @@ public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 }
 ```
 
-#### Method Security
+## Method Security
 
-##### XML
+- Method-level security is accomplished using Spring AOP proxies.
+
+### XML
 
 ```xml
 <global-method-security secured-annotations="enabled" />
-	<protect-pointcut expression="execution(* com.ps.*.*Service.findById(*))"
-			access="hasRole(’ADMIN’)" />
+	<protect-pointcut expression="execution(* com.ps.*.*Service.findById(*))" access="hasRole(’ADMIN’)" />
 </global-method-security>
 ```
 
-##### Java 
+### Java 
+
+#### @Secured
 
 - Configuration class annotate with `@EnableGlobalMethodSecurity(securedEnabled  =  true)`
 - Methods annotate with annotation `@Secured`
+- The `@Secured` annotation is a legacy Spring Security 2 annotation that can be used to configured method security.
 	
 ```java
 @Configuration
@@ -3776,8 +3827,11 @@ public class UserServiceImpl implements UserService {
     
 }
 ```
+
+#### @RolesAllowed
      
 - Configuration class annotate with `@EnableGlobalMethodSecurity(jsr250Enabled  =  true)`
+- The `@RolesAllowed` annotation has its origin in the JSR-250 Java security standard. This annotation is more limited than the `@PreAuthorize` annotation in that it only supports role-based security.
 
 ```java
 @Configuration
@@ -3790,6 +3844,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 @Service
 @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class UserServiceImpl implements UserService {
+	
     @RolesAllowed("ROLE_ADMIN")
     public User findById(Long id) {
         return userRepo.findOne(id);
@@ -3798,12 +3853,17 @@ public class UserServiceImpl implements UserService {
 }
 ```
 
-#### Support expression attributes
+#### @PreAuthorize
 
-- @PreAuthorize
-- @PreFilter
-- @PostAuthorize
-- @PostFilter
+- In order to be able to use `@PreAuthorize`, the `prePostEnabled` attribute in the `@EnableGlobalMethodSecurity` annotation needs to be set to true.
+- `@EnableGlobalMethodSecurity(prePostEnabled=true)`
+- `@PreAuthorize` annotation allows for specifying access constraints to a method using the Spring Expression Language (SpEL). These constraints are evaluated prior to the method being
+   executed and may result in execution of the method being denied if the constraints are not fulfilled. The `@PreAuthorize` annotation is part of the Spring Security framework.	
+  
+- `@PreAuthorize`
+- `@PreFilter`
+- `@PostAuthorize`
+- `@PostFilter`
 
 ```java
 @Service
@@ -3827,6 +3887,12 @@ public class UserServiceImpl implements UserService {
 }
 ```
 
+#### Security annotation are you allowed to use SpEL
+
+![alt text](images/core_spring_in_detail/Screenshot_14.png)	
+
+#### Spring Security expressions
+
 ![alt text](images/web/security/Screenshot_1.png)	
 
 ![alt text](images/web/security/Screenshot_2.png)	
@@ -3849,6 +3915,49 @@ public class UserServiceImpl implements UserService {
 
 ```jsp
  <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+```
+
+- The `authorize` tag - the contents of the authorize tag will only be visible if the expression in the `access` attribute is evaluated to true.
+
+```jsp
+<sec:authorize access="hasRole('aadministrator')">
+    Hello, I know you are an administrator!
+</sec:authorize>
+```
+
+- The `authentication` tag - the `authentication` tag allows for accessing the `Authentication` object in the current security context.
+
+```jsp
+<sec:authentication property="principal.username" />
+```
+
+- The `accesscontrollist` tag - deprecated, use the authorize tag instead. Checks a list of permissions for a specific domain object.
+
+```jsp
+<sec:accesscontrollist hasPermission="5, 7" domainObject="${order}">
+```
+
+- The `csrfInput` tag - when cross-site request forgery (CSRF) protection is enabled, this tag inserts a hidden form with the name and value of the CSRF protection token in the rendered page.
+
+```jsp
+<form action="login" method="post">
+   <sec:csrfInput />
+   <div><label>User Name: <input type="text" name="username"/> </label></div>
+   <div><label>Password : <input type="password" name="password"/> </label></div>
+   <div><input type="submit" value="Sign In"/></div>
+</form>
+```
+
+- The `csrfMetaTags` tag - When cross-site request forgery (CSRF) protection is enabled, this tag inserts meta tags containing
+  the CSRF protection token form field and header names and CSRF protection token value. These meta tags can then be accessed from JavaScript in your application.
+
+```jsp
+<sec:csrfMetaTags />
+<script type="text/javascript" language="javascript">
+   var csrfParameter = $("meta[name='_csrf_parameter']").attr("content");
+   var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+   var csrfToken = $("meta[name='_csrf']").attr("content");
+   ...
 ```
 
 - Facelet fags for JSF also available
