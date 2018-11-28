@@ -26,5 +26,4 @@ public class TestAspect {
 		log.info("testExecution3");
 	}
 
-
 }

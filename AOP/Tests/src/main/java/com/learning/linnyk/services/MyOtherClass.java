@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class MyOtherClass {
 
-	public void doIt(){
+	public void doIt() {
 		log.info("MyClass doIt");
 	}
 
