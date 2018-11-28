@@ -16,6 +16,7 @@
 
     <modules>
         <module>SpringAOP_AspectJ</module>
+        <module>Tests</module>
     </modules>
 
 </project>
