@@ -16,6 +16,9 @@
 		<context:include-filter type="annotation"
 			expression="org.aspectj.lang.annotation.Aspect" />
 	</context:component-scan>
-	<aop:aspectj-autoproxy />
+
+    <aop:aspectj-autoproxy >
+        <aop:include></aop:include>
+    </aop:aspectj-autoproxy>
 
 </beans>
