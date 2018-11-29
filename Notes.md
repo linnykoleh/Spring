@@ -4394,7 +4394,7 @@ a web resource became able to be anything (object, entity) that can be accessed 
 - `JMX (Java Management Extensions)` is a Java technology that supplies tools for managing and monitoring applications, system objects, devices (such as printers) and service-oriented networks
 	- Those resources are represented by objects called `MBeans` (Managed Bean)
 	
-## Spring Remoting
+# Spring Remoting
 
 ## Java Remote Method Invocation 
 
