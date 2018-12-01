@@ -625,6 +625,10 @@ public MyBeanClass myBeanWithACloseMethodNotToBeInvokedAsLifecycleCallback() {
 
 - Initialization of Bean `monitoring` will be after initialization of bean `app`
 
+#### Accessing a Bean
+
+![alt text](images/handout/Screenshot_1.png "Screenshot_1")
+
 --- 
 
 ## Java Spring Configuration and Annotations
