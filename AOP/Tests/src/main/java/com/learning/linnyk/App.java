@@ -3,7 +3,7 @@ package com.learning.linnyk;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.learning.linnyk.config.AppConfiguration;
+import com.learning.linnyk.initialization.config.AppConfiguration;
 import com.learning.linnyk.services.MyClass;
 
 public class App {

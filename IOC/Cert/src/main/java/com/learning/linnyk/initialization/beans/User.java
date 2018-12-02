@@ -1,4 +1,4 @@
-package com.learning.linnyk.beans;
+package com.learning.linnyk.initialization.beans;
 
 import javax.annotation.PostConstruct;
 

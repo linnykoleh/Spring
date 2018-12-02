@@ -1,10 +1,10 @@
-package com.learning.linnyk.bpp;
+package com.learning.linnyk.initialization.bpp;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
 
-import com.learning.linnyk.beans.User;
+import com.learning.linnyk.initialization.beans.User;
 
 @Component
 public class UserBeanPostProcessor implements BeanPostProcessor {

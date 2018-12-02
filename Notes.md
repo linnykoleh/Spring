@@ -710,6 +710,9 @@ public class DataSourceConfig {
 - `@Bean ( initMethod = "init", destroyMethod = "destroy")` - for declare init and destroy methods
 - `@PropertySource` annotation will be used to read property values from a property file set as argument
     - The annotation is applied to classes annotated with `@Configuration`.
+
+![alt text](images/handout/Screenshot_3.png "Screenshot_3")   
+    
 - `@ImportResource` for importing another configurations
 - `@Import` annotation to import the bean definition in one class into the other.
 - `@ComponentScan` works the same way as <context:component-scan /> for XML
@@ -1025,6 +1028,9 @@ public class MethodSecurityConfig {
 }
 ```
 
+![alt text](images/handout/Screenshot_6.png "Screenshot_6") 
+
+
 ## Generic Injection
 
 - This is useful when you have classes that are organized in a hierarchy and they all inherit a certain class that is generic, 
@@ -1135,6 +1141,8 @@ public class GenericQualifierTest {
 
 - The Environment is a part of the application container. The Environment contains profiles and properties, two important parts of the application environment.
   
+![alt text](images/handout/Screenshot_2.png "Screenshot_2")  
+  
 ![alt text](images/core_spring_in_detail/Screenshot_4.png "Screenshot_4")  
 
 ![alt text](images/core_spring_in_detail/Screenshot_5.png "Screenshot_5")  
@@ -1225,6 +1233,7 @@ public class ConfigurationClass {
    - In tests, the `@ActiveProfiles` annotation may be applied at class level to the test class
      specifying which the profile(s) that are to be activated when the tests in the class are run.
 
+![alt text](images/handout/Screenshot_4.png "Screenshot_4")  
 
 # Testing Spring Applications
 
@@ -1603,6 +1612,8 @@ public class LoggingAspect {
 	- Based on proxy inheriting the base class
 	
 ![alt text](images/core_spring_in_detail/Screenshot_11.png "Screenshot_11")	
+
+![alt text](images/handout/Screenshot_5.png "Screenshot_5")	
 	
 - The default type of proxy used by the Spring framework is the `JDK dynamic proxy`.
 - Proxies limitations:

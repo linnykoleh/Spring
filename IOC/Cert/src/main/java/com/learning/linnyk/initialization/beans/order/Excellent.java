@@ -1,14 +1,14 @@
-package com.learning.linnyk.beans.order;
+package com.learning.linnyk.initialization.beans.order;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
-@Order(2)
-public class Good implements Rating {
+@Order(1)
+public class Excellent implements Rating {
 
     @Override
     public String toString() {
-        return "Good{order 2}";
+        return "Excellent{order 1}";
     }
 }

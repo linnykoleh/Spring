@@ -1,4 +1,4 @@
-package com.learning.linnyk.bfpp;
+package com.learning.linnyk.initialization.bfpp;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
