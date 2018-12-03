@@ -379,7 +379,11 @@ Some commonly used implementations of the `ApplicationContext` interface are:
 
 ## The lifecycle of a Spring bean
 
-![alt text](images/pet-sitter/Screenshot_3.png "Screenshot_3")
+![alt text](images/handout/Screenshot_15.png "Screenshot_15.png")
+
+![alt text](images/handout/Screenshot_16.png "Screenshot_16.png")
+
+![alt text](images/handout/Screenshot_17.png "Screenshot_17.png")
 
 The lifecycle of a Spring bean looks like this:
 - Spring bean configuration is read and metadata in the form of a BeanDefinition object is created for each bean.
@@ -678,8 +682,10 @@ public MyBeanClass myBeanWithACloseMethodNotToBeInvokedAsLifecycleCallback() {
           in order for the Spring container to be able to autowire dependencies. If a bean class contains more
           than one constructor and autowiring is desired, at least one of the constructors need to be annotated
           with `@Autowired` in order to give the container a hint on which constructor to use.
-    - `@Inject`: equivalent annotation to `@Autowired` from javax.inject package. Use with `@Qualifier` from javax.inject to specify name of the bean to inject.
-    - `@Resource`: equivalent annotation to `@Autowired` from javax.annotation package. Provides a name attribute to specify name of the bean to inject.
+        - Autowire by type then name  
+    - `@Inject`: equivalent annotation to `@Autowired` from javax.inject package. Use with `@Qualifier` from javax.inject to specify name of the bean to inject. 
+    - `@Resource`: equivalent annotation to `@Autowired` from javax.annotation package.
+        - Autowire by name then type
     - `@Required`: Spring annotation that marks a dependency as mandatory, used on setters.
     - `@Lazy`: dependency will be injected the first time it is used.    
  
@@ -942,6 +948,8 @@ public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements Reques
 
 }
 ```
+
+![alt text](images/handout/Screenshot_14.png "Screenshot_14") 
 
 ## Field Injection
 
