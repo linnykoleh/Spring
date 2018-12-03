@@ -510,9 +510,9 @@ public class TriangleLifecycle implements InitializingBean {
 }
 ```
 
-## @PostConstruct
+## @javax.annotation.PostConstruct
 
-- The `@PostConstruct` annotation is part of the JSR 25013 and is used on a method that needs to be executed after dependency injection is done to perform initialization
+- The `@PostConstruct` annotation is part of the JSR-250 and is used on a method that needs to be executed **after dependency injection** is done to perform initialization
 - The bean that registers `@PostConstruct` is `org.springframework.context.annotation.CommonAnnotationBeanPostProcessor`
 - The methods that can be annotated with `@PostConstruct` must respect the rules: 
  	- they must have no arguments 
@@ -535,6 +535,8 @@ public class TriangleLifecycle implements InitializingBean {
 	- Scans the classpath for annotated components that will be auto-registered as Spring beans. 
     - By default, the Spring-provided `@Component`, `@Repository`, `@Service`, `@Controller`, `@RestController`, `@ControllerAdvice`, and `@Configuration` stereotypes  will be detected.                                                               
     - Reduce the number of classes to be scanned  
+    
+![alt text](images/handout/Screenshot_11.png "Screenshot_11")
 
 [Context name space configuration example](/IOC/src/main/resources/jb/_3_annotation_event/spring.xml)
 
@@ -584,6 +586,8 @@ public MyBeanClass myBeanWithACloseMethodNotToBeInvokedAsLifecycleCallback() {
 	- The destroy method can have any accessor; some developers even recommend to make it `private`, so that only Spring can call it via reflection.
 	- The destroy method must not have any parameters.
 	- The destroy method must return `void`. 
+
+![alt text](images/handout/Screenshot_12.png "Screenshot_12")
 
 ## Bean Scopes
 
@@ -663,6 +667,8 @@ public MyBeanClass myBeanWithACloseMethodNotToBeInvokedAsLifecycleCallback() {
     - `@Controller`: indicates that a class is a web controller. Template for a web component, specialization of the `@Component` annotation for the `Web layer`.
     - `@RestController`: indicates that a class is a specialized web controller for a REST service. Combines the `@Controller` and `@ResponseBody` annotations.
     - `@Configuration`: configuration class containing bean definitions (methods annotated with `@Bean`).
+ 
+![alt text](images/handout/Screenshot_13.png "Screenshot_13")      
     
 - Autowiring and initialization annotations are used to define which dependency is injected and what the bean looks like. For example:
     - `@Autowired`: core annotation for this group; is used on dependencies to instruct Spring IoC to take care of injecting them.
@@ -711,6 +717,8 @@ public class DataSourceConfig {
 - `@PropertySource` annotation will be used to read property values from a property file set as argument
     - The annotation is applied to classes annotated with `@Configuration`.
 
+![alt text](images/handout/Screenshot_9.png "Screenshot_9") 
+
 ![alt text](images/handout/Screenshot_3.png "Screenshot_3")   
     
 - `@ImportResource` for importing another configurations
@@ -731,6 +739,8 @@ public class SpringApplication {
 
 }
 ```
+
+![alt text](images/handout/Screenshot_10.png "Screenshot_10") 
 
 ### @Qualifier
 
@@ -1084,6 +1094,10 @@ public class GenericQualifierTest {
 	 @Value("#{dbProps.username}")String username,
 	 @Value("#{dbProps.password}")String password
 ```
+
+![alt text](images/handout/Screenshot_7.png "Screenshot_7") 
+
+![alt text](images/handout/Screenshot_8.png "Screenshot_8") 
 
 ## Spring Expression language (SpEL)
 
