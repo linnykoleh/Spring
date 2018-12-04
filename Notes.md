@@ -546,6 +546,9 @@ public class TriangleLifecycle implements InitializingBean {
 
 ## Destroying beans priority
 
+- When you close a context the destruction phase completes: `applicationContext.close();`
+- Called also when JVM exit normally
+- Not called for `prototype` beans
 - Destroying ways
 	- Set a method to be called before destruction using the `destroy-method` attribute of the <bean /> element.
 	- Modify the bean to implement the `org.springframework.beans.factory.DisposableBean` interface and provide an implementation for the `destroy()` method (not recommended, since it couples the application code with Spring infrastructure).
@@ -1259,6 +1262,13 @@ public class ConfigurationClass {
 
 # Testing Spring Applications
 
+- Unit Testing
+	- Tests one unit of functionality
+	- Keeps dependencies minimal
+	- Isolated from the environment (including Spring)
+- Integration Testing
+	- Tests the interaction of multiple units working together
+	– Integrates infrastructure
 - `TDD` - This approach puts the design under question: if tests are difficult to write, the design should be reconsidered
 - Trying to write at least two tests for each method: one positive and one negative, for methods that can be tested
 
@@ -1332,6 +1342,18 @@ public final class FooTest  {
 }
 ```
 
+- The ApplicationContext is instantiated only once for all tests that use the same set of config files (even across test classes)
+- Annotate test method with `@DirtiesContext` to force recreation of the cached ApplicationContext if method changes the contained beans
+
+![alt text](images/handout/Screenshot_19.png "Screenshot_19")  
+
+![alt text](images/handout/Screenshot_20.png "Screenshot_20")  
+
+![alt text](images/handout/Screenshot_21.png "Screenshot_21")  
+
+![alt text](images/handout/Screenshot_22.png "Screenshot_22")  
+
+
 #### AnnotationConfigContextLoader
 
 - `@Configuration` inner classes (must be static) are automatically detected and loaded in tests
@@ -1359,8 +1381,15 @@ public class SpringPetServiceTest3 {
 ```
 
 #### Testing with spring profiles
+
 - `@ActiveProfiles` annotation of test class activates profiles listed
 - `@ActiveProfiles( { "foo", "bar" } )`
+
+![alt text](images/handout/Screenshot_23.png "Screenshot_23") 
+ 
+![alt text](images/handout/Screenshot_24.png "Screenshot_24")  
+
+![alt text](images/handout/Screenshot_25.png "Screenshot_25")  
 
 #### Inject mocks using Mockito
 
@@ -1406,6 +1435,8 @@ public class MockPetServiceTest {
     
 ## Testing Rest with Spring boot
 
+- Can use `SpringRunner` as an alternative to the `SpringJUnit4ClassRunner`
+  
 ```java
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = CustomerController.class, secure=false)
@@ -1511,23 +1542,11 @@ by applying advices to specific join points, specified by pointcuts.
 
 - The original library that provided components for creating aspects is named **AspectJ.**
 
+![alt text](images/handout/Screenshot_27.png "Screenshot_27")
+
 ## AOP Terminology
     
-- **Aspect** - an aspect brings together one or more **pointcuts** with one or more **advice**.
-   A class declaration is recognized in Spring as an aspect if it is annotated with the `@Aspect` annotation.
--  **Weaving** - a synonym for this word is interlacing, but in software, the synonym is linking, <br/> 
-   and it refers to aspects being combined with other types of objects to create an advised object. 
-   - Compile time weaving. <br/> 
-     Byte code of classes is modified at compilation time at selected join points to execute advice
-     code. The AspectJ compiler uses compile time weaving. 
-   - Load time weaving. <br/> 
-     Byte code of classes is modified at class loading time when the application is run.  
-   - Runtime weaving. <br/> 
-     Proxy objects are created at runtime when the application is run. The proxy objects are used
-     instead of the original objects and divert method invocations to advice code.
-     Spring AOP uses runtime weaving exclusively.  
-- **Join point** - a point during the execution of a program. In Spring AOP, a joint point is always a method execution. 
-	- Spring AOP only supports public method invocation join points. Compare to AspectJ which supports all of the above listed join point types and more.
+![alt text](images/handout/Screenshot_28.png "Screenshot_28")
 
 ![alt text](images/core_spring_in_detail/Screenshot_7.png "Screenshot_7")
   
@@ -1614,6 +1633,7 @@ public class LoggingAspect {
 
 ![alt text](images/core_spring_in_detail/Screenshot_2.png "Screenshot_2")
 
+- Proxy classes are created in the init phase by dedicated BeanPostProcessors
 - Two types of proxies
 - `JDK dynamic proxies` - creates a proxy object that implements all the interfaces implemented by the object to beproxied.
 	- Can only proxy by interface
@@ -1633,9 +1653,8 @@ public class LoggingAspect {
 	- Cannot be applied to final classes or methods
 	- Based on proxy inheriting the base class
 	
-![alt text](images/core_spring_in_detail/Screenshot_11.png "Screenshot_11")	
+![alt text](images/handout/Screenshot_18.png "Screenshot_18")	
 
-![alt text](images/handout/Screenshot_5.png "Screenshot_5")	
 	
 - The default type of proxy used by the Spring framework is the `JDK dynamic proxy`.
 - Proxies limitations:
@@ -1653,6 +1672,8 @@ public class LoggingAspect {
   annotated with the `@Aspect` annotation, the `@EnableAspectJAutoProxy` annotation should be <br/>
   applied to a `@Configuration` class and aspects must be annotated with `@Component` <br/>
   similar to functionality found in Spring's <aop:aspectj-autoproxy> XML element.
+  
+![alt text](images/handout/Screenshot_5.png "Screenshot_5")	
   
 ```java
 @Aspect
@@ -1679,6 +1700,8 @@ public class AppConfig {
 }
 ```  
 
+![alt text](images/handout/Screenshot_29.png "Screenshot_29")
+
 - `@EnableAspectJAutoProxy`- to enable aspect support, the configuration class must be annotated, default **JDK dynamic proxy**.
 - `@EnableAspectJAutoProxy(proxyTargetClass = true)` - if the **CGLIB** library is to be added to the application classpath, Spring must be told that we want subclass-based proxies by modifying the aspect enabling annotation
 	- This approach is suitable when the target class does not implement any interface, so Spring will create a new class on the fly that is a subclass of the target class
@@ -1700,6 +1723,8 @@ public class AppConfig {
 	- declare an advice method annotated with a typical advice annotation (`@Before`, `@After`, etc.) and associate it to a pointcut expression
 	- enable aspects support by annotating a configuration class with `@EnableAspectJAutoProxy`
 	- (optional) add CGLIB as a dependency and enable aspects support using subclassed proxies by annotating a configuration class with `@EnableAspectJAutoProxy(proxyTargetClass = true)`
+	
+![alt text](images/handout/Screenshot_30.png "Screenshot_30")
 	
 ## Defining Pointcuts	
 
@@ -2031,11 +2056,15 @@ public Object loggingAdvice(
 
 ![alt text](images/aop/Screenshot_18.png "Screenshot_18")
 
+![alt text](images/handout/Screenshot_31.png "Screenshot_31")
+
 #### Annotation
 
 ![alt text](images/aop/Screenshot_13.png "Screenshot_13")
 
 ![alt text](images/aop/Screenshot_17.png "Screenshot_17")
+
+![alt text](images/handout/Screenshot_32.png "Screenshot_32")
 
 #### Spring beans names as PointCut
 
@@ -2491,6 +2520,8 @@ public void testCount() {
 	assertEquals(8, count);
 }   
 ```
+
+![alt text](images/handout/Screenshot_26.png "Screenshot_26")
 
 ## jdbcTemplate
 
