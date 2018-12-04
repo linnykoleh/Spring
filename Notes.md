@@ -1675,6 +1675,9 @@ public class LoggingAspect {
   
 ![alt text](images/handout/Screenshot_5.png "Screenshot_5")	
   
+- When using proxies, suppose method a() calls method b()
+  on the same class/interface, advice will never be executed for method b()  
+  
 ```java
 @Aspect
 @Component
@@ -2107,6 +2110,19 @@ public void setters() {
     //...
 }
 ```
+
+#### Context Selection 
+
+```java
+public interface Server {
+	public void start(Map input);
+	public void stop();
+}
+```
+
+![alt text](images/handout/Screenshot_33.png "Screenshot_33")
+
+![alt text](images/handout/Screenshot_34.png "Screenshot_34")
 
 # Data Access
 
