@@ -2313,6 +2313,7 @@ public class TestDataConfig {
 - The `@CachePut` annotation helps for updating the cache with the latest execution without stopping the method execution. 
   The primary difference between the `@Cacheable` and the `@CachePut` annotation is that `@Cacheable` will skip running the method whereas 
   `@CachePut` will actually run the method and then put its results in the cache
+- Must specify a cache-manager
   
 ```java
 @Configuration
@@ -2330,6 +2331,14 @@ public class AppConfig {
 }
 ```
 
+- For each cache name, it creates a `ConcurrentHashMap`
+- Third-party alternatives
+	- Terracotta's EhCache
+	- Google's Guava and Caffeine
+	- Pivotal's Gemfire
+	
+![alt text](images/handout/Screenshot_38.png "Screenshot_38") 
+ 
 ```java
 @Service
 public class CitiesService {
@@ -2352,6 +2361,10 @@ public class CitiesService {
 	}
 }
 ```
+
+![alt text](images/handout/Screenshot_36.png "Screenshot_36")
+
+![alt text](images/handout/Screenshot_37.png "Screenshot_37")
 
 #### ACID
 
@@ -2443,10 +2456,12 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 - Parameters:
     - `transactionManager` - the transaction manager used to manage the transaction in the context of which the annotated method is executed.
     - `readOnly` - should be used for transactions that involve operations that do not modify the database (example: searching, counting records)
+    	- allows Spring to optimize the transactional resource for read-only data access
     - `propagation` - transaction propagation. `org.springframework.transaction.annotation.Propagation`
     - `isolation` - the transaction isolation level. `org.springframework.transaction.annotation.Isolation`
     - `timeout` - value represents the number of milliseconds after which a transaction is considered failed,
     - `rollbackFor` - when this type of exception is thrown during the execution of a transactional method, the transaction is rolled back
+    ![alt text](images/handout/Screenshot_50.png "Screenshot_50")
     - `rollbackForClassName` - name of exception class(es) that are to cause a transaction rollback.
     - `noRollbackFor` - exception class(es) that never are to cause a transaction rollback.
     - `noRollbackForClassName` - names of exception class(es) that never are to cause a transaction rollback.
@@ -2462,7 +2477,19 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
     - The types of exceptions that are to cause a rollback can be configured using the `rollbackFor`
       element of the `@Transactional` annotation. In addition, the types of exceptions that not are to cause
       rollbacks can also be configured using the `noRollbackFor` element.  
-              
+- Target object wrapped in a proxy
+	- Uses an **Around** advice              
+- Proxy implements the following behavior
+	- Transaction started before entering the method
+	- Commit at the end of the method
+	- Rollback if method throws a **RuntimeException**
+- By default, a transaction is rolled back if a `RuntimeException` has been thrown	
+- `@Transactional("myOtherTransactionManager")` - runs a transaction with specific transaction managers
+
+![alt text](images/handout/Screenshot_47.png "Screenshot_47")
+
+![alt text](images/handout/Screenshot_48.png "Screenshot_48")
+
 
 ### PlatformTransactionManager
 
@@ -2472,6 +2499,46 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
         - void commit(TransactionStatus)
         - void rollback(TransactionStatus)
         - TransactionStatus getTransaction(TransactionDefinition)
+
+### Programmatic Transactions
+
+- **Example 1**
+
+![alt text](images/handout/Screenshot_52.png "Screenshot_52")
+
+- **Example 2**
+
+```java
+@Service
+public class ProgramaticUserService implements UserService {
+
+    private UserRepo userRepo;
+
+    private TransactionTemplate txTemplate;
+
+    @Autowired
+    public ProgramaticUserService(UserRepo userRepo, PlatformTransactionManager txManager) {
+        this.userRepo = userRepo;
+        this.txTemplate = new TransactionTemplate(txManager);
+    }
+
+    @Override
+    public int updatePassword(Long userId, String newPass) throws MailSendingException {
+        return txTemplate.execute(status -> {
+            try {
+                int result = userRepo.updatePassword(userId, newPass);
+                User user = userRepo.findById(userId);
+                String email = user.getEmail();
+                sendEmail(email);
+                return result;
+            } catch (MailSendingException e) {
+                status.setRollbackOnly();
+            }
+            return 0;
+        });
+    }
+}
+```
 
 ### @EnableTransactionManagement
 
@@ -2522,6 +2589,8 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 
 ### org.springframework.transaction.annotation.Isolation
 
+![alt text](images/handout/Screenshot_49.png "Screenshot_49")
+
 - **DEFAULT**: the default isolation level of the DBMS.
 - **READ_UNCOMMITED**: data changed by a transaction can be read by a different transaction while the first one is not yet committed, also known as dirty reads.
     `Dirty reads may occur.`
@@ -2559,8 +2628,9 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 
 ## Testing transactional methods
 
-- If a test-method annotated with `@Test` is also annotated with `@Transactional`, then the test-method will be executed in a transaction.
+- If a test-method annotated with `@Test` is also annotated with `@Transactional`, then the test-method will be executed in a transaction. <br />
   Such a transaction will automatically be rolled back after the completion of the test-method.
+	- No need to clean up your database after testing!
 - The rollback policy of a test can be changed using the `@Rollback` annotation and setting the value to false.  
 - The `@Sql` annotation can be used to specify SQL scripts to be executed against a given database during integration tests.
 - The `@SqlGroup` annotation can be used on classes and methods to group together `@Sql` annotations.
@@ -2594,9 +2664,31 @@ public void testCount() {
 }   
 ```
 
+##### @Sql
+
 ![alt text](images/handout/Screenshot_26.png "Screenshot_26")
 
-## jdbcTemplate
+##### @Commit
+
+![alt text](images/handout/Screenshot_51.png "Screenshot_51")
+
+##### @BeforeTransaction
+
+![alt text](images/handout/Screenshot_53.png "Screenshot_53")
+
+## Spring JDBC
+
+- Spring’s `JdbcTemplate`
+	- Greatly simplifies use of the JDBC API
+		- Eliminates repetitive boilerplate code
+		- Alleviates common causes of bugs
+		- Handles SQLExceptions properly
+	- Without sacrificing power
+		- Provides full access to the standard JDBC constructs
+
+![alt text](images/handout/Screenshot_39.png "Screenshot_39")
+
+![alt text](images/handout/Screenshot_40.png "Screenshot_40")
 
 - `jdbcTemplate.update` uses for `insert` `update` `delete`
 
@@ -2616,8 +2708,7 @@ public void testCount() {
 #### Inject into repository
 
 ```java
-jdbcTemplate.update("insert INTO RIDE(NAME, DURATION) values (?, ?)",
-				ride.getName(), ride.getDuration());
+jdbcTemplate.update("insert INTO RIDE(NAME, DURATION) values (?, ?)", ride.getName(), ride.getDuration());
 ```
 
 #### Select
@@ -2649,16 +2740,59 @@ jdbcTemplate.update("UPDATE MY_TABLE set NAME = ?, DURATION = ? where id = ?",
 jdbcTemplate.update("delete from MY_TABLE where id = ?", id);
 ```
 
-#### Query for domain object
+### Callback Interfaces
 
-- May consider ORM for this
-- Must implement `RowMapper` interface, which maps row of ResultSet to a domain object
+- `RowMapper` - best choice when each row of a ResultSet maps to a domain object
+- `RowCallbackHandler` - best choice when no value should be returned from the callback method for each row, especially large queries
+- `ResultSetExtractor` - best choice when multiple rows of a ResultSet map to a single object
+
+#### RowMapper
+
+- Spring provides a `RowMapper` interface **for mapping a single row** of a `ResultSet` to an object
 
 ```java
 public interface RowMapper<T> {
-    T mapRow(ResultSet resultSet, int rowNum) throws SQLException; 
+	T mapRow(ResultSet rs, int rowNum) throws SQLException;
 }
 ```
+
+![alt text](images/handout/Screenshot_43.png "Screenshot_43")
+
+![alt text](images/handout/Screenshot_44.png "Screenshot_44")
+
+#### RowCallbackHandler
+
+- Spring provides a simpler RowCallbackHandler interface when there is **no return object**
+  - Streaming rows to a file
+  - Converting rows to XML
+  - Filtering rows before adding to a Collection
+
+```java
+public interface RowCallbackHandler {
+	void processRow(ResultSet rs) throws SQLException;
+}
+```
+
+![alt text](images/handout/Screenshot_45.png "Screenshot_45")
+
+#### ResultSetExtractor
+
+- Spring provides a ResultSetExtractor interface **for processing an entire ResultSet at once**
+  - You are responsible for iterating the ResultSet
+ 
+```java
+public interface ResultSetExtractor<T> {
+	T extractData(ResultSet rs) throws SQLException, DataAccessException;
+}
+``` 
+
+![alt text](images/handout/Screenshot_46.png "Screenshot_46")  
+  
+#### Querying for Generic Maps
+
+![alt text](images/handout/Screenshot_41.png "Screenshot_41")
+
+![alt text](images/handout/Screenshot_42.png "Screenshot_42")
 
 ## In-Memory Database
 
