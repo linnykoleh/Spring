@@ -2990,6 +2990,17 @@ public class HibernateUserRepo implements UserRepo {
 }
 ```
 
+### @Repository
+
+- `@Repository`’s job is to catch persistence specific exceptions and rethrow them as one of Spring’s unified unchecked exception.
+- Spring has built-in exception translation mechanism, so that all exceptions thrown by the JPA persistence providers are converted into Spring's `DataAccessException` - for all beans annotated with `@Repository`
+    - `NonTransientDataAccessException` – these are the exceptions where a retry of the same operation would fail unless the cause of the Exception is corrected. So if you pass non existing id for example, it will fail unless the id exists in the database.
+    - `RecoverableDataAccessException` – these are the “opposite” of the previous one – exceptions which are recoverable – after some recovery steps. More details in the API docs
+    - `ScriptException` – SQL related exceptions, when trying to process not well-formed script for example.
+    - `TransientDataAccessException` – these are the exception when recovery is possible without any explicit step, e.g. when there is a timeout to the database, you are retrying after few seconds.
+- The `DataAccessException` has a ton of subclasses which you can dig through, the hierarchy is extensive.
+- The logic done by `org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor`
+
 ## Spring + JPA Java configuration
 
 - The following steps are needed if you want to work with JPA in a Spring application:
@@ -3017,11 +3028,14 @@ public class HibernateUserRepo implements UserRepo {
 
 - `@PersistenceContext`- The annotation is applied to a instance variable of the type EntityManager or
    a setter method, taking a single parameter of the EntityManager type, into which an entity manager is to be injected.
+    - JPA's equivalent to `@Autowired`
 
 ```java
 @PersistenceContext
 private EntityManager entityManager;
 ```
+
+![alt text](images/handout/Screenshot_54.png "Screenshot_54")
 
 - `EntityManagerFactory` - An entity manager factory is used to interact with a persistence unit.
 
@@ -3115,6 +3129,8 @@ public class JpaUserRepo implements UserRepo {
 private EntityManager entityManager;
 ```
 
+![alt text](images/handout/Screenshot_55.png "Screenshot_55")
+
 ## Spring + JPA XML configuration
 
 - Add transaction management
@@ -3201,6 +3217,7 @@ private EntityManager entityManager;
  - Most Spring data sub-projects have their own variations of Repository
  	- JpaRepository for JPA
  - Repositories can be injected by type of their interface
+ - Repository is an interface (not a class!)
  
 ```java
 public interface PersonRepository extends Repository<Person, Long> {}
@@ -3215,7 +3232,9 @@ public class PersonService {
 ````
 
 - Locations, where spring should look for Repository interfaces need to be explicitly defined
-
+- Spring scans for `Repository` interfaces
+    - Implements them and creates as a Spring bean
+  
 ```java
 @Configuration 
 @EnableJpaRepositories(basePackages="com.example.**.repository") 
@@ -3229,6 +3248,9 @@ public class GemfireConfig {...}
 @EnableMongoRepositories(basePackages="com.example.**.repository") 
 public class MongoDbConfig {...}
 ```
+
+![alt text](images/handout/Screenshot_56.png "Screenshot_56")
+
 ## Spring Data Configuration
 
 - For Java configuration `@EnableJpaRepositories(basePackages="com.example.**.repository")` - Annotation to enable JPA repositories.
