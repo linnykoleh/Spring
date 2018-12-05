@@ -17,6 +17,7 @@
     <modules>
         <module>SpringJDBC</module>
         <module>SpringData</module>
+        <module>SpringCache</module>
     </modules>
 
 

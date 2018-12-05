@@ -2136,6 +2136,9 @@ tables, views, cursors, etc. The commands `CREATE`, `ALTER`, `DROP`
     - AbstractDataSource
     - SmartDataSource
     - EmbeddedDatabase
+    
+![alt text](images/handout/Screenshot_35.png "Screenshot_35")
+    
 - `DataSource` in a standalone application    
 
 ```java
@@ -2269,6 +2272,9 @@ public class TestDataConfig {
 
 #### Embedded DataSource Java Configuration
 
+- Especially useful for testing
+- Supports H2, HSQL and Derby
+
 ```java
 
 @Configuration
@@ -2289,11 +2295,62 @@ public class TestDataConfig {
 
 #### Embedded DataSource XML Configuration
 
+- Especially useful for testing
+- Supports H2, HSQL and Derby
+
 ```xml
 <jdbc:embedded-database id="dataSource">
 	 <jdbc:script location="classpath:db/schema.sql"/>
 	 <jdbc:script location="classpath:db/test-data.sql"/>
 </jdbc:embedded-database>
+```
+
+## Spring Cache
+
+- The `@Cacheable` annotation is one of the most important and common annotation for caching the requests. 
+  If developers annotate a method with `@Cacheable` annotation and multiple requests are received by the application,
+  then this annotation will not execute the method multiple times, instead, it will send the result from the cached storage  
+- The `@CachePut` annotation helps for updating the cache with the latest execution without stopping the method execution. 
+  The primary difference between the `@Cacheable` and the `@CachePut` annotation is that `@Cacheable` will skip running the method whereas 
+  `@CachePut` will actually run the method and then put its results in the cache
+  
+```java
+@Configuration
+@ComponentScan("com.learning.linnyk")
+@EnableCaching
+public class AppConfig {
+
+	@Bean
+	public CacheManager cacheManager() {
+		final SimpleCacheManager cacheManager = new SimpleCacheManager();
+		cacheManager.setCaches(Arrays.asList(new ConcurrentMapCache("cities")));
+		return cacheManager;
+	}
+
+}
+```
+
+```java
+@Service
+public class CitiesService {
+
+	private CitiesRepository citiesRepository;
+
+	@Autowired
+	public CitiesService(CitiesRepository citiesRepository) {
+		this.citiesRepository = citiesRepository;
+	}
+
+	@Cacheable(value = "cities") 
+	public City getCityByIdCacheable(long id) {
+		return citiesRepository.getCityById(id);
+	}
+
+	@CachePut(value = "cities")
+	public City getCityByIdCachePut(long id) {
+		return citiesRepository.getCityById(id);
+	}
+}
 ```
 
 #### ACID
