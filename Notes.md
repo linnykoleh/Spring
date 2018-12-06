@@ -1087,6 +1087,8 @@ public class GenericQualifierTest {
 	- `#{environment['minAmount'] ?: 100}`
 	- `#{ T(java.lang.Math).random() * 50.0 }`
 	- `#{@systemProperties['os.name']}`
+	- `path` equivalent to `PATH`
+	- `java.home` equivalent to `JAVA_HOME`
 - The `@Value`a annotation can be applied to:
     - Fields
   	- Methods. Typically setter methods
@@ -1322,8 +1324,16 @@ public final class FooTest  {
 }
 ```
 
-#### Web Application Context
+#### Testing Web Application Context 
 
+- Spring Unit test with `@WebAppConfiguration`
+	- Creates a `WebApplicationContext`
+	- Can test code that uses web features
+		- ServletContext, Session and Request bean scopes
+- Configures the location of resources
+	- Defaults to `src/main/webapp`
+	- For classpath resources use classpath: prefix
+	
 ```java
 @SpringJUnitConfig(classes={TestConfig.class, OtherConfig.class})
 @WebAppConfiguration
@@ -3384,6 +3394,8 @@ int setPageCount(int pageCount, String title);
   - The `DispatcherServlet` must be defined in `web.xml` when the application is configured using the old-style XML configuration
   - The `DispatcherServlet` must be defined in `web.xml` when the application is configured using the old-style XML configuration.
   - When using a configuration without `web.xml`, a configuration class that extends `AbstractDispatcherServletInitializer` or `AbstractAnnotationConfigDispatcherServletInitializer` must be declared
+  - Defined by `WebApplicationInitializer` or `web.xml`
+  - Creates separate “servlet” application context
  
 ```
 The DispatcherServlet creates a separate “servlet” application context containing all specific web beans (controller, views, view resolvers). 
@@ -3392,7 +3404,9 @@ This context is also called the web context or the DispatcherServletContext.
 The application context is also called RootApplicationContext. It contains all non-web beans and is instantiated using a bean of type org.springframework.web.context.ContextLoaderListener. 
 The relationship between the two contexts is a parent–child relationship, with the application context being the parent. 
 Thus, beans in the web context can access the beans in the parent context, but not conversely
-```  
+```
+
+![alt text](images/handout/Screenshot_58.png "Screenshot_58.png")
 
 #### XML Configuration
 
@@ -3513,6 +3527,12 @@ public String show(@PathVariable("userId") Long id, Model model) {
 - A handler method typically returns a string value representing a logical view name, and the view is populated with values in the Model object.
 - The model contains the data that will be used to populate a view
 - Need to provide view resolver e.g. `InternalResourceViewResolver`
+- View support classes for creating PDFs, Excel spreadsheets
+- Controllers typically return a 'logical view name' String.
+- ViewResolvers select View based on view name.
+- The `DispatcherServlet` delegates to a ViewResolver to obtain View implementation based on view name.
+
+- ![alt text](images/handout/Screenshot_59.png "Screenshot_59.png")
 
 ```xml
 <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -3563,6 +3583,8 @@ public ModelAndView passParametersWithModelAndView() {
     return modelAndView;
 }
 ```
+
+![alt text](images/handout/Screenshot_56.png "Screenshot_56.png")
 
 ## Spring MVC 
 
@@ -3654,38 +3676,9 @@ public class WebInitializer implements WebApplicationInitializer {
 ```
 
 - Another way extending the `AbstractAnnotationConfigDispatcherServletInitializer`
+	- Base-class for all Spring MVC apps to implement for servlet configuration without `web.xml`
 
-```java
-public class WebInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
-    
-     @Override
-     protected Class<?> getRootConfigClasses() {
-         return new Class<?>{
-                 ServiceConfig.class
-         };
-     }
-     
-     @Override
-     protected Class<?> getServletConfigClasses() {
-         return new Class<?>{
-                 WebConfig.class
-         };
-     }
-     
-     @Override
-     protected String getServletMappings() {
-         return new String{"/"};
-     }
-     
-     @Override
-     protected Filter getServletFilters() {
-         CharacterEncodingFilter cef = new CharacterEncodingFilter();
-         cef.setEncoding("UTF-8");
-         cef.setForceEncoding(true);
-         return new Filter{new HiddenHttpMethodFilter(), cef};
-     }
-}
-```
+![alt text](images/handout/Screenshot_57.png "Screenshot_57.png")
 
 - For Java configuration need also to extends `WebMvcConfigurerAdapter`
 
@@ -3715,7 +3708,24 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 }
 ```
 
+- Use `WebApplicationContextUtils` to gets Spring `ApplicationContext` `from ServletContext`
+
+```java
+public class TopSpendersReportGenerator extends HttpServlet {
+	
+	private ClientService clientService;
+	
+	public void init() {
+		ApplicationContext context = WebApplicationContextUtils.
+		getRequiredWebApplicationContext(getServletContext());
+		clientService = (ClientService) context.getBean(“clientService”);
+	}
+...
+}
+```
+
 #### Spring MVC Quick Start
+
 1 Register Dispatcher servlet (web.xml or in Java)
 2 Implement Controllers
 3 Register Controllers with Dispatcher Servlet
@@ -4292,6 +4302,12 @@ It’s goal is to allow developers to focus on implementation of the actual requ
 - Spring boot is NOT
 	- No code generation
 	- Neither an application server nor a web server
+	
+- Spring Boot uses sensible defaults, “opinions”, mostly based on the classpath contents.
+  - For example
+	- Sets up a JPA Entity Manager Factory if a JPA implementation is on the classpath.
+  	- Creates a default Spring MVC setup, if Spring MVC is on the classpath.
+- Everything can be overridden easily, but most of the time not needed
 
 ![alt text](images/web/boot/Screenshot_2.png)
 
@@ -4315,6 +4331,7 @@ It’s goal is to allow developers to focus on implementation of the actual requ
 - How does it work? How does it know what to configure?
 	- Spring Boot detects the dependencies available on the classpath and configures Spring beans accordingly. There are a number of annotations, examples are `@ConditionalOnClass`,
       `@ConditionalOnBean`, `@ConditionalOnMissingBean` and `@ConditionalOnMissingClass`, that allows for applying conditions to Spring configuration classes or Spring bean declaration methods in such classes.
+	![alt text](images/handout/Screenshot_66.png) 	    	
     	- A Spring bean is to be created only if a certain dependency is available on the classpath. Use `@ConditionalOnClass` and supply a class contained in the dependency in question.
     	- A Spring bean is to be created only if there is no bean of a certain type or with a certain name created. Use `@ConditionalOnMissingBean` and specify name or type of bean to check.
 - Properties controlling the behavior of Spring Boot applications can be defined using:
@@ -4342,6 +4359,10 @@ public class Application {
 
 }
 ```
+
+![alt text](images/handout/Screenshot_60.png)
+
+![alt text](images/handout/Screenshot_63.png)
 
 - If the `war` we want to produce a deployable web archive that can be deployed on any application server and since the project does not contain a `web.xml` file, 
 it is mandatory to define a class extending `SpringBootServletInitializer` and override its `configure` method.
@@ -4371,12 +4392,28 @@ public class Application extends SpringBootServletInitializer {
 }
 ```
 
-![alt text](images/web/boot/Screenshot_4.png)
+- Can still be executed with embedded Tomcat using `java -jar yourapp.war`
+- Traditional WAR file is produced as well
+	- without embedded Tomcat
+	- just drop it in your application server web app directory
+
+![alt text](images/handout/Screenshot_64.png)
+
+### @SpringBootApplication
+
+![alt text](images/handout/Screenshot_61.png)
+
+![alt text](images/handout/Screenshot_62.png)
+
 
 ### Configuration Using YAML
 
+- Alternative to .properties files, allows hierarchical configuration
 - `YAML` is a superset of JSON and has a very convenient syntax for storing external properties in a hierarchical format
 - `YML` files are files containing properties in the YAML format. YAML stands for YAML Ain’t Markup Language.
+- Java parser for YAML is called **SnakeYAML**
+	- Must be in the classpath
+	- Provided by spring-boot-starters
 
 
 ![alt text](images/web/boot/Screenshot_5.png)	
@@ -4399,6 +4436,14 @@ Server:
     port: 9000
     context:  /ps-boot
 ```
+
+![alt text](images/web/boot/Screenshot_4.png)
+
+##### Multiple Profiles Inside an YAML File
+
+![alt text](images/handout/Screenshot_68.png)
+
+![alt text](images/handout/Screenshot_69.png)
 
 ### @ConfigurationProperties
 
@@ -4438,6 +4483,8 @@ public class AppSettings {
     }
 }
 ```
+
+![alt text](images/handout/Screenshot_67.png)	
 
 - `@EnableConfigurationProperties` - enable support for beans annotated with `@ConfigurationProperties` (see above)
 
@@ -4488,7 +4535,7 @@ public class Application extends SpringBootServletInitializer {
 - @AutoConfigureMockMvc - Enables auto-configuration of MockMvc in test-classes.
 - @WebMvcTest - Used with @RunWith(SpringRunner.class) in tests that focuses on Spring MVC components.
 ```
- 
+
 #### Testing with Spring Boot
 
 - `@SpringBootTest` - this annotation should be used on a test class that runs Spring Boot-based tests
@@ -4576,10 +4623,11 @@ logging.pattern.console=%clr(%d{yyyy-MM-dd HH:mm:ss}){yellow}
 
 ```properties
 #Connection
-spring.datasource.url=             
-spring.datasource.username=
-spring.datasource.password=
-spring.datasource.driver-class-name=
+spring.datasource.url=jdbc:mysql://localhost/test
+spring.datasource.username=dbuser
+spring.datasource.password=dbpass
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+spring.datasource.url=jdbc:mysql://localhost/test
 
 #Scripts to be executed
 spring.datasource.schema=
@@ -4595,11 +4643,11 @@ spring.datasource.min-idle=
 #### Container
 
 ```properties
-server.port=
-server.address=
-server.session-timeout=
-server.context-path=
-server.servlet-path=
+server.port=9000
+server.address=192.168.1.20
+server.session-timeout=1800
+server.context-path=/rewards
+server.servlet-path=/admin
 ```
 
 - Web container can be configured in Java dynamically by implementing `EmbeddedServletContainerCustomizer` interface and registering resulting class as a @Component
@@ -4613,6 +4661,8 @@ public void customize(ConfigurableEmbeddedServletContainer container) {
 }
 ```
 
+- [Common spring boot application properties](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
+ 
 ## @Conditional
 
 - Enables bean instantiatiation only when specific condition is met
@@ -4651,6 +4701,8 @@ public void customize(ConfigurableEmbeddedServletContainer container) {
 - @ConditionalOnRepositoryType - Specified type of Spring Data repository has been enabled.
 - @ConditionalOnSingleCandidate - Spring bean of specified type (class) contained in bean factory and single candidate can be determined.
 ```
+
+![alt text](images/handout/Screenshot_65.png)
 		
 ## Spring actuator dependency
 

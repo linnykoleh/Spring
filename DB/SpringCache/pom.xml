@@ -4,12 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>com.learning.linnyk</groupId>
-        <artifactId>DB</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
-
+    <groupId>com.learning.linnyk</groupId>
     <artifactId>SpringCache</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -71,6 +66,13 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.4</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -85,6 +87,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>
