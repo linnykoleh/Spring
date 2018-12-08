@@ -1,5 +1,9 @@
 package com.ps.web;
 
+import com.ps.ents.User;
+import com.ps.problem.NotFoundException;
+import com.ps.services.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,11 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.ps.ents.User;
-import com.ps.problem.NotFoundException;
-import com.ps.services.UserService;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/users")
@@ -40,10 +40,8 @@ public class UserController {
      */
     @RequestMapping(value = "/show/{id:[\\d]*}", method = RequestMethod.GET)
     public String show(@PathVariable Long id, Model model) throws NotFoundException {
-        User user = userService.findById(id);
-        if (user == null) {
-            throw new NotFoundException(User.class, id);
-        }
+        User user = Optional.ofNullable(userService.findById(id)).orElseThrow(() -> new NotFoundException(User.class, id));
+
         model.addAttribute("user", user);
         return "users/show";
     }
@@ -53,10 +51,8 @@ public class UserController {
      */
     @RequestMapping(value = "/delete/{id:[\\d]*}", method = RequestMethod.GET)
     public String delete(@PathVariable Long id, Model model) throws NotFoundException {
-        User user = userService.findById(id);
-        if (user == null) {
-            throw new NotFoundException(User.class, id);
-        }
+        Optional.ofNullable(userService.findById(id)).orElseThrow(() -> new NotFoundException(User.class, id));
+
         userService.deleteById(id);
         model.addAttribute("confirmationMessage", "user.deleted");
         model.addAttribute("users", userService.findAll());

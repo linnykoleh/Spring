@@ -3776,7 +3776,7 @@ public class TopSpendersReportGenerator extends HttpServlet {
 	- `MEMBER` is used for limited power
 	- `GUEST` is used for restricted use of the application
 	
-![alt text](images/web/security/security_unders_the_hood.png)	
+![alt text](images/web/security/Screenshot_77.png)	
 
 1. A user tries to access the application by making a request. The application requires the user to provide the credentials so it can be logged in.
 2. The credentials are verified by the `Authenticaltion Manager` and the user is granted access to the application. The authorization rights for this user are loaded into the Spring Security context.
@@ -3800,6 +3800,8 @@ public class TopSpendersReportGenerator extends HttpServlet {
     <url-pattern>/*</url-pattern>
 </filter-mapping>   
 ```
+
+![alt text](images/handout/security_unders_the_hood.png)	
 
 - `<form-login ../>` - configuration element is used to define the request URL for the login form where the user can provide its credentials.
 - `<logout ../> ` - configuration element is used to define the request URL for the logout form.
@@ -3908,6 +3910,9 @@ public class WebInitializer extends AbstractDispatcherServletInitializer {
 - Your `@Configuration` should extend `WebSecurityConfigurerAdapter`
 - Register your SecurityConfig class with `AbstractSecurityWebApplicationInitializer`
 
+![alt text](images/handout/Screenshot_70.png)	
+
+
 ```java
 public class SecurityWebAppInitializer extends AbstractSecurityWebApplicationInitializer {
  
@@ -3953,6 +3958,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 }
 ```
 
+![alt text](images/handout/Screenshot_71.png)
+
 #### Authorization
 
 - Process of checking a principal has privileges to perform requested action
@@ -3990,7 +3997,7 @@ public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 
 #### Authentication
 
-- In-memory Authentication provider
+- In-memory Authentication provider example
 
 ```java
 @Configuration
@@ -4005,10 +4012,16 @@ public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 }
 ```
 
+![alt text](images/handout/Screenshot_73.png)
+
 - JDBC Authentication provider
     - Authenticates against DB
-    - Can customize queries using .usersByUsernameQuery(), .authoritiesByUsernameQuery(), groupAuthoritiesByUsername()
+    - Can customize queries using 
+        - .usersByUsernameQuery(), 
+        - .authoritiesByUsernameQuery(), 
+        - .groupAuthoritiesByUsername()
     - Otherwise default queries will be used
+    
 ```java
 @Configuration
 @EnableWebSecurity
@@ -4027,15 +4040,8 @@ public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 }
 ```
 
-```java
-@Bean
-public CsrfTokenRepository repo() {
-   HttpSessionCsrfTokenRepository repo = new HttpSessionCsrfTokenRepository();
-   repo.setParameterName("_csrf");
-   repo.setHeaderName("X-CSRF-TOKEN");
-   return repo;
-}
-```
+![alt text](images/handout/Screenshot_74.png)
+
 
 #### Password Encoding
 
@@ -4079,6 +4085,8 @@ hash("hello" + "QxLUF1bgIAdeQX") = 9e209040c863f84a31e719795b2577523954739fe5ed3
 hash("hello" + "bv5PehSMfV11Cd") = d1d3ec2e6f20fd420d50e2642992841d8338a314b8ea157c9e18477aaef226ab
 ```
 
+![alt text](images/handout/Screenshot_75.png)
+
 #### Login and Logout
 
 ```java
@@ -4095,9 +4103,15 @@ public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 }
 ```
 
+![alt text](images/handout/Screenshot_72.png)
+
+![alt text](images/handout/Screenshot_78.png)
+
 ## Method Security
 
 - Method-level security is accomplished using Spring AOP proxies.
+- Annotations based on Spring annotations or JSR-250 annotations
+-  Java configuration to activate detection of annotations
 
 ### XML
 
@@ -4167,10 +4181,11 @@ public class UserServiceImpl implements UserService {
 - `@PreAuthorize` annotation allows for specifying access constraints to a method using the Spring Expression Language (SpEL). These constraints are evaluated prior to the method being
    executed and may result in execution of the method being denied if the constraints are not fulfilled. The `@PreAuthorize` annotation is part of the Spring Security framework.	
   
-- `@PreAuthorize`
-- `@PreFilter`
-- `@PostAuthorize`
-- `@PostFilter`
+- Use Pre/Post annotations for SpEL  
+    - `@PreAuthorize`
+    - `@PreFilter`
+    - `@PostAuthorize`
+    - `@PostFilter`
 
 ```java
 @Service
@@ -4215,6 +4230,16 @@ public class UserServiceImpl implements UserService {
 ![alt text](images/web/security/Screenshot_4.png)	
 
 ![alt text](images/web/security/Screenshot_5.png)	
+
+```java
+@Bean
+public CsrfTokenRepository repo() {
+   HttpSessionCsrfTokenRepository repo = new HttpSessionCsrfTokenRepository();
+   repo.setParameterName("_csrf");
+   repo.setHeaderName("X-CSRF-TOKEN");
+   return repo;
+}
+```
 
 ## Spring Security Tag Libraries
 
@@ -4284,6 +4309,9 @@ public class UserServiceImpl implements UserService {
     <p>Admin only content</p>
 </security:authorize>
 ```
+
+![alt text](images/handout/Screenshot_76.png)
+
 
 # Spring Boot
 

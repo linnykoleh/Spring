@@ -38,14 +38,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
+        http.authorizeRequests()
                 .antMatchers("/users/delete/**").hasRole("ADMIN")
                 .antMatchers("/**").hasAnyRole("ADMIN","USER")
                 .anyRequest()
                 .authenticated()
                 .and()
-                .formLogin()
+
+        .formLogin()
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .loginProcessingUrl("/login")
@@ -54,11 +54,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/home")
                 .permitAll()
                 .and()
-                .logout()
+
+        .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
                 .and()
-                .csrf().csrfTokenRepository(repo());
+                .csrf()
+                .csrfTokenRepository(repo());
     }
 
     @Bean
