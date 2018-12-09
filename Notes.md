@@ -237,6 +237,8 @@ public class ComplexBeanImpl implements ComplexBean {
  </bean>
 ```
 
+![alt text](images/handout/Screenshot_93.png "Screenshot_93")
+
 #### util namespace to deal with collections
 
 - util namespace for reducing code working with collections
@@ -268,9 +270,11 @@ public class ComplexBeanImpl implements ComplexBean {
 </beans>
 ```
 
+![alt text](images/handout/Screenshot_94.png "Screenshot_94")
+
 ## Using Bean Factories
 
-#### factory-method
+### factory-method
 
 - To use a singleton class to create a bean, the `factory-method` attribute is used, and its value will be the static method name that returns the bean instance
 
@@ -292,15 +296,14 @@ public class SimpleSingleton {
 }
 ```
 
-#### factory-bean
+### factory-bean
 
 - To use a factory object to create a bean, the `factory-bean` and `factory-method` attributes are used.
 
 ```xml
 <beans>
     <bean id=" simpleBeanFactory" class="com.ps.beans.others.SimpleFactoryBean"/>
-    <bean id="simpleFB" factory-bean=" simpleBeanFactory"
-          factory-method="getSimpleBean" />
+    <bean id="simpleFB" factory-bean="simpleBeanFactory" factory-method="getSimpleBean" />
 </beans>
 ```
 
@@ -313,7 +316,7 @@ public class SimpleFactoryBean {
 }
 ```
 
-#### FactoryBean
+### FactoryBean
 
 By implementing this interface, the factory beans will be automatically picked up by the Spring container, 
 and the desired bean will be created by automatically calling the `getObject` method
@@ -342,6 +345,26 @@ public class SpringFactoryBean implements FactoryBean<SimpleBean> {
 	}
 }    
 ```
+
+### FactoryBean
+
+![alt text](images/handout/Screenshot_91.png "Screenshot_91")
+
+![alt text](images/handout/Screenshot_92.png "Screenshot_92")
+
+### Bean Definition Inheritance
+
+- Sometimes several beans need to be configured in the same way
+- Use bean definition inheritance to define the common configuration once
+    - Inherit it where needed
+    
+![alt text](images/handout/Screenshot_87.png "Screenshot_87")
+
+![alt text](images/handout/Screenshot_88.png "Screenshot_88")
+
+![alt text](images/handout/Screenshot_89.png "Screenshot_89")
+
+![alt text](images/handout/Screenshot_90.png "Screenshot_90")
 
 ## Import configuration files
 
@@ -3481,6 +3504,16 @@ public class UserController {
 }
 ```
 
+### Simpler Mapping Annotations
+
+- `@RequestMapping`
+- Exist for each HTTP method
+    - `@GetMapping`
+    - `@PostMapping`
+    - `@PutMapping`
+    - `@DeleteMapping`
+    - `@PatchMapping`
+
 #### @RequestMapping annotation
 
 - Can specify URL, which annotated method should handle - @RequestMapping("/foo")
@@ -3750,8 +3783,12 @@ public class TopSpendersReportGenerator extends HttpServlet {
    - 4** - client error (404 Not found, 405 Method Not Allowed, 409 Conflict,...)
    - 5** - server error
 
+### Accessing Request/Response Data
+
+- Annotate incoming data with `@RequestBody`
+- Annotate outgoing data with `@ResponseBody`
 - `@ResponseBody` before controller method return type means that the response should be directly rendered to client and not evaluated as a logical view name
-    - public void updatePerson(@RequestBody Person person, @PathVariable("id") int personId)
+    - `public void updatePerson(@RequestBody Person person, @PathVariable("id") int personId)`
 - `@RequestHeader` can inject value from HTTP request header as a method parameter
 - `@ExceptionHandler({MyException.class})` - Controller methods annotated with it are called when declared exceptions are thrown
 
@@ -3801,8 +3838,6 @@ public class TopSpendersReportGenerator extends HttpServlet {
 </filter-mapping>   
 ```
 
-![alt text](images/handout/security_unders_the_hood.png)	
-
 - `<form-login ../>` - configuration element is used to define the request URL for the login form where the user can provide its credentials.
 - `<logout ../> ` - configuration element is used to define the request URL for the logout form.
 - `<intercept-url …/>` - The paths defined as values for the pattern attribute are pieces of URLs defined 
@@ -3826,19 +3861,7 @@ public class TopSpendersReportGenerator extends HttpServlet {
         - #### ** <br/>
         Matches any path on the level at the wildcard occurs and all levels below. If only /** or ** then will match any request.  <br/>
         Example: /services/** matches /services, /services/, /services/users and /services/orders and also /services/orders/123/items etc.
-        
-    	  
-      
-```xml
-<beans:beans  ...>
-        <http>
-              <intercept-url pattern="/users/edit" access="ROLE_ADMIN"/>
-              <intercept-url pattern="/users/list" access="ROLE_USER"/>
-              <intercept-url pattern="/users/**" access="IS_AUTHENTICATED_FULLY"/>
-        </http>
-</beans:beans> 
-```
-
+     
 - `mvcMatchers` API is newer than the `antMatchers` API.
 - ` <csrf disabled="true"/>` - using CSFR tokens in Spring forms to prevent cross-site request forgery
 - `authentication-failure-url` - is used to define where the user should be redirected when there is an authentication failure
@@ -3856,6 +3879,28 @@ public class TopSpendersReportGenerator extends HttpServlet {
         </authentication-provider>
 </authentication-manager>
 ```
+
+        
+#### intercept-url 	 
+
+```xml
+<beans:beans  ...>
+        <http>
+              <intercept-url pattern="/users/edit" access="ROLE_ADMIN"/>
+              <intercept-url pattern="/users/list" access="ROLE_USER"/>
+              <intercept-url pattern="/users/**" access="IS_AUTHENTICATED_FULLY"/>
+        </http>
+</beans:beans> 
+```
+
+![alt text](images/handout/Screenshot_95.png)	   
+ 	  
+![alt text](images/handout/Screenshot_96.png)
+	    	  
+![alt text](images/handout/Screenshot_97.png)	
+    	  
+![alt text](images/handout/Screenshot_98.png)	    	  
+
 
 ### Spring Security Core Components
 
@@ -4948,26 +4993,43 @@ public class HttpInvokerClientConfig {
 
 # Spring JMS
 
-The basic building blocks of a JMS applications are:
-- messages
-- message producers (publisher)
-- messages consumers (subscriber)
-- connections
-- sessions
-- connection factories
-- destinations
+JMS Core Components
+- Message
+- Destination
+- Connection
+- Session
+- MessageProducer
+- MessageConsumer
 
-## JMS Messages
+Implementations of the Destination interface
+- Queue
+    - Point-to-point messaging
+    ![alt text](images/handout/Screenshot_99.png)
+- Topic
+    - Publish/subscribe messaging
+    ![alt text](images/handout/Screenshot_100.png)
+
+### JMS Messages
 
 ![alt text](images/pet-sitter/Screenshot_20.png)
 
 - The message has a standard structure, being composed of a header and a body
     - The header contains system-level information common to all messages, such as the destination and the time it was sent and application-specific information, stored as keyword/value properties
     - The body contains the effective application data, and JMS defines five distinct message body types represented as Java interfaces extending `javax.jms.Message`
-    
+
 ![alt text](images/pet-sitter/Screenshot_21.png)
 
-## JMS Destinations
+### JMS Connection
+
+![alt text](images/handout/Screenshot_101.png)
+
+### JMS Session
+
+![alt text](images/handout/Screenshot_102.png)
+
+![alt text](images/handout/Screenshot_103.png)    
+
+### JMS Destinations
 
 - The `javax.jms.Destination` interface is implemented on the client side and is used to specify the target of the messages produced by the client and the source of messages the client consumes
 - Depending on the messaging domain, the implementation differs:
@@ -4977,12 +5039,109 @@ The basic building blocks of a JMS applications are:
 ![alt text](images/pet-sitter/Screenshot_22.png)    
 
 ```java
-//Java Configuration standalone Queue
+// Configuring a ConnectionFactory
+@Bean
+public ConnectionFactory connectionFactory() {
+    ActiveMQConnectionFactory cf = new ActiveMQConnectionFactory();
+    cf.setBrokerURL("tcp://localhost:60606");
+    return cf;
+}
+```
+
+```java
+// Configuring Destinations
+
 @Bean
 public Queue userQueue(){
      return new ActiveMQQueue("queues.users");
 }
 ```
+
+![alt text](images/handout/Screenshot_104.png) 
+
+### JMSTemplate
+
+- Must provide reference to `ConnectionFactory`
+
+```java
+@Bean
+public JmsTemplate jmsTemplate () {
+    final JmsTemplate template = new JmsTemplate( connectionFactory() );
+    template.setMessageConverter ( ... );
+    template.setDestinationResolver ( ... );
+    template.setDefaultDestinationName ("order.queue");
+    return template;
+}
+```
+
+### JMS Sending Message
+
+```java
+public class JmsOrderManager implements OrderManager {
+    @Autowired JmsTemplate jmsTemplate;
+    @Autowired Destination orderQueue;
+   
+    public void placeOrder(Order order) {
+        String stringMessage = "New order " + order.getNumber();
+        jmsTemplate.convertAndSend("message.queue", stringMessage );
+        
+        // use destination resolver and message converter
+        jmsTemplate.convertAndSend(orderQueue, order); // use message converter
+        jmsTemplate.convertAndSend(order); // use converter and default destination
+    }
+}
+```
+
+### JMS Receiving Message
+
+- Automatically converted using MessageConverter
+
+```java
+public void receiveData() {
+    // use message converter and destination resolver
+    String s = (String) jmsTemplate.receiveAndConvert("message.queue");
+    
+    // use message converter
+    Order order1 = (Order) jmsTemplate.receiveAndConvert(orderQueue);
+    
+    // use message converter and default destination
+    Order order2 = (Order) jmsTemplate.receiveAndConvert(\);
+}
+
+public void receiveMessages() {
+    // handle JMS native message from default destination
+    ObjectMessage orderMessage = (ObjectMessage) jmsTemplate.receive();
+    
+    Order order2 = (Order) orderMessage.getObject();
+    // receive(destination) and receive(destinationName) also available
+}
+```
+
+##### Synchronous Message Exchange
+
+- JmsTemplate also implements a request/reply pattern
+    - Using `sendAndReceive()`
+    - Sending a message and blocking until a reply has been received (also uses receiveTimeout)
+    - Manage a temporary reply queue automatically by default
+    
+```java
+public void processMessage(String msg) {
+    Message reply = jmsTemplate.sendAndReceive("message.queue",
+        (session) -> {
+         return session.createTextMessage(msg);
+        }
+    );
+    // handle reply
+}
+```    
+
+### Asynchronous Message Handling
+
+![alt text](images/handout/Screenshot_105.png) 
+
+![alt text](images/handout/Screenshot_106.png) 
+
+![alt text](images/handout/Screenshot_107.png) 
 
 # Spring Web Services
 
@@ -5208,6 +5367,7 @@ public class RestExceptionProcessor {
 - The client must know the format to use, or request a resource with a representation it understands form the server. 
   Representations are converted to HTTP requests and from HTTP responses by implementations of the `org.springframework.http.converter.HttpMessageConverter<T>` interface
 - Message converters are automatically detected and used by Spring in applications configured with `<mvc:annotation-driven/>` or `@EnableWebMvc`
+    - Or define explicitly (allows you to register extra convertors) - using `WebMvcConfigurer` or `<mvc/>`
 
 ![alt text](images/pet-sitter/Screenshot_28.png)  
 
@@ -5240,17 +5400,47 @@ public class RestUserController {
 - The `produces` attribute defines the producible media types of the mapped request, narrowing the primary mapping, 
   and the value of the `Accept` header (on the client side) must match at least one of the values of this property in order for a method to handle a specific REST request. 
   
-#### HATEOAS   
+#### ``````   
 
 - Hypermedia As The Engine of Application State
 - Response contains links to other items and actions → can change behavior without changing client
 - Decoupling of client and server
+- REST clients need no prior knowledge about how to interact with a particular application/server
+- Clients interact entirely through hypermedia
+    - Provided dynamically by application servers
+- Serves to decouple client and server
+    - Allows the server to evolve functionality independently
+    - Unique compared to other architectures    
+    
+![alt text](images/handout/Screenshot_83.png)    
+
+![alt text](images/handout/Screenshot_84.png)    
+
+![alt text](images/handout/Screenshot_85.png)    
+
+#### Building URIs
+
+- An HTTP POST typically returns location of newly
+created resource in the response header
+- `UriComponentsBuilder`
+    - Allows explicit creation of URI
+    - But uses hard-coded URLs
+- `ServletUriComponentsBuilder`
+    - Provides access to the URL that invoked the current controller method
+    
+![alt text](images/handout/Screenshot_79.png)
+	
+![alt text](images/handout/Screenshot_80.png)	
+   
 
 #### JAX-RS 
 
 - Java API for RESTful web services
-- Part of Java EE6
+- JAX-RS is a Java EE 6 standard for building RESTful applications
 - Jersey is reference implementation
+- Various implementations
+    - Jersey (RI), RESTEasy, Restlet, CXF
+- Spring MVC does not implement JAX-RS
 
 ```java
 @Path("/persons/{id}")
@@ -5262,6 +5452,15 @@ public class PersonService {
     }
 }
 ```
+
+#### RestTemplate
+
+- Clients use `RestTemplate` to access RESTful servers
+
+![alt text](images/handout/Screenshot_81.png)  
+
+![alt text](images/handout/Screenshot_82.png)  
+
 ## RESTful  
 
 ![alt text](images/web/rest/The-Richardson-Maturity-Model-Nordic-APIs.png)  
@@ -5297,6 +5496,15 @@ public class PersonService {
 	- GET, HEAD, OPTIONS and TRACE methods are defined as safe, meaning they are only intended for retrieving data. This makes them idempotent as well since multiple, identical requests will behave the same.
 
 - Spring RESTful application can be tested without deploying it on a server by declaring a mock restful server and using mock dependencies, so the REST requests can be tested in isolation
+
+- HTTP Status Code
+    - `Success`: 200 OK
+    - `Redirect`: 30x for Redirects
+    - `Client Error`: 404 Not Found
+    - `Server Error`: 500 (such as unhandled Exceptions)
+
+
+### Testing rest 
 
 ```java
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -5382,8 +5590,7 @@ public class RestUserController {
 }
 ```
 
-# Spring JMX
-
+# JMX
 
 - JMX is an acronym for Java Management Extensions,  this technology provides the tools for building distributed, Web-based, modular, and dynamic solutions for managing and monitoring devices, applications, and service-driven networks
 - JMX technology can be used to monitor and manage the `Java Virtual Machine (Java VM)`.
@@ -5396,11 +5603,14 @@ public class RestUserController {
 - **Instrumentation layer**: where resources are wrapped in MBeans.
 - **Agent layer**: the management infrastructure consisting of the MBean Server and agents that provide the following JMX services:
   - Monitoring
+    - Reporting cache hit/miss ratios at runtime
   - Event notification
   - Timers
-- **Management layer**: Defines how external management applications can interact with the underlying layers in terms of protocols  
+- **Management layer**
+    - Defines how external management applications can interact with the underlying layers in terms of protocols  
+    - Changing configuration properties at runtime
 
-![alt text](images/pet-sitter/Screenshot_33.png)
+![alt text](images/handout/Screenshot_108.png)
 
 - The JMX technology defines standard connectors (known as JMX connectors) that enable you to access JMX agents from remote management applications
 - The MBean server acts as a broker for communication between local MBeans and agents and between MBeans and remote clients
@@ -5412,6 +5622,8 @@ public class RestUserController {
     - self description
     
 - By convention, an MBean interface takes the name of the Java class that implements it, with the suffix **MBean** added.    
+
+![alt text](images/pet-sitter/Screenshot_33.png)
 
 ```java
 MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
@@ -5432,41 +5644,24 @@ mbs.registerMBean(mbean, name);
     - A flexible mechanism for controlling the management interface of your beans.
     - The declarative exposure of MBeans over remote JSR-160 connectors.
     - The simple proxying of both local and remote MBean resources.
+
+![alt text](images/handout/Screenshot_113.png)  
     
 - JMX infrastructure can be configured using the context namespace or using Java Configuration.    
 - The core class in Spring’s JMX framework is the `MBeanExporter` - responsible for taking your Spring beans and registering them with a JMX MBeanServer
 
-```xml
-<beans ...>
+- Spring JMX Steps
+  1. Configuring MBean Server
+  2. Configure Exporter
+  3. Control Attribute / Operation Exposure.
+  
+![alt text](images/handout/Screenshot_109.png)
 
-    <!-- Configuration for JMX exposure in the application -->
-    <context:mbean-server />
-    <context:mbean-export />
-</beans>
-```
+![alt text](images/handout/Screenshot_110.png)
 
-or 
+![alt text](images/handout/Screenshot_112.png)
 
-```java
-@Configuration
-public clas JmxConfig(){
-	
-    // equivalent of <context:mbean-server />
-    @Bean
-    MBeanServerFactoryBean mbeanServer(){
-        return new MBeanServerFactoryBean();
-    }
-    
-    // equivalent of <context:mbean-export />
-    @Bean
-    MBeanExporter exporter(){
-         MBeanExporter exporter = new MBeanExporter();
-         exporter.setAutodetect(true);
-         exporter.setBeans(map);
-         return exporter;
-    }
-}
-```
+![alt text](images/handout/Screenshot_111.png)  
 
 - The <context:mbean-server/> declares a bean of type `org.springframework.jmx.support.MBeanServerFactoryBean`. 
   This bean has the responsibility of obtaining a `javax.management.MBeanServer` reference from the the standard JMX 1.2 javax.management.MBeanServerFactory API.
@@ -5530,6 +5725,8 @@ public class JmxCounterImpl implements JmxCounter {
 
 # Spring Microservices with Spring Cloud
 
+[https://martinfowler.com/articles/microservices.html](https://martinfowler.com/articles/microservices.html)
+
 ![alt text](images/spring_cloud/diagram-distributed-systems.svg)
 
 - Microservices are a specialization and implementation approach for service-oriented architectures (SOA), and they are used to build flexible, independently deployable services. 
@@ -5574,6 +5771,8 @@ Each microservice is a really small unit of stateless functionality, a process t
 	- `Zookeeper` - by Apache
 	
 ![alt text](images/spring_cloud/Screenshot_3.png)	
+
+![alt text](images/handout/Screenshot_86.png)	
 	
 - Annotate `@SpringBootApplication` with `@EnableEurekaServer`
 - `@EnableEurekaServer` annotation, which is responsible for injecting a Eureka server instance into your project. 
@@ -5890,7 +6089,4 @@ public interface CurrencyExchangeServiceProxy {
 ## Spring Cloud Security
 
 ![alt text](images/spring_cloud/Screenshot_61.png)
-
-
-
 
