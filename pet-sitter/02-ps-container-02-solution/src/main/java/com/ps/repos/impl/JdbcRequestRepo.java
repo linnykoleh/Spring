@@ -18,12 +18,14 @@ import java.util.Set;
 @Repository
 @Description("This is not the bean you are looking for")
 public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements RequestRepo {
+
     private Logger logger = LoggerFactory.getLogger(JdbcRequestRepo.class);
 
-    private void init(){
+    private void init() {
         logger.info(" ... initializing requestRepo ...");
     }
-    private void destroy(){
+
+    private void destroy() {
         logger.info(" ... destroying requestRepo ...");
     }
 

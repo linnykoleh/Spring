@@ -1,6 +1,9 @@
-package com.learning.linnyk;
+package com.learning.linnyk.profile;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.learning.linnyk.profile.beans.ProfileBeanLive;
+import com.learning.linnyk.profile.config.TestConfiguration1;
 
 public class MainProfiles {
 

@@ -1,10 +1,10 @@
-package com.learning.linnyk;
+package com.learning.linnyk.profile.beans;
 
-public class ProfileBeanHisto {
+public class ProfileBeanLive {
 
     private String profileValue;
 
-    public ProfileBeanHisto(String profileValue) {
+    public ProfileBeanLive(String profileValue) {
         this.profileValue = profileValue;
     }
 
@@ -14,7 +14,7 @@ public class ProfileBeanHisto {
 
     @Override
     public String toString() {
-        return "ProfileBeanHisto{" +
+        return "ProfileBeanLive{" +
                 "profileValue='" + profileValue + '\'' +
                 '}';
     }

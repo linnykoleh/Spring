@@ -17,7 +17,6 @@ import com.ps.repos.impl.JdbcAbstractRepo;
 @ContextConfiguration(classes = {AllRepoConfig.class})
 public class GenericQualifierTest {
 
-
     @Autowired
     JdbcAbstractRepo<Review> reviewRepo;
 

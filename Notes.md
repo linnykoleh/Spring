@@ -15,7 +15,7 @@ In Spring, there are two types of dependency injection specific to XML: via **co
 
 For XML, the class **org.springframework.context.support.ClassPathXmlApplicationContext** is used.
 
-## Constructor Injection
+### Constructor Injection
 
 Constructor injection can be used to define beans when the bean type is a class that has a constructor with arguments defined.
 
@@ -133,7 +133,7 @@ then the attribute definition with c: should match the pattern c:nameConstructor
 while if you are using indexes, the attribute definition should match c:_{index}[-ref].
 ```
 
-## Setter Injection
+### Setter Injection
       
 - When creating a bean using setter injection, the bean is first `instantiated` by calling the constructor and then `initialized` by injecting the dependencies using setters.
 - `<property />` element defines the property to be set and the value to be set with and does so using a pair of attributes: **[name, ref]** or **[name,value]**.
@@ -195,7 +195,7 @@ public class ComplexBeanImpl implements ComplexBean {
 </beans>
 ```
 
-## Collections
+### Collections
 
 #### List
 
@@ -394,11 +394,11 @@ The application context in a Spring application is a Java object that implements
 - Managing the life-cycle of Spring beans.
 
 Some commonly used implementations of the `ApplicationContext` interface are:
-- `AnnotationConfigApplicationContext` - Standalone application context used with configuration in the form of annotated classes.
-- `AnnotationConfigWebApplicationContext` - Same as `AnnotationConfigApplicationContext` but for web applications.
-- `ClassPathXmlApplicationContext` - Standalone application context used with XML configuration located on the classpath of the application.
-- `FileSystemXmlApplicationContext` - Standalone application context used with XML configuration located as one or more files in the file system.
-- `XmlWebApplicationContext` - Web application context used with XML configuration.
+- **AnnotationConfigApplicationContext** - Standalone application context used with configuration in the form of annotated classes.
+- **AnnotationConfigWebApplicationContext** - Same as `AnnotationConfigApplicationContext` but for web applications.
+- **ClassPathXmlApplicationContext** - Standalone application context used with XML configuration located on the `classpath` of the application.
+- **FileSystemXmlApplicationContext** - Standalone application context used with XML configuration located as one or more files in the `file system`.
+- **XmlWebApplicationContext** - Web application context used with XML configuration.
 
 ## The lifecycle of a Spring bean
 
@@ -565,7 +565,7 @@ public class TriangleLifecycle implements InitializingBean {
     
 ![alt text](images/handout/Screenshot_11.png "Screenshot_11")
 
-[Context name space configuration example](/IOC/src/main/resources/jb/_3_annotation_event/spring.xml)
+[Context name space configuration example](/IOC/Courses/src/main/resources/jb/_3_annotation_event/spring.xml)
 
 ## Destroying beans priority
 
@@ -573,10 +573,10 @@ public class TriangleLifecycle implements InitializingBean {
 - Called also when JVM exit normally
 - Not called for `prototype` beans
 - Destroying ways
-	- Set a method to be called before destruction using the `destroy-method` attribute of the <bean /> element.
-	- Modify the bean to implement the `org.springframework.beans.factory.DisposableBean` interface and provide an implementation for the `destroy()` method (not recommended, since it couples the application code with Spring infrastructure).
 	- Annotate a method with `@PreDestroy`, also part of JSR 250 and one of the first supported annotations in Spring.
-	- The equivalent of `destroy-method` for Java Configuration `@Bean(destroyMethod="...")`.
+	- Modify the bean to implement the `org.springframework.beans.factory.DisposableBean` interface and provide an implementation for the `destroy()` method (not recommended, since it couples the application code with Spring infrastructure).
+	- Set a method to be called before destruction using the `destroy-method` attribute of the <bean /> element.
+		- The equivalent of `destroy-method` for Java Configuration `@Bean(destroyMethod="...")`.
 
 ```java
 public class TriangleLifecycle implements DisposableBean {
@@ -708,10 +708,10 @@ public MyBeanClass myBeanWithACloseMethodNotToBeInvokedAsLifecycleCallback() {
           in order for the Spring container to be able to autowire dependencies. If a bean class contains more
           than one constructor and autowiring is desired, at least one of the constructors need to be annotated
           with `@Autowired` in order to give the container a hint on which constructor to use.
-        - Autowire by type then name  
+        - Autowire by type then by name  
     - `@Inject`: equivalent annotation to `@Autowired` from javax.inject package. Use with `@Qualifier` from javax.inject to specify name of the bean to inject. 
     - `@Resource`: equivalent annotation to `@Autowired` from javax.annotation package.
-        - Autowire by name then type
+        - Autowire by name then by type
     - `@Required`: Spring annotation that marks a dependency as mandatory, used on setters.
     - `@Lazy`: dependency will be injected the first time it is used.    
  
@@ -755,7 +755,7 @@ public class DataSourceConfig {
     
 - `@ImportResource` for importing another configurations
 - `@Import` annotation to import the bean definition in one class into the other.
-- `@ComponentScan` works the same way as <context:component-scan /> for XML
+- `@ComponentScan` works the same way as `<context:component-scan />` for XML
 
 - `@ComponentScan` - The default component scanning behavior is to detect classes annotated with `@Component` or an annotation that itself is annotated with `@Component`. 
 	Note that the `@Configuration` annotation is annotated with the `@Component` annotation and thus are Spring Java configuration classes also candidates for auto-detection using component scanning.
@@ -836,9 +836,7 @@ public Foo foo() {
 
 ### Lookup method injection
 
-- lookup method injection is an advanced feature that you should use rarely. It is useful in cases where a `singleton`-scoped bean has a dependency on a `prototype`-scoped bean
-- examples
-
+- Lookup method injection is an advanced feature that you should use rarely. It is useful in cases where a `singleton`-scoped bean has a dependency on a `prototype`-scoped bean
 - Configuration example
 
 ```java
@@ -899,15 +897,15 @@ public class App {
 	public static void main(String[] args) {
 		ApplicationContext context = new AnnotationConfigApplicationContext(LMIConfiguration.class);
 		final CommandManager commandManager = context.getBean(CommandManager.class);
-
+		
 		commandManager.process();
 		// CommandManager: 81412691
 		// Command: 717176949
-
+		
 		commandManager.process();
-	    // CommandManager: 81412691
+		// CommandManager: 81412691
 		// Command: 1997353766
-
+		
 		commandManager.process();
 		// CommandManager: 81412691
 		// Command: 1288235781
@@ -947,7 +945,7 @@ public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements Reques
        
 }
 
-// bean name = requestRepo@Description
+// bean name = requestRepo
 @Repository("requestRepo")
 public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements RequestRepo{
          
@@ -1002,13 +1000,14 @@ public class JdbcRequestRepo extends JdbcAbstractRepo<Request> implements Reques
 ```
 ## Constructor Injection
 
-- Constructors in Spring bean classes can be annotated with the @Autowired annotation in order for
+- Constructors in Spring bean classes can be annotated with the `@Autowired` annotation in order for
   the Spring container to look up Spring beans with the same types as the parameters of the
-  constructor and supply these beans (as parameters) when creating an instance of the bean with the `@Autowired` -annotated constructor.
+  constructor and supply these beans (as parameters) when creating an instance of the bean with the `@Autowired` - annotated constructor.
 - If there is only one single constructor with parameters in a Spring bean class, then there is no need
-  to annotate this constructor with @Autowired – the Spring container will perform dependence injection anyway.
+  to annotate this constructor with `@Autowired` – the Spring container will perform dependence injection anyway.
 - If there are multiple constructors in a Spring bean class and autowiring is desired, `@Autowired` may
-  be applied to one of the constructors in the class. Only one single constructor may be annotated with `@Autowired`.  
+  be applied to one of the constructors in the class. 
+	- Only one single constructor may be annotated with `@Autowired`.  
 - Constructors annotated with `@Autowired` does not have to be public in order for Spring to be able
   to create a bean instance of the class in question, but can have any visibility.  
 - If a constructor is annotated with `@Autowired`, then all the parameters of the constructor are required. Individual parameters of such constructors can be declared using the Java 8 `Optional`
@@ -1028,7 +1027,7 @@ public class JdbcRequestRepo  extends JdbcAbstractRepo<Request> implements Reque
 
 ## Setter Injection
 
-- Methods with any visibility.
+- Methods with any visibility. <br />
   Example: Setter-methods annotated with `@Autowired` can be private – the Spring container will still detect and invoke them.
 - If a method annotated with `@Autowired`, regardless of whether required is true or false, has parameters wrapped by the Java 8 Optional, then this method will always be invoked with the
   parameters for which dependencies can be resolved having a value wrapped in an `Optional` object. All parameters for which no dependencies can be resolved will have the value `Optional.EMPTY`.  
@@ -1054,8 +1053,8 @@ public class JdbcUserRepo extends JdbcAbstractRepo<User> implements UserRepo {
 ## Method Injection
 
 - Methods with more than one parameter.
-- Methods with any visibility.
- Example: Setter-methods annotated with `@Autowired` can be private – the Spring container will still detect and invoke them.
+- Methods with any visibility. <br />
+  Example: Setter-methods annotated with `@Autowired` can be private – the Spring container will still detect and invoke them.
 - If a method annotated with `@Autowired`, regardless of whether required is true or false, has parameters wrapped by the Java 8 Optional, then this method will always be invoked with the
   parameters for which dependencies can be resolved having a value wrapped in an `Optional` object. All parameters for which no dependencies can be resolved will have the value `Optional.EMPTY`.  
  
@@ -1092,6 +1091,11 @@ public class GenericQualifierTest {
 
 }
 ```
+```java
+public class JdbcAbstractRepo<T extends AbstractEntity> implements AbstractRepo<T> {
+	...
+}
+```
 
 ## @Value annotation
 
@@ -1102,13 +1106,13 @@ public class GenericQualifierTest {
       to bean creation and can only be used in @Value annnotations.
 	- SpEL **using #{}** - Spring Expression Language expressions parsed by a SpEL expression parser and evaluated by a SpEL expression instance.
 - Can be on fields, constructor parameters or setter parameters
-- On constructors and setters must be combined with @Autowired on method level, for fields @Value alone is enough
+- On constructors and setters must be combined with `@Autowired` on method level, for fields `@Value` alone is enough
 - Can specify default values
 	- `${minAmount:100}"`
 	- `${personservice.retry-count:${services.default.retry-count}}`
 - `@Value` injection using SpEL
 	- `#{environment['minAmount'] ?: 100}`
-	- `#{ T(java.lang.Math).random() * 50.0 }`
+	- `#{T(java.lang.Math).random() * 50.0 }`
 	- `#{@systemProperties['os.name']}`
 	- `path` equivalent to `PATH`
 	- `java.home` equivalent to `JAVA_HOME`
@@ -1116,8 +1120,8 @@ public class GenericQualifierTest {
     - Fields
   	- Methods. Typically setter methods
     - Method parameters. Including constructor parameters. Note that when annotating a parameter in a method other
-  than a constructor, automatic dependency injection will not occur. If automatic injection of
-  the value is desired, the @Value annotation should be moved to the method instead.
+	  than a constructor, automatic dependency injection will not occur. If automatic injection of
+	  the value is desired, the `@Value` annotation should be moved to the method instead.
   	- Definition of annotations. In order to create a custom annotation.	
 
 
@@ -1148,12 +1152,12 @@ public class GenericQualifierTest {
 	- Literal expressions.
 		- Example string: 'Hello World'
 	- Properties, arrays, lists and maps.	
-	- Example create a list of integers: {1, 2, 3, 4, 5}
-		- Example create a map: {1 : "one", 2 : "two", 3 : "three", 4 : "four"}
-		- Example retrieve third item in list referenced by variable theList: #theList[3]
-		- Example retrieve value from map in variable personsMap that has key “ivan”: #personsMap['ivan']
+	- Example create a list of integers: `{1, 2, 3, 4, 5}`
+		- Example create a map: `{1 : "one", 2 : "two", 3 : "three", 4 : "four"}`
+		- Example retrieve third item in list referenced by variable theList: `#theList[3]`
+		- Example retrieve value from map in variable personsMap that has key “ivan”: `#personsMap['ivan']`
 	- Method invocation.	
-		- Example invoke a method on a Java object stored in variable javaObject: #javaObject.firstAndLastName()
+		- Example invoke a method on a Java object stored in variable javaObject: `#javaObject.firstAndLastName()`
 	- Operators.
 		- Creating Java objects using new operator.
 		- Ternary operator: <condition> ? <true-expression> : <false-expression>
@@ -1242,12 +1246,12 @@ implements PetRepo {
 ### @Profile
 
 - Bean definition profiles is a mechanism that allows for registering different beans depending on different conditions. 
-    - Testing and development
+    - Testing and development. <br />
        Certain beans are only to be created when running tests. When developing, an in-memory
        database is to be used, but when deploying a regular database is to be used.
     - Performance monitoring.
     - Application customization for different markets, customers 
-- One or more beans can be configured to be registered when one or more profiles are active using the @Profile annotation.
+- One or more beans can be configured to be registered when one or more profiles are active using the `@Profile` annotation.
 - The beans in the below configuration class will be registered if the “dev” or “qa” profile is active.
 
 ```java

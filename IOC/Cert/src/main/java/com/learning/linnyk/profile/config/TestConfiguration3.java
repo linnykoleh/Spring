@@ -1,8 +1,10 @@
-package com.learning.linnyk;
+package com.learning.linnyk.profile.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+
+import com.learning.linnyk.profile.beans.ProfileBeanHisto;
 
 @Configuration
 @Profile("stage")
