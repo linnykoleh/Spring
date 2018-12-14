@@ -1330,7 +1330,6 @@ public final class FooTest  {
     public void test() {
     	
     }
-    //...
 }
 ```
 
@@ -1347,7 +1346,6 @@ public final class FooTest  {
     public void test() {
     	
     }
-    //...
 }
 ```
 
@@ -1368,18 +1366,18 @@ public final class FooTest  {
  
     @Autowired
     private MyService myService;
+    
     @Autowired
-    protected WebApplicationContext mWebApplicationContext;
+    private WebApplicationContext mWebApplicationContext;
     
     @Test
     public void test() {
     	
     }
-    //...
 }
 ```
 
-- The ApplicationContext is instantiated only once for all tests that use the same set of config files (even across test classes)
+- The ApplicationContext is **instantiated only once** for all tests that use the same set of config files (even across test classes)
 - Annotate test method with `@DirtiesContext` to force recreation of the cached ApplicationContext if method changes the contained beans
 
 ![alt text](images/handout/Screenshot_19.png "Screenshot_19")  
@@ -1561,9 +1559,9 @@ public class TestCustomerRepo {
 # Aspect Oriented Programming
     
 ```
-AOP is a type of programming paradigm that aims to help with separation of cross-cutting concerns to increase modularity; 
-it implies declaring an aspect class that will alter the behavior of base code, 
-by applying advices to specific join points, specified by pointcuts.
+AOP is a type of programming paradigm that aims to help with separation of cross-cutting concerns 
+to increase modularity; it implies declaring an aspect class that will alter the behavior of 
+base code, by applying advices to specific join points, specified by pointcuts.
 ```    
 
 - Examples of cross-cutting concerns:
@@ -1590,8 +1588,8 @@ by applying advices to specific join points, specified by pointcuts.
 - **Target object** - object to which the aspect applies.
 - **Target method** - the advised method.
 - **Advice** - action taken by an aspect at a join point. In Spring AOP there are multiple advice types:
-	- **Before advice** - methods annotated with @Before that will execute before the join point
-	- **After returning advice** - methods annotated with `@AfterReturning` that will execute after a join point completes normally, <br/> 
+	- **Before advice** - methods annotated with `@Before` that will execute before the join point
+	- **After returning advice** - methods annotated with `@AfterReturning` that will execute after a join point completes normally,
 	  meaning that the target method returns normally without throwing an exception.
 	- **After throwing advice** - methods annotated with `@AfterThrowing` that will execute after a join point execution ends by throwing an exception.  
 	- **After (finally) advice** - methods annotated with `@After` that will execute after a join point execution, no matter how the execution ended.
@@ -1599,6 +1597,8 @@ by applying advices to specific join points, specified by pointcuts.
 	  This is the most powerful type of advice, since it can perform custom behavior before and after the invocation
 - **Pointcut** - a pointcut selects one or more join points out of the set of all join points in an application.
     Pointcut expressions can be defined as arguments for Advice annotations or as arguments for the `@Pointcut` annotation. 
+- **Introduction** - declaring additional methods, fields, interfaces being implemented, annotations on behalf of another type.
+- **AOP proxy** - the object created by AOP to implement the aspect contracts.    
     
 ![alt text](images/core_spring_in_detail/Screenshot_8.png "Screenshot_8")    
 
@@ -1662,9 +1662,6 @@ public class LoggingAspect {
 	}
 }
 ```
-    
-- **Introduction** - declaring additional methods, fields, interfaces being implemented, annotations on behalf of another type.
-- **AOP proxy** - the object created by AOP to implement the aspect contracts.
 
 ## Proxies
 
@@ -1672,7 +1669,7 @@ public class LoggingAspect {
 
 - Proxy classes are created in the init phase by dedicated BeanPostProcessors
 - Two types of proxies
-- `JDK dynamic proxies` - creates a proxy object that implements all the interfaces implemented by the object to beproxied.
+- `JDK dynamic proxies` - creates a proxy object that implements all the interfaces implemented by the object to be proxied.
 	- Can only proxy by interface
 	- Proxied bean must implement java interface
 	- Part of JDK
@@ -1705,9 +1702,9 @@ public class LoggingAspect {
 		- Method(s) in class for which a proxy is to be created must not be final.
 		- Only public and protected methods will be proxied.
 
-- To enable detection of Spring beans implementing advice which implementation classes are <br/>
-  annotated with the `@Aspect` annotation, the `@EnableAspectJAutoProxy` annotation should be <br/>
-  applied to a `@Configuration` class and aspects must be annotated with `@Component` <br/>
+- To enable detection of Spring beans implementing advice which implementation classes are annotated with the `@Aspect` annotation, 
+  the `@EnableAspectJAutoProxy` annotation should be 
+  applied to a `@Configuration` class and aspects must be annotated with `@Component` 
   similar to functionality found in Spring's <aop:aspectj-autoproxy> XML element.
   
 ![alt text](images/handout/Screenshot_5.png "Screenshot_5")	
@@ -1806,28 +1803,28 @@ execution(public (public * com.ps.service.*.*Service+.*(..) && @annotation(org.s
 ### Pointcut Designators
 
 - Pointcut designator: **execution**
-    - The `execution` pointcut designator matches method execution join points.
-        - Method visibility <br/>
+    - The **execution** pointcut designator matches method execution join points.
+        - `Method visibility` <br/>
          Can be one of private, protected, public. Can be negated using !. May be omitted, in which
          case all method visibilities will match.
-        - Return type <br/>
+        - `Return type` <br/>
           Object or primitive type. Can be negated with !. Wildcard * can be used, in which case all
           return types will be matched.     
-        - Package <br/>
+        - `Package` <br/>
           Package in which class(es) is/are located. May be omitted. Wildcard “..” may be used last in
           package name to include all sub-packages. Wildcard * may be used in package name.  
-        - Class <br/>
+        - `Class` <br/>
           Class in which method(s) to be selected is/are located. May be omitted. Includes subclasses
           of the specified class. Wildcard * may be used.  
-        - Method <br/>
+        - `Method` <br/>
           Name of method(s) in which join points to be selected are located. Whole or partial method
           name. Wildcard * may be used, for example “gree*” will match a method named greet and
           any other methods which names start with “gree”.  
-        - Parameters <br/>
+        - `Parameters` <br/>
           Object or primitive types of parameters. A parameter-type can be negated with !, that is !int
           will match any type except for int. The wildcard “..” can be used to match zero or more
           subsequent parameters.  
-        - Exceptions <br/>
+        - `Exceptions` <br/>
           Type(s) of exception(s) that matching method(s) throws. An exception type can be negated using !.     
           
 ```java
@@ -1838,13 +1835,13 @@ Pattern
 ```
 
 - Pointcut designator: **within**
-    - The `within` pointcut designator matches join points located in one or more classes, optionally
+    - The **within** pointcut designator matches join points located in one or more classes, optionally
       specifying the package(s) in which the class(es) is/are located.
-        - Package <br/>
+        - `Package` <br/>
           Package in which class(es) to be selected is/are located. May be omitted. Wildcard “..” may
           be used last in package name to include all sub-packages. Wildcard * may be used in
           package name.
-        - Class <br/>
+        - `Class` <br/>
           Class(es) in which join points are to be selected. Wildcard * may be used. Join points in
           subclasses of the specified class will also be matched.
 
@@ -1857,7 +1854,7 @@ Pattern
 ```
 
 - Pointcut designator: **this**
-	- The this pointcut designator matches all join points where the currently executing object is of specified type (class or interface).
+	- The **this** pointcut designator matches all join points where the currently executing object is of specified type (class or interface).
 	- The pattern specifying which join points to select only consists of a single type. Wildcards can not be used in type names.
 
 ```java
@@ -1872,7 +1869,7 @@ target(MySuperServiceImpl)
 ```
 
 - Pointcut designator: **args**
-	- The args pointcut designator matches join points, in Spring AOP method execution, where the argument(s) are of the specified type(s).
+	- The **args** pointcut designator matches join points, in Spring AOP method execution, where the argument(s) are of the specified type(s).
 		- The .. wildcard may be used to specify zero or more parameters of arbitrary type.
         - The * wildcard can be used to specify one parameter of any type.
         - Package information may be included in the pattern specifying which join points to select.
@@ -1884,7 +1881,7 @@ args(java.util.*)
 ```
 
 - Pointcut designator: **@target**
-	- The @target pointcut designator matches join points in classes annotated with the specified annotation(s).
+	- The **@target** pointcut designator matches join points in classes annotated with the specified annotation(s).
 
 ```java
 @target(org.springframework.stereotype.Service)
@@ -1899,14 +1896,14 @@ args(java.util.*)
 ```
 
 - Pointcut designator: **@within**
-	- The @within pointcut designator matches join points in classes annotated with specified annotation.
+	- The **@within** pointcut designator matches join points in classes annotated with specified annotation.
 
 ```java
 @within(org.springframework.stereotype.Service)
 ```
 
 - Pointcut designator: **@annotation**
-	- The @annotation pointcut designator matches join points in methods annotated with specified annotation.
+	- The **@annotation** pointcut designator matches join points in methods annotated with specified annotation.
 
 ```java
 @annotation(se.ivankrizsan.spring.aopexamples.MySuperSecurityAnnotation)
@@ -1990,10 +1987,10 @@ public void afterBadUpdate(JoinPoint joinPoint, Exception e) throws Throwable {
 
 #### After
 
-- The after advice is executed after the target method regardless of how its execution ended, whether successfully or with an exception, and because of this, </br> 
+- The after advice is executed after the target method regardless of how its execution ended, whether successfully or with an exception, and because of this,
   it is most suitable to use for auditing or logging.
    - Examples:
-  		- Releasing resources <br/>
+  		- Releasing resources. <br/>
   		As with finally-blocks in try-finally, the after (finally) advice is always executed after the
         completion of the join point and can thus ensure that resources are always released.
 
@@ -2011,7 +2008,7 @@ public void afterFindById(JoinPoint joinPoint) throws Throwable {
 #### Around
 
 - Executed before and after (around) a join point.
-- The around advice is the most powerful type of advice, because it encapsulates the target method and has control over its execution, </br>
+- The around advice is the most powerful type of advice, because it encapsulates the target method and has control over its execution, 
   meaning that the advice decides whether the target method is called, and if so, when.
 - The type `ProceedingJoinPoint` inherits from JoinPoint and adds the `proceed()` method that is used to call the target method
 
@@ -2052,10 +2049,10 @@ public Object monitorFind( ProceedingJoinPoint joinPoint) throws Throwable {
 - `ProceedingJoinPoint` parameter, it will be impossible to invoke the next advice method or target method in such a case.
 - `ProceedingJoinPoint` class is a subclass of the JoinPoint class it contains all the information described in the above section on the JoinPoint class.
 - `ProceedingJoinPoint` class contains these two additional methods:
-	- proceed() <br/>
+	- **proceed()** <br/>
       Proceed to invoke the next advice method or the target method without passing any
       parameters. Will return an Object. May throw a Throwable exception.
-    - proceed(Object[] args) <br/>
+    - **proceed(Object[] args)** <br/>
       Proceed to invoke the next advice method or the target method passing an array of objects as
       argument to the method to be invoked.  
 
@@ -2167,7 +2164,7 @@ public interface Server {
 the commands `SELECT`, `INSERT`, `UPDATE`, and `DELETE` are database statements used to create, update, or delete data from existing tables.
 - **DDL** stands for `Data Definition Language`, and database operations that are part of it are used to manipulate database objects: 
 tables, views, cursors, etc. The commands `CREATE`, `ALTER`, `DROP`
-- `DataAccessException` class and all of its subclasses in the Spring Framework. All the exceptions in this exception hierarchy are unchecked.
+- **DataAccessException** class and all of its subclasses in the Spring Framework. All the exceptions in this exception hierarchy are unchecked.
 - The javax.sql.DataSource interface is the interface from which all data-source classes related to SQL stem.
 	- DelegatingDataSource
     - AbstractDataSource
@@ -2245,21 +2242,21 @@ spring.datasource.jndi-name=java:comp/env/jdbc/MyDatabase
 @PropertySource("classpath:db/db.properties")
 public class TestDataConfig {
 	
-    @Value("${driverClassName}")
-    private String driverClassName;
-    
-    @Value("${url}")
-    private String url;
-    
-    @Value("${username}")
-    private String username;
-    
-    @Value("${password}")
-    private String password;
-    
-    @Value("classpath:db/schema.sql")
+	@Value("${driverClassName}")
+	private String driverClassName;
+	
+	@Value("${url}")
+	private String url;
+	
+	@Value("${username}")
+	private String username;
+	
+	@Value("${password}")
+	private String password;
+	
+	@Value("classpath:db/schema.sql")
 	private Resource schemaScript;
-    
+	
 	@Value("classpath:db/test-data.sql")
 	private Resource dataScript;
         
@@ -2403,14 +2400,14 @@ public class CitiesService {
 
 ![alt text](images/handout/Screenshot_37.png "Screenshot_37")
 
-#### ACID
+### ACID
 
 - **Atomicity** The changes within a transaction are either all applied or none applied. “All or nothing”
 - **Consistency** Any integrity constraints, for instance of a database, are not violated.
 - **Isolation** Transactions are isolated from each other and do not affect each other.
 - **Durability** is the property of a transaction that should persist even in cases of power off, crashes, and other errors on the underlying system
 
-#### Transactional Environment
+### Transactional Environment
 
 - A transaction is an operation that consists of a number of tasks that takes place as a single unit – either all tasks are performed or no tasks are performed.
   If a task that is part of a transaction do not complete successfully, the other tasks in the transaction will either not be performed or, 
@@ -2474,14 +2471,13 @@ public User findById(Long id) {
 ```
 
 - The `@Transactional` annotation can be used at the class level too. 
-  In this case, all the methods in the class become transactional, and all properties defined for the transaction are inherited from the @Transactional class level definition,
+  In this case, all the methods in the class become transactional, and all properties defined for the transaction are inherited from the 1@Transactional1 class level definition,
 
-```
-Both @EnableTransactionManagement and <tx:annotation-driven ../> enable all infrastructure beans necessary for supporting transactional execution. 
-But there is a minor difference between them. The XML configuration element can be used like this: <tx:annotation-driven /> without the transaction-manager attribute. 
+- Both `@EnableTransactionManagement` and `<tx:annotation-driven ../>` enable all infrastructure beans necessary for supporting transactional execution. 
+But there is a minor difference between them. The XML configuration element can be used like this: `<tx:annotation-driven />` without the transaction-manager attribute. 
 In this case, Spring will look for a bean named transactionManager by default, and if it is not found, the application won’t start. 
-The @EnableTransactionManagement is more flexible; it looks for a bean of any type that implements the org.springframework.transaction.PlatformTransactionManager, so the name is not important.
-```
+The `@EnableTransactionManagement` is more flexible; it looks for a bean of any type that implements the `org.springframework.transaction.PlatformTransactionManager`, so the name is not important.
+
 
 ## @Transactional
 
@@ -2493,15 +2489,19 @@ The @EnableTransactionManagement is more flexible; it looks for a bean of any ty
 - Parameters:
     - `transactionManager` - the transaction manager used to manage the transaction in the context of which the annotated method is executed.
     - `readOnly` - should be used for transactions that involve operations that do not modify the database (example: searching, counting records)
-    	- allows Spring to optimize the transactional resource for read-only data access
+    	- Allows Spring to optimize the transactional resource for read-only data access
+    	- Read-only transaction prevents Hibernate from flushing its session. Hibernate does not apply dirty checking thus it increases its performance
+    	- When JDBC transaction is marked as read-only, Oracle only accepts SELECT SQL statements.
     - `propagation` - transaction propagation. `org.springframework.transaction.annotation.Propagation`
     - `isolation` - the transaction isolation level. `org.springframework.transaction.annotation.Isolation`
     - `timeout` - value represents the number of milliseconds after which a transaction is considered failed,
     - `rollbackFor` - when this type of exception is thrown during the execution of a transactional method, the transaction is rolled back
-    ![alt text](images/handout/Screenshot_50.png "Screenshot_50")
     - `rollbackForClassName` - name of exception class(es) that are to cause a transaction rollback.
     - `noRollbackFor` - exception class(es) that never are to cause a transaction rollback.
     - `noRollbackForClassName` - names of exception class(es) that never are to cause a transaction rollback.
+    
+![alt text](images/handout/Screenshot_50.png "Screenshot_50")
+
 - Spring allows for using the JPA `javax.transaction.Transactional` annotation as a replacement for the <br/>
   Spring `@Transactional` annotation, though it does not have as many configuration options.
 - If one `@Transactional` method call another `@Transactional` method,  <br/>
