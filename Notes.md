@@ -3047,8 +3047,6 @@ public class HibernateUserRepo implements UserRepo {
     - Implement entity classes with mapping metadata in the form of annotations.  <br/>
     As a minimum, entity classes need to be annotated with the `@Entity` annotation on class
     level and the `@Id` annotation annotating the field or property that is to be the primary key of the entity.
-    It is possible to separate mapping metadata from the implementation of entity classes by
-    using an orm.xml file, but that is outside of the scope of this book.
     - Define an `EntityManagerFactory` bean.
     The JPA support in the Spring framework offer three alternatives when creating an `EntityManagerFactoryBean`:
         - `LocalEntityManagerFactoryBean` <br/>
@@ -3060,11 +3058,11 @@ public class HibernateUserRepo implements UserRepo {
         Gives the application full JPA capabilities.
     - Define a `DataSource` bean.
     - Define a `TransactionManager` bean. <br/>
-    Typically using the JpaTransactionManager class from the Spring Framework.
+    Typically using the `JpaTransactionManager` class from the Spring Framework.
     - Implement repositories.
 
-- `@PersistenceContext`- The annotation is applied to a instance variable of the type EntityManager or
-   a setter method, taking a single parameter of the EntityManager type, into which an entity manager is to be injected.
+- `@PersistenceContext`- The annotation is applied to a instance variable of the type `EntityManager` or
+   a setter method, taking a single parameter of the `EntityManager` type, into which an entity manager is to be injected.
     - JPA's equivalent to `@Autowired`
 
 ```java
@@ -3073,21 +3071,6 @@ private EntityManager entityManager;
 ```
 
 ![alt text](images/handout/Screenshot_54.png "Screenshot_54")
-
-- `EntityManagerFactory` - An entity manager factory is used to interact with a persistence unit.
-
-```java
-@Bean
-public EntityManagerFactory entityManagerFactory() {
-    LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-    factoryBean.setPackagesToScan("com.ps.ents");
-    factoryBean.setDataSource(dataSource());
-    factoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-    factoryBean.setJpaProperties(hibernateProperties());
-    factoryBean.afterPropertiesSet();
-    return factoryBean.getNativeEntityManagerFactory();
-}
-```
 
 - `PlatformTransactionManager`
 
@@ -3111,7 +3094,7 @@ public DataSource dataSource() {
 
 ---
 
-- Create `hibernateProperties`
+- Create `HibernateProperties`
 
 ```java
 @Bean
@@ -3126,7 +3109,7 @@ public Properties hibernateProperties() {
 }
 ```
 
-- Create `entityManagerFactory`
+- Create `EntityManagerFactory` - An entity manager factory is used to interact with a persistence unit. `@PersistenceUnit`
 
 ```java
 @Bean
@@ -3141,7 +3124,7 @@ public EntityManagerFactory entityManagerFactory() {
 }
 ```
 
-- Create `transactionManager`
+- Create `TransactionManager`
 
 ```java
 @Bean
@@ -3159,7 +3142,7 @@ public class JpaUserRepo implements UserRepo {
 }
 ```
 
-- Inject `entityManager` into `@Repository` beans and use session to deal with database
+- Inject `EntityManager` into `@Repository` beans and use session to deal with database
 
 ```java
 @PersistenceContext
@@ -3180,7 +3163,7 @@ private EntityManager entityManager;
 </bean>
 ```
 
-- Add `dataSource` bean
+- Add `DataSource` bean
 
 ```xml
 <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -3191,7 +3174,7 @@ private EntityManager entityManager;
 </bean>
 ```
 
-- Add `entityManagerFactory` bean
+- Add `EntityManagerFactory` bean
 
 ```xml
 <bean id="entityManagerFactory"
@@ -3219,7 +3202,7 @@ public class JpaUserRepo implements UserRepo {
 }
 ```
 
-- Inject `entityManager` into `@Repository` beans and use session to deal with database
+- Inject `EntityManager` into `@Repository` beans and use session to deal with database
 
 ```java
 @PersistenceContext
@@ -3250,23 +3233,27 @@ private EntityManager entityManager;
 	 - findBy + Field (+ Operation)
 	 - FindByFirstName(String name), findByDateOfBirthGt(Date date), ...
 	 - Operations - Gt, Lt, Ne, Like, Between, ...
- - Can extend PagingAndSortingRepository - added sorting and paging
+ - Can extend `PagingAndSortingRepository` - added sorting and paging
  - Most Spring data sub-projects have their own variations of Repository
- 	- JpaRepository for JPA
+ 	- `JpaRepository` for JPA
  - Repositories can be injected by type of their interface
  - Repository is an interface (not a class!)
  
 ```java
-public interface PersonRepository extends Repository<Person, Long> {}
+public interface PersonRepository extends Repository<Person, Long> {
     
+}
+```
+
+```java
 @Service    
 public class PersonService {
 
     @Autowired
     private PersonRepository personRepository;
            
-}  
-````
+}
+```
 
 - Locations, where spring should look for Repository interfaces need to be explicitly defined
 - Spring scans for `Repository` interfaces
@@ -3285,8 +3272,6 @@ public class GemfireConfig {...}
 @EnableMongoRepositories(basePackages="com.example.**.repository") 
 public class MongoDbConfig {...}
 ```
-
-![alt text](images/handout/Screenshot_56.png "Screenshot_56")
 
 ## Spring Data Configuration
 
@@ -3413,7 +3398,7 @@ int setPageCount(int pageCount, String title);
 
 ![alt text](images/pet-sitter/Screenshot_14.png "Screenshot_14")
 
-#### DispatcherServlet
+### DispatcherServlet
 
   - The central piece of Spring Web MVC is the `DispatcherServlet` class, which is the entry point for every Spring Web application.
   - The `DispatcherServlet` converts HTTP requests into commands for controller components and manages rendered data as well.
@@ -3424,14 +3409,14 @@ int setPageCount(int pageCount, String title);
   - Defined by `WebApplicationInitializer` or `web.xml`
   - Creates separate “servlet” application context
  
-```
-The DispatcherServlet creates a separate “servlet” application context containing all specific web beans (controller, views, view resolvers). 
-This context is also called the web context or the DispatcherServletContext.
+![alt text](images/handout/Screenshot_56.png "Screenshot_56")
+ 
+The `DispatcherServlet` creates a separate **servlet application context** containing all specific web beans (controller, views, view resolvers). 
+This context is also called the web context or the `DispatcherServletContext`.
 
-The application context is also called RootApplicationContext. It contains all non-web beans and is instantiated using a bean of type org.springframework.web.context.ContextLoaderListener. 
+The application context is also called `RootApplicationContext`. It contains all non-web beans and is instantiated using a bean of type `org.springframework.web.context.ContextLoaderListener`. 
 The relationship between the two contexts is a parent–child relationship, with the application context being the parent. 
-Thus, beans in the web context can access the beans in the parent context, but not conversely
-```
+**Thus, beans in the web context can access the beans in the parent context, but not conversely
 
 ![alt text](images/handout/Screenshot_58.png "Screenshot_58.png")
 
