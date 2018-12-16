@@ -3552,7 +3552,7 @@ public String show(@PathVariable("userId") Long id, Model model) {
 - View support classes for creating PDFs, Excel spreadsheets
 - Controllers typically return a 'logical view name' String.
 - ViewResolvers select View based on view name.
-- The `DispatcherServlet` delegates to a ViewResolver to obtain View implementation based on view name.
+- The `DispatcherServlet` delegates to a `ViewResolver` to obtain View implementation based on view name.
 
 - ![alt text](images/handout/Screenshot_59.png "Screenshot_59.png")
 
@@ -3613,26 +3613,26 @@ public ModelAndView passParametersWithModelAndView() {
 #### Spring MVC XML Configuration
 
 - The main component of an SpringMVC XML configuration is the `<mvc:annotation-driven/>` which registers all necessary default infrastructure beans for a web application to work: handler mapping, validation, conversion beans
-- `<mvc:default-servlet-handler/>` - default servlet mapping "/" is mapped to the DispatcherServlet
+- `<mvc:default-servlet-handler/>` - default servlet mapping "/" is mapped to the `DispatcherServlet`
 
 ```xml
 <beans ...>
                 
-	<!-- Defines basic MVC defaults (handler mapping, date formatting, etc) -->
+    <!-- Defines basic MVC defaults (handler mapping, date formatting, etc) -->
    <mvc:annotation-driven/>
    
    <!-- Configures a handler for serving static resources by forwarding to the
-      Servlet container’s default Servlet.-->
+        Servlet container’s default Servlet.-->
    <mvc:default-servlet-handler/>
    
    <mvc:resources mapping="pdfs" location="/pdfs/**"/>
    
-   	<!-- Views -->
-   	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-   		<property name="prefix" value="/WEB-INF/jsp/"/>
-   		<property name="suffix" value=".jsp"/>
-   		<property name="order" value="2"/>
-   	</bean>
+    <!-- Views -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+        <property name="order" value="2"/>
+    </bean>
    
 </beans>
 ```
@@ -3738,8 +3738,7 @@ public class TopSpendersReportGenerator extends HttpServlet {
 	private ClientService clientService;
 	
 	public void init() {
-		ApplicationContext context = WebApplicationContextUtils.
-		getRequiredWebApplicationContext(getServletContext());
+		ApplicationContext context = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
 		clientService = (ClientService) context.getBean(“clientService”);
 	}
 ...
@@ -3748,15 +3747,15 @@ public class TopSpendersReportGenerator extends HttpServlet {
 
 #### Spring MVC Quick Start
 
-1 Register Dispatcher servlet (web.xml or in Java)
-2 Implement Controllers
-3 Register Controllers with Dispatcher Servlet
+1. Register Dispatcher servlet (web.xml or in Java)
+2. Implement Controllers
+3. Register Controllers with Dispatcher Servlet
    - Can be discovered using component-scan
-4 Implement Views
+4. Implement Views
    - eg. write JSP pages
-5 Register View resolver or use the default one
+5. Register View resolver or use the default one
    - Need to set prefix (eg. /WEB-INF/views/) and suffix (eg. .jsp)
-6 Deploy
+6. Deploy
 
 ![alt text](images/web/mvc/workflow.png)
 
@@ -3793,7 +3792,7 @@ public class TopSpendersReportGenerator extends HttpServlet {
 	    - An example is the login of a computer system; a user enters a user name and a password.
 	    - other ways of authenticating a user of a computer system such as PIN numbers, security questions, id cards, fingerprints
 	- `Authorization` is the process of making a decision whether an authenticated user is allowed to perform a certain action within the application
-	    - For instance, the only type of users that can create and delete users in a computer system is users is users in the administrator role.
+	    - For instance, the only type of users that can create and delete users in a computer system is users in the administrator role.
           Thus the only users that have access to the create and delete functions of the application are users in the administrator role.
 	- `Secured` item is the term used to describe any resource that is being secured.
 
@@ -3802,13 +3801,13 @@ public class TopSpendersReportGenerator extends HttpServlet {
 	- `MEMBER` is used for limited power
 	- `GUEST` is used for restricted use of the application
 	
-![alt text](images/web/security/Screenshot_77.png)	
+![alt text](images/handout/Screenshot_77.png)	
 
 1. A user tries to access the application by making a request. The application requires the user to provide the credentials so it can be logged in.
 2. The credentials are verified by the `Authenticaltion Manager` and the user is granted access to the application. The authorization rights for this user are loaded into the Spring Security context.
 3. The user makes a resource request (view, edit, insert, or delete information) and the Security Interceptor intercepts the request before the user accesses a protected/secured resource.
 4. The `Security Interceptor` extracts the user authorization data from the security context and…
-5. … delegates the decision to the Access `Decision Manager`.
+5. … delegates the decision to the `Access Decision Manager`.
 6. The `Access Decision Manager` polls a list of voters to return a decision regarding the rights of the authenticated user to system resources.
 7. Access is granted or denied to the resource based on the user rights and the resource attributes.
 	
@@ -3833,14 +3832,14 @@ public class TopSpendersReportGenerator extends HttpServlet {
 	- `<intercept-url>` element in Spring Security 5 XML configuration is used to specify an
       URL pattern in the application and information deciding who will be able to access the resource(s) which URLs match the URL pattern.
     - `<intercept-url>` element has the following attributes:
-    	- access - Access attributes, commonly role names, specifying the user(s) that has access
-      	- filters - Omitted or having the value “none”. In the latter case the Spring Security filter chain for the URL pattern will be bypassed.
-      	- method - HTTP method used with URL pattern and, optionally, servlet path to match requests. If omitted all HTTP methods will match.
-      	- pattern - URL path pattern for which the Spring Security filter chain will be applied.
-      	- request-matcher-ref - Reference to RequestMatcher bean used to determine if this <intercept-url> will be used.
-      	- requires-channel - Possible values are “http”, “https” and “any”. The first two are for access over HTTP and
+    	- **access** - Access attributes, commonly role names, specifying the user(s) that has access
+      	- **filters** - Omitted or having the value “none”. In the latter case the Spring Security filter chain for the URL pattern will be bypassed.
+      	- **method** - HTTP method used with URL pattern and, optionally, servlet path to match requests. If omitted all HTTP methods will match.
+      	- **pattern** - URL path pattern for which the Spring Security filter chain will be applied.
+      	- **request-matcher-ref** - Reference to RequestMatcher bean used to determine if this <intercept-url> will be used.
+      	- **requires-channel** - Possible values are “http”, “https” and “any”. The first two are for access over HTTP and
       		HTTPS respectively. Omitting this attribute or using the value “any” matches both HTTP and HTTPS.
-      	- servlet-path - Servlet path used in combination with method and pattern to match requests. Optional.  
+      	- **servlet-path** - Servlet path used in combination with method and pattern to match requests. Optional.  
     - Multiple `<intercept-url>` elements may be defined and they will be evaluated in the order in which they are defined. When an `<intercept-url>` element with a matching pattern is found, evaluation
       stops. It is therefore recommended to define more `<intercept-url>` elements with more specific pattern earlier and more general patterns later.  	
     - There are two wildcards that can be used in URL patterns:
@@ -4175,7 +4174,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class UserServiceImpl implements UserService {
     
-	@Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     public User findById(Long id) {
         return userRepo.findOne(id);
     }
@@ -4351,10 +4350,10 @@ public CsrfTokenRepository repo() {
 
 Start collect the project by [https://start.spring.io/](https://start.spring.io/)	
 
-```
-Spring Boot is a set of preconfigured frameworks/technologies designed to reduce boilerplate configuration(infrastructure) and provide a quick way to have a Spring web application up and running
-It’s goal is to allow developers to focus on implementation of the actual required functionality instead of how to configure an application, by providing out of the box ready-to-use infrastructure beans
-```
+ - Spring Boot is a set of preconfigured frameworks/technologies designed to reduce boilerplate configuration(infrastructure) 
+and provide a quick way to have a Spring web application up and running
+It’s goal is to allow developers to focus on implementation of the actual required functionality instead of how to configure an application, 
+by providing out of the box ready-to-use infrastructure beans
 
 - Provide common non-functional features
 	- embedded servers (Tomcat, Jetty, Undertow)
