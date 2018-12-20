@@ -4400,8 +4400,8 @@ by providing out of the box ready-to-use infrastructure beans
 	- YAML files
 	- Environment variables	
 	- Command-line arguments (`java -jar myspringbootapp.jar –server.port=8081`)
-- The default properties of a Spring Boot application are stores in the application’s JAR in a file named “application.properties”. <br/>     	
-  When developing, this file is found in the src/main/resources directory.
+- The default properties of a Spring Boot application are stores in the application’s JAR in a file named **application.properties**. 
+  When developing, this file is found in the `src/main/resources` directory.
 
 ![alt text](images/web/boot/Screenshot_1.png)	
 
@@ -4493,7 +4493,7 @@ datasource:
     url: jdbc:h2:sample;DB_CLOSE_ON_EXIT=TRUE
     username: sample
     password: sample
-Server:
+server:
     port: 9000
     context:  /ps-boot
 ```
@@ -4508,8 +4508,8 @@ Server:
 
 ### @ConfigurationProperties
 
-- To use YAML, the `application.properties` must be replaced with `application.yml` file`
-- To get YAML data need to use `@ConfigurationProperties` with defined prefix for the properties (see above)
+- To use YAML, the `application.properties` must be replaced with `application.yml` file
+- To get YAML data need to use `@ConfigurationProperties` with defined `prefix` for the properties 
 - Class is annotated with `@ConfigurationProperties(prefix= "com.example")`
 - Fields of the class are automatically injected with values from properties
 - `@ConfigurationProperties(prefix= "com.example")` + com.example.foo → foo field injected
@@ -4547,7 +4547,7 @@ public class AppSettings {
 
 ![alt text](images/handout/Screenshot_67.png)	
 
-- `@EnableConfigurationProperties` - enable support for beans annotated with `@ConfigurationProperties` (see above)
+- `@EnableConfigurationProperties` - enable support for beans annotated with `@ConfigurationProperties`
 
 ```java
 @SpringBootApplication(scanBasePackages = {"com.ps.start"})
@@ -4561,7 +4561,7 @@ public class Application extends SpringBootServletInitializer {
 
 ### Common Spring Boot Annotations
 
-```java
+```
 - @SpringBootApplication - is a convenience-annotation that can be applied to Spring Java configuration classes. 
 						The @SpringBootApplication is equivalent to the three annotations  @Configuration, @EnableAutoConfiguration and @ComponentScan
 - @EnableAutoConfiguration - is a  annotation enables Spring Boot auto-configuration. As earlier, Spring Boot autoconfiguration attempts to create and configure Spring beans based on the
@@ -4597,7 +4597,7 @@ public class Application extends SpringBootServletInitializer {
 - @WebMvcTest - Used with @RunWith(SpringRunner.class) in tests that focuses on Spring MVC components.
 ```
 
-#### Testing with Spring Boot
+### Testing with Spring Boot
 
 - `@SpringBootTest` - this annotation should be used on a test class that runs Spring Boot-based tests
     - If no `@ContextConfiguration`, it uses `org.springframework.boot.test.context.SpringBootContextLoader` by default.
@@ -4626,7 +4626,7 @@ public class FooServiceTest {
 }
 ```
 
-#### Monitoring
+### Monitoring
 
 ![alt text](images/web/boot/Screenshot_14.png)
 
@@ -4642,10 +4642,10 @@ public class FooServiceTest {
 
 ![alt text](images/web/boot/Screenshot_20.png)
 
-#### Logging
+### Logging
 
-- As per default, messages written with the ERROR, WARN and INFO levels will be output in a Spring Boot application. To enable DEBUG or TRACE logging for the entire application, use the --
-  debug or --trace flags or set the properties debug=true or trace=true in the application.properties file.
+- As per default, messages written with the ERROR, WARN and INFO levels will be output in a Spring Boot application. To enable DEBUG or TRACE logging for the entire application, 
+  use the `--debug` or `--trace` flags or set the properties `debug=true` or `trace=true` in the `application.properties` file.
 - By default `Logback` over `SLF4J`
 - By default logs to console, but can define log file
 
@@ -4676,11 +4676,11 @@ logging.pattern.file=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %m
 logging.pattern.console=%clr(%d{yyyy-MM-dd HH:mm:ss}){yellow}
 ```
 
-#### DataSource
+### DataSource
 
-- either include spring-boot-starter-jdbc or spring-boot-starter- data-jpa
+- Either include spring-boot-starter-jdbc or spring-boot-starter-data-jpa
 - JDBC driver required on classpath, datasource will be created automatically
-- Tomcat JDBC as default pool, other connection pools can be used if present - eg.HikariCP
+- Tomcat JDBC as default pool, other connection pools can be used if present - e.g. HikariCP
 
 ```properties
 #Connection
@@ -4701,7 +4701,7 @@ spring.datasource.max-idle=
 spring.datasource.min-idle=
 ```
 
-#### Container
+### Container
 
 ```properties
 server.port=9000
@@ -4711,7 +4711,7 @@ server.context-path=/rewards
 server.servlet-path=/admin
 ```
 
-- Web container can be configured in Java dynamically by implementing `EmbeddedServletContainerCustomizer` interface and registering resulting class as a @Component
+- Web container can be configured in Java dynamically by implementing `EmbeddedServletContainerCustomizer` interface and registering resulting class as a `@Component`
 - if needed more fine-grained configuration - declare bean of type `EmbeddedServletContainerFactory`
 
 ```java
@@ -4764,16 +4764,6 @@ public void customize(ConfigurableEmbeddedServletContainer container) {
 ```
 
 ![alt text](images/handout/Screenshot_65.png)
-		
-## Spring actuator dependency
-
-- provides ready features to help monitor and manage application
-```xml
-<dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-starter-actuator</artifactId>
-</dependency>
-```
 
 # Integration
 
