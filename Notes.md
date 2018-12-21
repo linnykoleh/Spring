@@ -5736,10 +5736,10 @@ Each microservice is a really small unit of stateless functionality, a process t
 
 - **Spring Cloud** is a big umbrella project that provides development tools designed to ease the development of distributed applications.	
 	- configuration management (Spring Cloud Config provides centralized external configuration backed by a Git repository)
-	- service discovery (Eureka is an AWS Service registry for resilient midtier load balancing and failover and is supported by Spring Cloud)
+	- service discovery (Eureka is an AWS Service registry for resilient mid tier load balancing and failover and is supported by Spring Cloud)
 	- circuit breakers (Spring Cloud supports Netflix’s Hystrix, which is a library that provides components that stop calling services when a response is not received by a predefined threshold)
 	- intelligent routing (Zuul, used to forward and distribute calls to services)
-	- micro-proxy (client-side proxies to midtier services)
+	- micro-proxy (client-side proxies to mid tier services)
 	- control bus (a messaging system can be used for monitoring and managing the components within the framework, as is used for “application-level” messaging)
 	- one-time tokens (used for data access only once with Spring Vault)
 	- global locks (used to coordinate, prioritize, or restrict access to resources)
@@ -5903,8 +5903,8 @@ public interface CurrencyExchangeServiceProxy {
 - Then `@Autowire` the Proxy client
 
 ```java
- @Autowired
-    private CurrencyExchangeServiceProxy currencyExchangeServiceProxy;
+@Autowired
+private CurrencyExchangeServiceProxy currencyExchangeServiceProxy;
 ```
 
 - And call needed method
@@ -5994,7 +5994,7 @@ final BigDecimal conversionMultiple = response.getConversionMultiple();
 
 ![alt text](images/spring_cloud/Screenshot_33.png)
 
-- Another way is to use `@RbbonClient`
+- Another way is to use `@RibbonClient`
 
 ```java
 @FeignClient(name = "currency-exchange-service")
