@@ -1,6 +1,6 @@
 # Spring notes
 
-[https://docs.spring.io/spring/docs/5.0.3.RELEASE](https://docs.spring.io/spring/docs/5.0.3.RELEASE/spring-framework-reference/index.html)
+[>> https://docs.spring.io/spring/docs/5.0.3.RELEASE](https://docs.spring.io/spring/docs/5.0.3.RELEASE/spring-framework-reference/index.html)
 
 # Spring Configuration
 
@@ -4348,7 +4348,7 @@ public CsrfTokenRepository repo() {
 
 # Spring Boot
 
-Start collect the project by [https://start.spring.io/](https://start.spring.io/)	
+Start collect the project by [>> https://start.spring.io/](https://start.spring.io/)	
 
  - Spring Boot is a set of preconfigured frameworks/technologies designed to reduce boilerplate configuration(infrastructure) 
 and provide a quick way to have a Spring web application up and running
@@ -4722,7 +4722,7 @@ public void customize(ConfigurableEmbeddedServletContainer container) {
 }
 ```
 
-- [Common spring boot application properties](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
+- [>> Common spring boot application properties](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
  
 ## @Conditional
 
@@ -5344,7 +5344,7 @@ public class RestExceptionProcessor {
 - `@ResponseBody` introduced earlier is also used to facilitate understanding of the REST message format between client and server
 - `@ResponseBody` is applied to the response
 - `@RequestBody` is applied to the request
-- The client must know the format to use, or request a resource with a representation it understands form the server. 
+- The client must know the format to use, or request a resource with a representation it understands from the server. 
   Representations are converted to HTTP requests and from HTTP responses by implementations of the `org.springframework.http.converter.HttpMessageConverter<T>` interface
 - Message converters are automatically detected and used by Spring in applications configured with `<mvc:annotation-driven/>` or `@EnableWebMvc`
     - Or define explicitly (allows you to register extra convertors) - using `WebMvcConfigurer` or `<mvc/>`
@@ -5380,7 +5380,7 @@ public class RestUserController {
 - The `produces` attribute defines the producible media types of the mapped request, narrowing the primary mapping, 
   and the value of the `Accept` header (on the client side) must match at least one of the values of this property in order for a method to handle a specific REST request. 
   
-#### ``````   
+### HATEOAS
 
 - Hypermedia As The Engine of Application State
 - Response contains links to other items and actions → can change behavior without changing client
@@ -5420,7 +5420,7 @@ created resource in the response header
 - Jersey is reference implementation
 - Various implementations
     - Jersey (RI), RESTEasy, Restlet, CXF
-- Spring MVC does not implement JAX-RS
+- **!!!** Spring MVC does not implement JAX-RS
 
 ```java
 @Path("/persons/{id}")
@@ -5442,6 +5442,8 @@ public class PersonService {
 ![alt text](images/handout/Screenshot_82.png)  
 
 ## RESTful  
+
+[>> Hypertext Transfer Protocol](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods)  
 
 ![alt text](images/web/rest/The-Richardson-Maturity-Model-Nordic-APIs.png)  
 
@@ -5470,11 +5472,13 @@ public class PersonService {
 	
 ![alt text](images/pet-sitter/Screenshot_32.png)	
 
-- Idempotence
-	- From a RESTful service standpoint, for an operation (or service call) to be idempotent, clients can make that same call repeatedly while producing the same result. In other words, making multiple identical requests has the same effect as making a single request. Note that while idempotent operations produce the same result on the server (no side effects), the response itself may not be the same (e.g. a resource's state may change between requests).
-	- The PUT and DELETE methods are defined to be idempotent. However, there is a caveat on DELETE. The problem with DELETE, which if successful would normally return a 200 (OK) or 204 (No Content), will often return a 404 (Not Found) on subsequent calls, unless the service is configured to "mark" resources for deletion without actually deleting them. However, when the service actually deletes the resource, the next call will not find the resource to delete it and return a 404. However, the state on the server is the same after each DELETE call, but the response is different.
-	- GET, HEAD, OPTIONS and TRACE methods are defined as safe, meaning they are only intended for retrieving data. This makes them idempotent as well since multiple, identical requests will behave the same.
-
+- **Idempotent methods**
+	- From a RESTful service standpoint, for an operation to be `idempotent`, clients can make that same call repeatedly while producing the same result. In other words, making multiple identical requests has the same effect as making a single request.
+- **Safe methods**
+	- Which means they are intended only for information retrieval and should not change the state of the server. 
+	
+![alt text](images/Screenshot.png)
+	
 - Spring RESTful application can be tested without deploying it on a server by declaring a mock restful server and using mock dependencies, so the REST requests can be tested in isolation
 
 - HTTP Status Code
@@ -5527,7 +5531,7 @@ public class StandaloneRestUserControllerTest {
 	- Because of the uniform interface, little or no documentation of the resources and basic operations API is necessary.
 	- Using REST does not imply specific libraries at client level in order to communicate with the server. With REST, all that is needed is a network connection.
 	
-# RESTful Spring Application with Spring Boot
+### RESTful Spring Application with Spring Boot
 
 - Spring Boot is very practical for writing RESTful applications, because it automatically configures the infrastructure beans necessary in the background, and all that is left for the developer to do is to create REST controller classes
 
@@ -5594,7 +5598,7 @@ public class RestUserController {
 
 - The JMX technology defines standard connectors (known as JMX connectors) that enable you to access JMX agents from remote management applications
 - The MBean server acts as a broker for communication between local MBeans and agents and between MBeans and remote clients
-- Common and accessible clients for the MBean Server are provided within the JDK: VisualVM,,jconsole, jvisualvm, and jmc.
+- Common and accessible clients for the MBean Server are provided within the JDK: VisualVM, jconsole, jvisualvm, and jmc.
 
 - MBeans expose a management interface that consists of the following:
 	- attributes (properties), which can be readable, writable, or both
@@ -5643,14 +5647,14 @@ mbs.registerMBean(mbean, name);
 
 ![alt text](images/handout/Screenshot_111.png)  
 
-- The <context:mbean-server/> declares a bean of type `org.springframework.jmx.support.MBeanServerFactoryBean`. 
-  This bean has the responsibility of obtaining a `javax.management.MBeanServer` reference from the the standard JMX 1.2 javax.management.MBeanServerFactory API.
+- The \<context:mbean-server/> declares a bean of type `org.springframework.jmx.support.MBeanServerFactoryBean`. 
+  This bean has the responsibility of obtaining a `javax.management.MBeanServer` reference from the javax.management.MBeanServerFactory.
 
-- The <context:mbean-export/> declares a bean of type `org.springframework.jmx.export.MBeanExporter`, 
+- The \<context:mbean-export/> declares a bean of type `org.springframework.jmx.export.MBeanExporter`, 
    and this is the bean that allows exposing any Spring-managed bean to a MBeanServer without the need to define any Spring-managed bean to a MBeanServer without the need to define any JMX-specific information in the bean classes.
     
 - `@EnableMBeanExport` is very important, because it enables default exporting of all standard MBeans from the Spring context and there is no need to configure the exporter bean explicitly.
-	- Behind the scenes, it basically declares and registers a bean of type `JmxMBeanServer` and a bean of type AnnotationMBeanExporter for you that will take care of registering and will expose your Spring managed beans as MBean
+	- Behind the scenes, it basically declares and registers a bean of type `JmxMBeanServer` and a bean of type `AnnotationMBeanExporter` for you that will take care of registering and will expose your Spring managed beans as MBean
 
 ```java
 @SpringBootApplication
@@ -5705,7 +5709,12 @@ public class JmxCounterImpl implements JmxCounter {
 
 # Spring Microservices with Spring Cloud
 
-[https://martinfowler.com/articles/microservices.html](https://martinfowler.com/articles/microservices.html)
+[>> https://martinfowler.com/articles/microservices.html](https://martinfowler.com/articles/microservices.html)
+
+[>> LinnykOleh/WickiUp/Microservices The Big Picture](https://github.com/LinnykOleh/WickiUp/blob/master/Microservices/Microservices_The_Big_Picture_course.md)
+
+[>> LinnykOleh/WickiUp/Microservices Architecture]( https://github.com/LinnykOleh/WickiUp/blob/master/Microservices/Microservices_Architecture_course.md)
+
 
 ![alt text](images/spring_cloud/diagram-distributed-systems.svg)
 
