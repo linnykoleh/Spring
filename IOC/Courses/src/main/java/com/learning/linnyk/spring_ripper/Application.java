@@ -10,7 +10,7 @@ import com.learning.linnyk.spring_ripper.part1.Quoter;
 public class Application {
 
 	public static void main(String[] args) throws InterruptedException {
-		final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("sp/spring.xml");
+		final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring_ripper/spring.xml");
 		final Quoter bean = context.getBean(Quoter.class);
 		System.out.println(bean);
 
