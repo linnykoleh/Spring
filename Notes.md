@@ -545,6 +545,9 @@ public class TriangleLifecycle implements InitializingBean {
  	- they must have no arguments 
  	- return void
  	- they can have any access right
+- Transactions don't configured/exists when `@PostConstruct` handled, that is why must not call data source in `@PostConstruct` method
+    - Because `@PostConstruct` works before every proxy are configured
+        - They configure in `postProcessAfterInitialization` stage in BPP, but `@PostConstruct` handles before `postProcessAfterInitialization` stage in BPP,
 
 ## context namespace
 
@@ -5614,6 +5617,43 @@ MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 ObjectName name = new ObjectName("com.ps.jmx:type=UserCounter");
 UserCounter mbean = new UserCounter();
 mbs.registerMBean(mbean, name);
+```
+
+#### Example how to expose MBean
+
+- Create class class
+
+```java
+public class ProfilingController implements  ProfilingControllerMBean {
+
+	private boolean enabled = true;
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+}
+```
+
+- Create interface for this class with name as class plus `MBean`
+
+```java
+public interface ProfilingControllerMBean {
+
+	void setEnabled(boolean enabled);
+}
+
+```
+
+- Expose MBean as managed resource which can be accessed via JConsole
+ 
+```java
+final MBeanServer platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
+platformMBeanServer.registerMBean(controller, new ObjectName("profiling", "name", "controller"));
 ```
 
 ## Spring JMX

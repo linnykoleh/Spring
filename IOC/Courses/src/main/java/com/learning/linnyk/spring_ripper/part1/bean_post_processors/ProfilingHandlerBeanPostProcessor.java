@@ -55,15 +55,19 @@ public class ProfilingHandlerBeanPostProcessor implements BeanPostProcessor {
 		if(beanClass != null){
 			return Proxy.newProxyInstance(beanClass.getClassLoader(), beanClass.getInterfaces(), (proxy, method, args) -> {
 				if(controller.isEnabled()) {
-					System.out.println("Profiling started");
+				    // это будет выполнено для каждого метода
+                    // оригинального класса
+
+					System.out.println("Profiling started...");
 					final long before = System.nanoTime();
 
-					final Object invoke = method.invoke(bean, args);
+					final Object returnValue = method.invoke(bean, args);
 
 					final long after = System.nanoTime();
 					System.out.println(after - before);
-					System.out.println("Profiling done");
-					return invoke;
+                    System.out.println("Profiling done");
+
+					return returnValue;
 				}else {
 					return method.invoke(bean, args);
 				}

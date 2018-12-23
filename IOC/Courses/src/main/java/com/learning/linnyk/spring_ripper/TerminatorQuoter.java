@@ -27,12 +27,19 @@ public class TerminatorQuoter implements Quoter {
 	}
 
 	@PostConstruct
-	public void init(){
+	public void init1(){
 		System.out.println("Phase 2");
 		System.out.println(repeat);
 	}
 
-	public void setMessage(String message) {
+    @PostConstruct
+    public void init2(){
+        System.out.println("Phase 2.2");
+        System.out.println(repeat);
+    }
+
+
+    public void setMessage(String message) {
 		this.message = message;
 	}
 
