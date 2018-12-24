@@ -1,9 +1,8 @@
-package com.learning.linnyk.spring_ripper.part2;
+package com.learning.linnyk.spring_ripper.part1.context;
 
+import com.learning.linnyk.spring_ripper.part1.bean.Quoter;
 import org.springframework.beans.factory.support.PropertiesBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
-
-import com.learning.linnyk.spring_ripper.part1.Quoter;
 
 /**
  * @author LinnykOleh

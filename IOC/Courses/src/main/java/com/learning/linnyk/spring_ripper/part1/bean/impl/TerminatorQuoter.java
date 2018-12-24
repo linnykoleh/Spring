@@ -1,13 +1,12 @@
-package com.learning.linnyk.spring_ripper;
+package com.learning.linnyk.spring_ripper.part1.bean.impl;
 
 import javax.annotation.PostConstruct;
 
-import com.learning.linnyk.spring_ripper.part1.Quoter;
 import com.learning.linnyk.spring_ripper.part1.annotations.DeprecatedClass;
 import com.learning.linnyk.spring_ripper.part1.annotations.InjectRandomInt;
 import com.learning.linnyk.spring_ripper.part1.annotations.PostProxy;
 import com.learning.linnyk.spring_ripper.part1.annotations.Profiling;
-import com.learning.linnyk.spring_ripper.part2.T1000;
+import com.learning.linnyk.spring_ripper.part1.bean.Quoter;
 
 /**
  * @author LinnykOleh

@@ -1,8 +1,7 @@
-package com.learning.linnyk.spring_ripper;
+package com.learning.linnyk.spring_ripper.part1;
 
+import com.learning.linnyk.spring_ripper.part1.bean.Quoter;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.learning.linnyk.spring_ripper.part1.Quoter;
 
 /**
  * @author LinnykOleh

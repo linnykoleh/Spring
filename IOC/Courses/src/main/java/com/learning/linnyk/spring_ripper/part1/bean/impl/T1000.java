@@ -1,7 +1,6 @@
-package com.learning.linnyk.spring_ripper.part2;
+package com.learning.linnyk.spring_ripper.part1.bean.impl;
 
-import com.learning.linnyk.spring_ripper.TerminatorQuoter;
-import com.learning.linnyk.spring_ripper.part1.Quoter;
+import com.learning.linnyk.spring_ripper.part1.bean.Quoter;
 
 /**
  * @author LinnykOleh

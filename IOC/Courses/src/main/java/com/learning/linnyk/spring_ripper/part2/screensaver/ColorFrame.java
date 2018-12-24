@@ -1,22 +1,16 @@
 package com.learning.linnyk.spring_ripper.part2.screensaver;
 
-import java.awt.Color;
-import java.util.Random;
-
-import javax.swing.JFrame;
-import javax.swing.WindowConstants;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Random;
 
 /**
  * @author LinnykOleh
  */
 @Service
 public abstract class ColorFrame extends JFrame {
-
-	@Autowired
-	private Color color;
 
 	public ColorFrame() {
 		setSize(200, 200);

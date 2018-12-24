@@ -1,16 +1,14 @@
-package com.learning.linnyk.spring_ripper.part2;
+package com.learning.linnyk.spring_ripper.part2.config;
 
-import java.awt.Color;
-import java.util.Random;
-
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import com.learning.linnyk.spring_ripper.part2.bean_post_processors.CustomScopeRegistryBeanFactoryPostProcessor;
+import com.learning.linnyk.spring_ripper.part2.screensaver.ColorFrame;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-import com.learning.linnyk.spring_ripper.part2.bean_post_processors.CustomScopeRegistryBeanFactoryPostProcessor;
-import com.learning.linnyk.spring_ripper.part2.screensaver.ColorFrame;
+import java.awt.*;
+import java.util.Random;
 
 /**
  * @author LinnykOleh
@@ -41,11 +39,4 @@ public class Config {
 		return new CustomScopeRegistryBeanFactoryPostProcessor();
 	}
 
-	public static void main(String[] args) throws InterruptedException {
-		final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Config.class);
-		while (true) {
-			context.getBean(ColorFrame.class).showOnRandomPlace();
-			Thread.sleep(300);
-		}
-	}
 }

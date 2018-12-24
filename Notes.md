@@ -431,6 +431,8 @@ The lifecycle of a Spring bean looks like this:
 
 ### BeanFactoryPostProcessor
 
+- Configures bean definitions before beans are created.
+    - Could change BeanDefinitions
 - `BeanFactoryPostProcessor` is an interface that defines the property (a single method) of a type of
 container extension point that is allowed to modify Spring bean meta-data prior to instantiation of
 the beans in a container. A bean factory post processor may not create instances of beans, only
@@ -639,6 +641,44 @@ public MyBeanClass myBeanWithACloseMethodNotToBeInvokedAsLifecycleCallback() {
 ```xml
 <bean id="complexBean" class="com.ps.sample.ComplexBean" scope="prototype"/>
 ```
+
+### @Scope
+
+- **proxyMode**
+    - Define bean with scope `request`
+    
+    ```java
+    @Bean
+    @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public HelloMessageGenerator requestScopedBean() {
+        return new HelloMessageGenerator();
+    }
+    
+    ```
+    
+    - Define controller in which autowire bean  with scope `request`
+    
+    ```java
+    @Controller
+    public class ScopesController {
+        
+        @Autowire
+        private HelloMessageGenerator requestScopedBean;
+     
+        @RequestMapping("/scopes/request")
+        public String getRequestScopeMessage(final Model model) {
+            model.addAttribute("previousMessage", requestScopedBean.getMessage());
+            requestScopedBean.setMessage("Good morning!");
+            model.addAttribute("currentMessage", requestScopedBean.getMessage());
+            return "scopesExample";
+        }
+    }
+    ```
+
+In case if we don't specify scope for `HelloMessageGenerator` we will get error while instantiation `ScopesController`.
+`proxyMode` will fix this problem this attribute is necessary because, at the moment of the instantiation of the web application context, 
+there is no active request. Spring will create a proxy to be injected as a dependency, and instantiate 
+the target bean when it is needed in a request.
 
 #### Lazy and eager beans
 

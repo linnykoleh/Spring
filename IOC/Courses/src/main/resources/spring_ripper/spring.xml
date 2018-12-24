@@ -5,7 +5,7 @@
 			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 
-	<bean id="terminatorQuoter" class="com.learning.linnyk.spring_ripper.TerminatorQuoter">
+	<bean id="terminatorQuoter" class="com.learning.linnyk.spring_ripper.part1.bean.impl.TerminatorQuoter">
 		<property name="message" value="I'll be back"/>
 	</bean>
 

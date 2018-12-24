@@ -11,7 +11,7 @@ import javax.management.ObjectName;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
-import com.learning.linnyk.spring_ripper.part1.ProfilingController;
+import com.learning.linnyk.spring_ripper.part1.mbean.ProfilingController;
 import com.learning.linnyk.spring_ripper.part1.annotations.Profiling;
 
 /**
