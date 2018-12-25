@@ -18,6 +18,7 @@
         <module>SpringWEB</module>
         <module>Integration</module>
         <module>SpringCloud</module>
+        <module>Spring5</module>
     </modules>
 
     <dependencies>

@@ -2,6 +2,6 @@
 
 ### Personal study of Spring framework
 
-[>> Notes are here](Notes.md)	
+[>> Notes](Notes.md)	
 
-Copyright [2018 - 2019] [Linnyk Oleh]
+**Copyright [2018 - 2019] [Linnyk Oleh]**

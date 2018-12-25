@@ -2907,6 +2907,8 @@ Initialise db
 </jdbc:initialize-database>
 ```
 
+- `EmbeddedDatabaseBuilder` automatically run **data.sql** and **schema.sql** scripts from `resources` folder
+
 ## Spring and Hibernate
 
 - `org.springframework.orm.hibernate5.LocalSessionFactoryBuilder`
