@@ -627,6 +627,7 @@ public MyBeanClass myBeanWithACloseMethodNotToBeInvokedAsLifecycleCallback() {
 ## Bean Scopes
 
 - Default scope for a bean is `singleton`
+    - One per IOC Container
 
 | **Scope**           |**Description** |
 | --------------------|-------------|
@@ -676,9 +677,42 @@ public MyBeanClass myBeanWithACloseMethodNotToBeInvokedAsLifecycleCallback() {
     ```
 
 In case if we don't specify scope for `HelloMessageGenerator` we will get error while instantiation `ScopesController`.
-`proxyMode` will fix this problem this attribute is necessary because, at the moment of the instantiation of the web application context, 
+`proxyMode` will fix this problem, this attribute is necessary because, at the moment of the instantiation of the web application context, 
 there is no active request. Spring will create a proxy to be injected as a dependency, and instantiate 
 the target bean when it is needed in a request.
+
+```java
+public enum ScopedProxyMode {
+
+	/**
+	 * Default typically equals {@link #NO}, unless a different default
+	 * has been configured at the component-scan instruction level.
+	 */
+	DEFAULT,
+
+	/**
+	 * Do not create a scoped proxy.
+	 * <p>This proxy-mode is not typically useful when used with a
+	 * non-singleton scoped instance, which should favor the use of the
+	 * {@link #INTERFACES} or {@link #TARGET_CLASS} proxy-modes instead if it
+	 * is to be used as a dependency.
+	 */
+	NO,
+
+	/**
+	 * Create a JDK dynamic proxy implementing <i>all</i> interfaces exposed by
+	 * the class of the target object.
+	 */
+	INTERFACES,
+
+	/**
+	 * Create a class-based proxy (uses CGLIB).
+	 */
+	TARGET_CLASS;
+
+}
+
+```
 
 #### Lazy and eager beans
 
@@ -932,7 +966,7 @@ public abstract class CommandManager {
 
 ```
 
-- Application example. `Prototype` beans is different every time, but `Singelton` is unique
+- Application example. `Prototype` beans is different every time, but `Singleton` is unique
 
 ```java
 public class App {
