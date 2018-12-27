@@ -5398,6 +5398,36 @@ public class RestUserController {
 ```
 
 - Another method to process REST request-related exceptions is to define a specialized exception class for a REST controller and a specialized component to intercept those types of exceptions and treat them in a certain way.
+	- Using `@ControllerAdvice`	
+	- Specialization of `@Component` for classes that declare `@ExceptionHandler`, `@InitBinder`, or `@ModelAttribute` methods to be shared across multiple `@Controller` classes.	
+
+```java
+@ControllerAdvice(basePackages = {"com.concretepage.controller"} )
+public class GlobalControllerAdvice {
+	
+	@InitBinder
+	public void dataBinding(WebDataBinder binder) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		dateFormat.setLenient(false);
+		binder.registerCustomEditor(Date.class, "dob", new CustomDateEditor(dateFormat, true));
+	}
+	
+	@ModelAttribute
+        public void globalAttributes(Model model) {
+		model.addAttribute("msg", "Welcome to My World!");
+	}
+        
+	@ExceptionHandler(FileNotFoundException.class)
+        public ModelAndView myError(Exception exception) {
+	    ModelAndView mav = new ModelAndView();
+	    mav.addObject("exception", exception);
+	    mav.setViewName("error");
+	    return mav;
+	}
+} 
+```
+
+or
 
 ```java
 @ControllerAdvice
