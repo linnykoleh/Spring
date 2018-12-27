@@ -195,6 +195,8 @@ public class ComplexBeanImpl implements ComplexBean {
 </beans>
 ```
 
+![alt text](images/Screenshot_1.png "Screenshot_1")
+
 ### Collections
 
 #### List
@@ -3493,9 +3495,10 @@ int setPageCount(int pageCount, String title);
 The `DispatcherServlet` creates a separate **servlet application context** containing all specific web beans (controller, views, view resolvers). 
 This context is also called the web context or the `DispatcherServletContext`.
 
-The application context is also called `RootApplicationContext`. It contains all non-web beans and is instantiated using a bean of type `org.springframework.web.context.ContextLoaderListener`. 
+The **root application context** is also called `RootApplicationContext`. It contains all non-web beans and is instantiated using a bean of type `org.springframework.web.context.ContextLoaderListener`. 
 The relationship between the two contexts is a parent–child relationship, with the application context being the parent. 
-**Thus, beans in the web context can access the beans in the parent context, but not conversely
+
+**Thus, beans in the web context can access the beans in the parent context, but not conversely**
 
 ![alt text](images/handout/Screenshot_58.png "Screenshot_58.png")
 
@@ -3780,6 +3783,26 @@ public class WebInitializer implements WebApplicationInitializer {
 	- Base-class for all Spring MVC apps to implement for servlet configuration without `web.xml`
 
 ![alt text](images/handout/Screenshot_57.png "Screenshot_57.png")
+
+```java
+public class WebAppConfigInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+
+    @Override
+    protected Class<?>[] getRootConfigClasses() {
+        return new Class<?>[]{RootConfig.class};
+    }
+
+    @Override
+    protected Class<?>[] getServletConfigClasses() {
+        return new Class<?>[]{WebConfig.class};
+    }
+
+    @Override
+    protected String[] getServletMappings() {
+        return new String[]{"/"};
+    }
+}
+```
 
 - For Java configuration need also to extends `WebMvcConfigurerAdapter`
 
