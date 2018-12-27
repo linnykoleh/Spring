@@ -195,7 +195,7 @@ public class ComplexBeanImpl implements ComplexBean {
 </beans>
 ```
 
-![alt text](images/Screenshot_1.png "Screenshot_1")
+![alt text](images/qa/Screenshot_1.png "Screenshot_1")
 
 ### Collections
 
@@ -4450,7 +4450,7 @@ public CsrfTokenRepository repo() {
 
 # Spring Boot
 
-Start collect the project by [>> https://start.spring.io/](https://start.spring.io/)	
+Start collect the project with **spring initializr** by [>> https://start.spring.io/](https://start.spring.io/)	
 
  - Spring Boot is a set of preconfigured frameworks/technologies designed to reduce boilerplate configuration(infrastructure) 
 and provide a quick way to have a Spring web application up and running
@@ -4459,6 +4459,7 @@ by providing out of the box ready-to-use infrastructure beans
 
 - Provide common non-functional features
 	- embedded servers (Tomcat, Jetty, Undertow)
+	![alt text](images/qa/Screenshot_3.png)
 	- metrics
 	- health checks
 	- external configuration
@@ -4468,8 +4469,9 @@ by providing out of the box ready-to-use infrastructure beans
 	
 - Spring Boot uses sensible defaults, “opinions”, mostly based on the classpath contents.
   - For example
-	- Sets up a JPA Entity Manager Factory if a JPA implementation is on the classpath.
-  	- Creates a default Spring MVC setup, if Spring MVC is on the classpath.
+	- Sets up a `JPA Entity Manager Factory` if a JPA implementation is on the classpath.
+  	- Creates a default `Spring MVC` setup, if Spring MVC is on the classpath.
+  	
 - Everything can be overridden easily, but most of the time not needed
 
 ![alt text](images/web/boot/Screenshot_2.png)
@@ -4477,10 +4479,40 @@ by providing out of the box ready-to-use infrastructure beans
 ![alt text](images/web/boot/Screenshot_3.png)
 
 - Project must have as a parent the `spring-boot-starter-parent`
+
+```xml
+<parent>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-parent</artifactId>
+	<version>2.0.5.RELEASE</version>
+	<relativePath/> <!-- lookup parent from repository -->
+</parent>
+```
+
 - Spring Boot Starters
 	- Spring Boot starters are dependency descriptors for different technologies that can be used in Spring
 	  Boot applications. For example, if you want to use Apache Artemis for JMS messaging in your Spring Boot application, then you simply add the `spring-boot-starter-artemis` dependency to your
-	  application and rest assured that you have the appropriate dependencies to get you started using Artemis in your Spring Boot application.
+	  application and rest assured that you have the appropriate dependencies to get you started using `Artemis` in your Spring Boot application.
+	- Every starter dependency contains all necessary dependencies to start developing  
+		- starter-web
+			- `spring-boot-starter-json`
+			- `spring-boot-starter-tomcat`
+			- `hibernate-validator`
+			- `spring-web`
+			- `spring-web-mvc`
+			- ...
+		- starter-data-jpa
+			- `hibernate-core`	
+			- `hibernate-validator`
+			- `spring-aspects`	
+			- `jdbc`	
+			- `transaction`	
+			- ...	
+
+	![alt text](images/qa/Screenshot_4.png)
+	
+	![alt text](images/qa/Screenshot_5.png)
+			
 - Advantages of using Spring Boot
 	- Automatic configuration of “sensible defaults” reducing boilerplate configuration.
 	- A Spring Boot project can produce an executable stand-alone JAR-file.
@@ -4497,6 +4529,9 @@ by providing out of the box ready-to-use infrastructure beans
 	![alt text](images/handout/Screenshot_66.png) 	    	
     	- A Spring bean is to be created only if a certain dependency is available on the classpath. Use `@ConditionalOnClass` and supply a class contained in the dependency in question.
     	- A Spring bean is to be created only if there is no bean of a certain type or with a certain name created. Use `@ConditionalOnMissingBean` and specify name or type of bean to check.
+    	
+![alt text](images/qa/Screenshot_2.png)
+    	
 - Properties controlling the behavior of Spring Boot applications can be defined using:
 	- Property files
 	- YAML files
@@ -4728,7 +4763,7 @@ public class FooServiceTest {
 }
 ```
 
-### Monitoring
+### Monitoring using Spring Actuator
 
 ![alt text](images/web/boot/Screenshot_14.png)
 
@@ -4739,6 +4774,10 @@ public class FooServiceTest {
 ![alt text](images/web/boot/Screenshot_17.png)
 
 ![alt text](images/web/boot/Screenshot_18.png)
+
+- Example monitoring Spring Boot application using actuator and HAL 
+
+![alt text](images/qa/Screenshot_6.png)
 
 ![alt text](images/web/boot/Screenshot_19.png)
 
@@ -4867,6 +4906,24 @@ public void customize(ConfigurableEmbeddedServletContainer container) {
 
 ![alt text](images/handout/Screenshot_65.png)
 
+### CommandLineRunner
+
+This class also implements Spring’s `CommandLineRunner` interface. 
+`CommandLineRunner` is a simple Spring Boot interface with a run method. 
+Spring Boot will automatically call the run method of all beans implementing this interface after the application context has been loaded.
+
+```java
+@Component
+public class CommandLineAppStartupRunner implements CommandLineRunner {
+	
+    private static final Logger logger = LoggerFactory.getLogger(CommandLineAppStartupRunner.class);
+    
+    @Override
+    public void run(String...args) throws Exception {
+        logger.info("Application started with command-line arguments: {} . \n To kill this application, press Ctrl + C.", Arrays.toString(args));
+    }
+}
+```
 # Integration
 
 - Remoting and Web Services are ways of communicating between applications

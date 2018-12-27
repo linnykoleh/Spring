@@ -17,9 +17,13 @@ import java.util.List;
 @ImportResource("classpath*:simple-context.xml")
 public class SpringMicroservicesApplication {
 
-    @Autowired
     @Resource(name = "circus")
-    public List<String> list;
+    public final List<String> list;
+
+    @Autowired
+    public SpringMicroservicesApplication(List<String> list) {
+        this.list = list;
+    }
 
     @RequestMapping("/")
     public String message() {
