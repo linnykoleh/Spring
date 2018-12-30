@@ -1566,9 +1566,10 @@ public class TestCustomerController {
 	public void testSuccessfulFindAllCustomers() throws Exception {
 		when(service.findAllCustomers()).thenReturn(Arrays.asList(new Customer(), new Customer()));
 
-		mockMvc.perform(get("/customers")).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-				.andExpect(jsonPath("$", hasSize(2)));
+		mockMvc.perform(get("/customers"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(jsonPath("$", hasSize(2)));
 	}
 	//..
 }	
@@ -1658,6 +1659,9 @@ base code, by applying advices to specific join points, specified by pointcuts.
 
 ![alt text](images/handout/Screenshot_27.png "Screenshot_27")
 
+
+
+
 ## AOP Terminology
     
 ![alt text](images/handout/Screenshot_28.png "Screenshot_28")
@@ -1678,6 +1682,9 @@ base code, by applying advices to specific join points, specified by pointcuts.
     Pointcut expressions can be defined as arguments for Advice annotations or as arguments for the `@Pointcut` annotation. 
 - **Introduction** - declaring additional methods, fields, interfaces being implemented, annotations on behalf of another type.
 - **AOP proxy** - the object created by AOP to implement the aspect contracts.    
+- **Weaving** -  linking aspects with other application types or objects to create an advised object. 
+    This can be done at compile time (using the AspectJ compiler, for example), load time, or at runtime. 
+    Spring AOP, like other pure Java AOP frameworks, performs weaving at runtime.
     
 ![alt text](images/core_spring_in_detail/Screenshot_8.png "Screenshot_8")    
 
@@ -4746,9 +4753,22 @@ public class Application extends SpringBootServletInitializer {
     
 ```java
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {"app.port=9090"})
+@SpringBootTest(classes = Application.class, 
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, 
+    properties = {"app.port=9090"}
+)
 public class CtxControllerTest {
-...
+    
+    @LocalServerPort
+    private int port;
+    
+    @Test
+    public void integrationTestSpringBoot(){
+        TestRestTemplate testRestTemplate = new TestRestTemplate();
+        ResponseEntity<String> response = testRestTemplate.getForEntity(FOO_RESOURCE_URL + "/1", String.class);
+        
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+    }
 }
 ```
 
@@ -5280,12 +5300,146 @@ public void processMessage(String msg) {
 
 ![alt text](images/handout/Screenshot_107.png) 
 
-# Spring Web Services
+# Web Services
+
+# SOAP Messages
 
 - `SOAP` is an acronym for Simple Object Access Protocol. It is a protocol specification for exchanging structured information in the implementation of web services in computer networks
+- SOAP messages have a structure similar to JMS Messages: they have a header and a body that are enclosed in a special SOAP envelope that identifies the XML document as a SOAP message. 
+- SOAP message containing user information looks like the following XML snippet.
 
-- Here are the 3 steps of designing a Contract-first:
+![alt text](images/qa/Screenshot_7.png)  
+
+![alt text](images/qa/Screenshot_8.png) 
+
+- `Header` contains authentication or authorisation
+- `Body` contains requests
+
+### SOAP Request
+
+```xml
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+    <SOAP-ENV:Header/>
+    <SOAP-ENV:Body>
+        <ns2:GetCourseDetailsRequest xmlns:ns2="http://localhost:8080/courses" />
+        <ns2:course>
+            <ns2:id>1</ns2:id>
+        </ns2:GetCourseDetailsRequest>
+        </ns2:getCourseDetailsResponse>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
+
+### SOAP Response
+
+```xml
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+    <SOAP-ENV:Header/>
+    <SOAP-ENV:Body>
+        <ns2:getCourseDetailsResponse xmlns:ns2="http://localhost:8080/courses"/>
+            <ns2:course>
+                <ns2:id>1</ns2:id>
+                <ns2:name>Spring</ns2:name>
+                <ns2:description>10 Steps</ns2:description>
+            </ns2:course>
+        </ns2:getCourseDetailsResponse>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
+
+### SOAP Header
+
+```xml
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Header>
+        <wsse:Security
+            xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+            mustUnderstand="1">
+            <wsse:UsernameToken>
+                <wsse:Username>user</wsse:Username>
+                <wsse:Password>password</wsse:Password>
+            </wsse:UsernameToken>
+        </wsse:Security>
+    </Header>
+    <Body>
+        <GetCourseDetailsRequest xmlns="http://localhost:8080/courses"
+            <id>1</id>
+        </GetCourseDetailsRequest>
+    </Body> 
+</Envelope>   
+```
+
+### WSDL
+
+- WSDL is often used in combination with SOAP and XML Schema to provide web services over the Internet
+
+![alt text](images/integration/Screenshot_2.png)  
+
+![alt text](images/qa/Screenshot_9.png)  
+
+- WSDL (Web Services Description Language) describes your service and its operations - what is the service called, which methods does it offer, 
+  what kind of in parameters and return values do these methods have?
+
+```xml
+<definitions name = "HelloService"
+   targetNamespace = "http://www.examples.com/wsdl/HelloService.wsdl"
+   xmlns = "http://schemas.xmlsoap.org/wsdl/"
+   xmlns:soap = "http://schemas.xmlsoap.org/wsdl/soap/"
+   xmlns:tns = "http://www.examples.com/wsdl/HelloService.wsdl"
+   xmlns:xsd = "http://www.w3.org/2001/XMLSchema">
+ 
+   <message name = "SayHelloRequest">
+      <part name = "firstName" type = "xsd:string"/>
+   </message>
 	
+   <message name = "SayHelloResponse">
+      <part name = "greeting" type = "xsd:string"/>
+   </message>
+
+   <portType name = "Hello_PortType">
+      <operation name = "sayHello">
+         <input message = "tns:SayHelloRequest"/>
+         <output message = "tns:SayHelloResponse"/>
+      </operation>
+   </portType>
+
+   <binding name = "Hello_Binding" type = "tns:Hello_PortType">
+      <soap:binding style = "rpc"
+         transport = "http://schemas.xmlsoap.org/soap/http"/>
+      <operation name = "sayHello">
+         <soap:operation soapAction = "sayHello"/>
+         <input>
+            <soap:body
+               encodingStyle = "http://schemas.xmlsoap.org/soap/encoding/"
+               namespace = "urn:examples:helloservice"
+               use = "encoded"/>
+         </input>
+		
+         <output>
+            <soap:body
+               encodingStyle = "http://schemas.xmlsoap.org/soap/encoding/"
+               namespace = "urn:examples:helloservice"
+               use = "encoded"/>
+         </output>
+      </operation>
+   </binding>
+
+   <service name = "Hello_Service">
+      <documentation>WSDL File for HelloService</documentation>
+      <port binding = "tns:Hello_Binding" name = "Hello_Port">
+         <soap:address
+            location = "http://www.examples.com/SayHello/" />
+      </port>
+   </service>
+</definitions
+```
+
+### XSD Contract-first approach
+
+- XSD (Xml Schema Definition) describes the static structure of the complex data types being exchanged by those service methods. 
+  It describes the types, their fields, any restriction on those fields (like max length or a regex pattern) and so forth.
+- XSD schema defines the web service domain and the operations that can be performed using web services
+
 	- create sample messages. A simple service user message could look like this:
 	```xml
 	<userMessage xmlns="http://ws-boot.com/schemas/um" active="true">
@@ -5296,9 +5450,7 @@ public void processMessage(String msg) {
 	
 	- define the XSD schema the service message must comply to
 	```xml
-	<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-			   elementFormDefault="qualified"
-			   targetNamespace="http://ws-boot.com/schemas/um">
+	<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"elementFormDefault="qualified" targetNamespace="http://ws-boot.com/schemas/um">
 		<xs:complexType name="userMessage">
 			<xs:sequence>
 				<xs:element name="email" type="xs:string"/>
@@ -5319,39 +5471,56 @@ public void processMessage(String msg) {
 	   </xs:simpleType>
 	</xs:element>
 	```
+### SOAP request example
 
-## SOAP Messages
+![alt text](images/qa/Screenshot_10.png)  
 
-- SOAP messages have a structure similar to JMS Messages: they have a header and a body that are enclosed in a special SOAP envelope that identifies the XML document as a SOAP message. 
-- SOAP message containing user information looks like the following XML snippet.
+```java
+@PayloadRoot(namespace = "http://localhost:8080/courses", localPart = "GetCourseDetailsRequest")
+@ResponsePayload
+public GetCourseDetailsResponse processCourseDetailsRequest(@RequestPayload GetCourseDetailsRequest request) {
 
-```xml
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                  xmlns:um="http://ws-boot.com/schemas/um">
-<soapenv:Header/>
-<soapenv:Body>
-    <um:getUserRequest>
-        <um:email>John.Cusack@pet.com</um:email>
-    </um:getUserRequest>
-</soapenv:Body>
-</soapenv:Envelope>
+    Course course = service.findById(request.getId());
+
+    if (course == null)
+        throw new CourseNotFoundException("Invalid Course Id " + request.getId());
+
+    return mapCourseDetails(course);
+}
 ```
 
-![alt text](images/integration/Screenshot_2.png)  
-
-- The XSD schema defines the web service domain and the operations that can be performed using web services
-- WSDL defines a network interface that consists of endpoints that get messages and then sometimes reply with messages. 
-- WSDL describes the endpoints, and the request and reply messages
+### SOAP Processing
 
 ![alt text](images/pet-sitter/Screenshot_23.png)  
 
-- Generating Java Code with XJC
+- Generating Java objects with XJC
 	- The JDK comes with a utility executable called `xjc`
 		- `xjc -d src/main/jaxb -p com.ps.ws src/main/resources/sample/userMessage.xsd`	
 	- Intellij IDEA have the capability of generating JAVA code from a built-in XSD schema
 		- select the `userMessages.xsd` file and right click
 		- on the menu that appears, there is a `WebServices` option
 		- click on it, and it will expand. In the submenu there is a `Generate Java Code from XML Schema using JAXB`
+- Generating Java objects with JAXB Plugin
+```xml
+<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>jaxb2-maven-plugin</artifactId>
+    <version>1.6</version>
+    <executions>
+        <execution>
+            <id>xjc</id>
+            <goals>
+                <goal>xjc</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <schemaDirectory>${project.basedir}/src/main/resources</schemaDirectory>
+        <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
+        <clearOutputDir>false</clearOutputDir>
+    </configuration>
+</plugin>
+```
 
 ![alt text](images/pet-sitter/Screenshot_24.png)  
 		

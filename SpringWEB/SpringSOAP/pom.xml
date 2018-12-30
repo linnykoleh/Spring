@@ -5,15 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.learning.linnyk</groupId>
-    <artifactId>SpringWEB</artifactId>
+    <artifactId>SpringSOAP</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>SpringMVC</module>
-        <module>SpringSecurity</module>
-        <module>SpringBoot</module>
-        <module>SpringSOAP</module>
+        <module>soap-web-services</module>
     </modules>
 
 </project>
