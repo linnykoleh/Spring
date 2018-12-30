@@ -5473,7 +5473,20 @@ public void processMessage(String msg) {
 	```
 ### SOAP request example
 
-![alt text](images/qa/Screenshot_10.png)  
+- Post request via Postman
+POST http://localhost:8080/ws/
+
+```
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:hs="http://localhost:8080/courses">
+ <soapenv:Body>
+     <hs:GetCourseDetailsRequest>
+        <hs:id>1</hs:id>
+     </hs:GetCourseDetailsRequest>
+ </soapenv:Body>
+</soapenv:Envelope>
+```
+
+- Java Endpoint
 
 ```java
 @PayloadRoot(namespace = "http://localhost:8080/courses", localPart = "GetCourseDetailsRequest")
@@ -5487,6 +5500,23 @@ public GetCourseDetailsResponse processCourseDetailsRequest(@RequestPayload GetC
 
     return mapCourseDetails(course);
 }
+```
+
+- SOAP response
+
+```
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Header/>
+    <SOAP-ENV:Body>
+        <ns2:GetCourseDetailsResponse xmlns:ns2="http://localhost:8080/courses">
+            <ns2:CourseDetails>
+                <ns2:id>1</ns2:id>
+                <ns2:name>Spring</ns2:name>
+                <ns2:description>10 Steps</ns2:description>
+            </ns2:CourseDetails>
+        </ns2:GetCourseDetailsResponse>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
 ```
 
 ### SOAP Processing
