@@ -5558,6 +5558,8 @@ public GetCourseDetailsResponse processCourseDetailsRequest(@RequestPayload GetC
 
 # REST
 
+[>> Architectural Styles and the Design of Network-based Software Architectures by Roy Thomas Fielding](https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm)  
+
 - `REpresentational State Transfer`
 - REST is a lightweight alternative to mechanisms like `RPC (Remote Procedure Calls)` and `Web Services (SOAP, WSDL, etc)`
 - REST is an architecture style for designing networked (distributed) applications
