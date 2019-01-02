@@ -3486,6 +3486,10 @@ int setPageCount(int pageCount, String title);
 
 ![alt text](images/pet-sitter/Screenshot_14.png "Screenshot_14")
 
+- Request life cycle
+
+![alt text](images/Screenshot_1.png "Screenshot_1")
+
 ### DispatcherServlet
 
   - The central piece of Spring Web MVC is the `DispatcherServlet` class, which is the entry point for every Spring Web application.
