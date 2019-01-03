@@ -1,8 +1,8 @@
-package com.spring3.mvc.linnyk.service;
+package com.mvc.session.linnyk.service;
 
 import java.util.List;
 
-import com.spring3.mvc.linnyk.model.Activity;
+import com.mvc.session.linnyk.model.Activity;
 
 public interface ExerciseService {
 

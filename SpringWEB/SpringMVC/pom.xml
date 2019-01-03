@@ -17,6 +17,7 @@
     <modules>
         <module>Spring3MVC</module>
         <module>Spring4MVC</module>
+        <module>SpringSession</module>
     </modules>
 
     <build>

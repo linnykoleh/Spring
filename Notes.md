@@ -3701,6 +3701,116 @@ public ModelAndView passParametersWithModelAndView() {
 
 ![alt text](images/handout/Screenshot_56.png "Screenshot_56.png")
 
+### SessionAttributes
+
+- Configure controller 
+	- add `@SessionAttributes()`
+	- add `@ModelAttribute()`
+
+```java
+@RestController
+@SessionAttributes("visitor")
+public class TodoListController {
+
+	private final TodoListService todoListService;
+
+	@Autowired
+	public TodoListController(TodoListService todoListService) {
+		this.todoListService = todoListService;
+	}
+
+	@ModelAttribute("visitor")
+	public Visitor getVisitor(HttpServletRequest request) {
+		return new Visitor(request.getSession().getId());
+	}
+
+	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	public Todo addTodo(@ModelAttribute("visitor") Visitor visitor, @RequestBody Todo todoToAdd) {
+		final Todo todo = new Todo(todoToAdd.getName(), todoToAdd.getDescription(), visitor);
+		todoListService.addToList(todo);
+		return todo;
+	}
+
+	@RequestMapping(value = "/get", method = RequestMethod.GET)
+	public List<Todo> getAllTodos() {
+		return todoListService.findAllTodos();
+	}
+}
+
+```
+
+- Configure service
+	- Need to has scope `@Scope(value = "session", proxyMode = ScopedProxyMode.INTERFACES)`
+
+```java
+@Service
+@Scope(value = "session", proxyMode = ScopedProxyMode.INTERFACES)
+public class TodoListServiceImpl implements TodoListService {
+
+	private List<Todo> todos = new CopyOnWriteArrayList<>();
+
+	@Override
+	public void addToList(Todo todo) {
+		todos.add(todo);
+	}
+
+	@Override
+	public List<Todo> findAllTodos() {
+		return new ArrayList<>(todos);
+	}
+
+}
+```
+
+- **For different sessions will be injected  different `TodoListServiceImpl` class**
+- Result of `findAllTodos` for session id = 7946F5947D2A8A1F63C9EA30114112B1
+
+```json
+[
+  {
+    "name": "my todo",
+    "description": "my description",
+    "visitor": {
+      "address": "7946F5947D2A8A1F63C9EA30114112B1"
+    }
+  },
+  {
+    "name": "my todo 1",
+    "description": "my description 1",
+    "visitor": {
+      "address": "7946F5947D2A8A1F63C9EA30114112B1"
+    }
+  }
+]
+```
+
+- Result of `findAllTodos` for session id = BB9D159075F2158176856A5A2C53F778
+```json
+[
+    {
+        "name": "my todo 1",
+        "description": "my description 1",
+        "visitor": {
+            "address": "BB9D159075F2158176856A5A2C53F778"
+        }
+    },
+    {
+        "name": "my todo",
+        "description": "my description",
+        "visitor": {
+            "address": "BB9D159075F2158176856A5A2C53F778"
+        }
+    },
+    {
+        "name": "my todo 2",
+        "description": "my description 2",
+        "visitor": {
+            "address": "BB9D159075F2158176856A5A2C53F778"
+        }
+    }
+]
+```
+
 ## Spring MVC 
 
 #### Spring MVC XML Configuration

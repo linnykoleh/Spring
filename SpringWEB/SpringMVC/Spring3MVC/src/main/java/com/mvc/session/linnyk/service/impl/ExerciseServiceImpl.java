@@ -1,12 +1,12 @@
-package com.spring3.mvc.linnyk.service.impl;
+package com.mvc.session.linnyk.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.spring3.mvc.linnyk.model.Activity;
-import com.spring3.mvc.linnyk.service.ExerciseService;
+import com.mvc.session.linnyk.model.Activity;
+import com.mvc.session.linnyk.service.ExerciseService;
 
 @Service
 public class ExerciseServiceImpl implements ExerciseService {

@@ -1,4 +1,4 @@
-package com.spring3.mvc.linnyk.controllers;
+package com.mvc.session.linnyk.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

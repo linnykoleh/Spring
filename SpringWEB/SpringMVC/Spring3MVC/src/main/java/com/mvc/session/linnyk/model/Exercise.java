@@ -1,4 +1,4 @@
-package com.spring3.mvc.linnyk.model;
+package com.mvc.session.linnyk.model;
 
 public class Exercise {
 

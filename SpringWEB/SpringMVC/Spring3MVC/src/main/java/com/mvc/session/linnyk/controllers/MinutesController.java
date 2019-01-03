@@ -1,4 +1,4 @@
-package com.spring3.mvc.linnyk.controllers;
+package com.mvc.session.linnyk.controllers;
 
 import java.util.List;
 
@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.spring3.mvc.linnyk.model.Activity;
-import com.spring3.mvc.linnyk.model.Exercise;
-import com.spring3.mvc.linnyk.service.ExerciseService;
+import com.mvc.session.linnyk.model.Activity;
+import com.mvc.session.linnyk.model.Exercise;
+import com.mvc.session.linnyk.service.ExerciseService;
 
 @Controller
 public class MinutesController {
