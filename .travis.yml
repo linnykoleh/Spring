@@ -1,3 +1,3 @@
 language: java
 sudo: false # faster builds
-install: mvn clean install -DskipTests=
+install: mvn clean install -DskipTests
