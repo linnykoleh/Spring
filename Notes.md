@@ -3811,7 +3811,18 @@ public class TodoListServiceImpl implements TodoListService {
 ]
 ```
 
-## Spring MVC 
+#### Parameter types for a @Controller method
+
+![alt text](images/web/mvc/Screenshot.png "Screenshot.png")
+
+#### Annotations might be used on a @Controller method parameter
+
+![alt text](images/web/mvc/Screenshot_1.png "Screenshot_1.png")
+![alt text](images/web/mvc/Screenshot_2.png "Screenshot_2.png")
+
+#### The valid return types of a @Controller method
+
+![alt text](images/web/mvc/Screenshot_3.png "Screenshot_3.png")
 
 #### Spring MVC XML Configuration
 
