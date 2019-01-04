@@ -1,3 +1,6 @@
 language: java
 sudo: false # faster builds
 install: mvn clean install -DskipTests
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
