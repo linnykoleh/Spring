@@ -2885,6 +2885,7 @@ public interface RowMapper<T> {
 
 #### RowCallbackHandler
 
+- It extracts values from each row of a ResultSet.
 - Spring provides a simpler RowCallbackHandler interface when there is **no return object**
   - Streaming rows to a file
   - Converting rows to XML
