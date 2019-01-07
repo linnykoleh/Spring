@@ -718,8 +718,8 @@ public enum ScopedProxyMode {
 
 #### Lazy and eager beans
 
-- **Singleton** Spring beans in an application context are `eagerly` initialized by default, as the application context is created.
-- **Prototype** scoped bean is typically created `lazily` when requested. 
+- **Singleton** scoped beans in an application context are `eagerly` initialized by default, as the application context is created.
+- **Prototype** scoped bean are typically created `lazily` when requested. 
     - An exception is when a prototype scoped bean is a dependency of a singleton scoped bean, 
       in which case the prototype scoped bean will be `eagerly` initialized.
 
@@ -1409,6 +1409,15 @@ public final class FooTest  {
     public void test() {
     	
     }
+}
+```
+
+or
+
+```java
+@ContextConfiguration
+public class MyTestClass extends AbstractJUnit4SpringContextTests {
+
 }
 ```
 
@@ -2749,6 +2758,8 @@ public class ProgramaticUserService implements UserService {
  - `@Transactional (isolation=Isolation.SERIALIZABLE)`
  - Prevents phantom reads
 
+![alt text](images/Screenshot_2.png "Screenshot_2")
+
 ## Testing transactional methods
 
 - If a test-method annotated with `@Test` is also annotated with `@Transactional`, then the test-method will be executed in a transaction. <br />
@@ -4046,7 +4057,8 @@ public class TopSpendersReportGenerator extends HttpServlet {
 6. The `Access Decision Manager` polls a list of voters to return a decision regarding the rights of the authenticated user to system resources.
 7. Access is granted or denied to the resource based on the user rights and the resource attributes.
 	
-- To configure Spring Security, the `web.xml` must be modified to include the security filter	
+- To configure Spring Security, the `web.xml` must be modified to include the security filter
+    - DelegatingFilterProxy - Spring's DelegatingFilterProxy provides the link between web.xml and the application context.
 
 ```xml
 <filter>
@@ -4394,6 +4406,7 @@ public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 #### @Secured
 
 - Configuration class annotate with `@EnableGlobalMethodSecurity(securedEnabled  =  true)`
+- In xml `<global-method-security pre-post-annotations="enabled"/>`
 - Methods annotate with annotation `@Secured`
 - The `@Secured` annotation is a legacy Spring Security 2 annotation that can be used to configured method security.
 	
@@ -4696,7 +4709,8 @@ public class Application {
 ![alt text](images/handout/Screenshot_63.png)
 
 - If the `war` we want to produce a deployable web archive that can be deployed on any application server and since the project does not contain a `web.xml` file, 
-it is mandatory to define a class extending `SpringBootServletInitializer` and override its `configure` method.
+    - to define a class extending `SpringBootServletInitializer` and override its `configure` method.
+    - <packaging>war</packaging> in pom.xml
 
 ```java
 @RestController
