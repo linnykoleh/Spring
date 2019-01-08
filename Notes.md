@@ -562,8 +562,9 @@ public class TriangleLifecycle implements InitializingBean {
 
 - `<context:annotation-config />` 
 	- Enables scanning of all the classes in the project for annotations, so using it on large applications might make them slow
-	- Activates various annotations to be detected in bean classes: Spring's @Required and
-      @Autowired, as well as JSR 250's `@PostConstruct`, `@PreDestroy` and `@Resource`
+	- Activates various annotations to be detected in bean classes: 
+	    - Spring's `@Required` and `@Autowired`
+	    - JSR 250's `@PostConstruct`, `@PreDestroy` and `@Resource`
     - JPA's `@PersistenceContext` and `@PersistenceUnit` (if available).
     - Register post-processors:
      	- `AutowiredAnnotationBeanPostProcessor`
@@ -727,6 +728,7 @@ public enum ScopedProxyMode {
 - **Prototype** scoped bean are typically created `lazily` when requested. 
     - An exception is when a prototype scoped bean is a dependency of a singleton scoped bean, 
       in which case the prototype scoped bean will be `eagerly` initialized.
+- As a rule, use the prototype scope for all stateful beans and the singleton scope for stateless beans
 
 #### Additional ways to create app context
 
@@ -793,10 +795,23 @@ public enum ScopedProxyMode {
           than one constructor and autowiring is desired, at least one of the constructors need to be annotated
           with `@Autowired` in order to give the container a hint on which constructor to use.
         - Autowire by type then by name  
+        - Typed Map collections can be autowired as long as the expected key type is String.
+        ```java
+         @Autowired
+        public void setMovieCatalogs(Map<String, MovieCatalog> movieCatalogs) {
+            this.movieCatalogs = movieCatalogs;
+        }
+        ```
     - `@Inject`: equivalent annotation to `@Autowired` from javax.inject package. Use with `@Qualifier` from javax.inject to specify name of the bean to inject. 
     - `@Resource`: equivalent annotation to `@Autowired` from javax.annotation package.
         - Autowire by name then by type
     - `@Required`: Spring annotation that marks a dependency as mandatory, used on setters.
+    ```java
+    @Required
+    public void setMovieFinder(MovieFinder movieFinder) {
+        this.movieFinder = movieFinder;
+    }
+    ```
     - `@Lazy`: dependency will be injected the first time it is used.    
  
 ```java
@@ -2647,7 +2662,10 @@ The `@EnableTransactionManagement` is more flexible; it looks for a bean of any 
 - Proxy implements the following behavior
 	- Transaction started before entering the method
 	- Commit at the end of the method
-	- Rollback if method throws a **RuntimeException**
+	- Rollback if method throws 
+	    - `java.lang.RuntimeException`
+	    - `unchecked exception`
+        - `java.lang.Error`
 - By default, a transaction is rolled back if a `RuntimeException` has been thrown	
 - `@Transactional("myOtherTransactionManager")` - runs a transaction with specific transaction managers
 
@@ -3395,6 +3413,7 @@ private EntityManager entityManager;
  	- `JpaRepository` for JPA
  - Repositories can be injected by type of their interface
  - Repository is an interface (not a class!)
+ - Use JDK proxy
  
 ```java
 public interface PersonRepository extends Repository<Person, Long> {
@@ -3476,6 +3495,10 @@ public class MongoDbConfig {...}
 ![alt text](images/db/Screenshot_17.png "Screenshot_17")
 
 ## Query Annotation
+
+- Queries annotated to the `@Query` will take precedence over queries defined using `@NamedQuery` or named queries declared in `orm.xml`.
+- `@Query` annotation allows to execute native queries by setting the 'nativeQuery' flag to true
+- Currently don't support execution of pagination or dynamic sorting for native queries as we'd have to manipulate the actual query declared and we cannot do this reliably for native SQL
 
 ![alt text](images/db/Screenshot_18.png "Screenshot_18")
 
@@ -3697,6 +3720,7 @@ public String list(Model model) {
 - Url `http://localhost:8080/mvc-basic/showUser?userId=105`
 handled by a method that has a parameter annotated with `@RequestParam` because the request is parametrized.
 - Can specify parameter from http request to be injected as method parameter
+- Can specify parameter weather required or not - `boolean required() default true;`
 
 
 ```java
@@ -4175,7 +4199,8 @@ public class TopSpendersReportGenerator extends HttpServlet {
 	- `<intercept-url>` element has the following attributes:
     	- **access** - Access attributes, commonly role names, specifying the user(s) that has access
         	- **filters** - Omitted or having the value `none`. This will cause any matching request to bypass the Spring Security filter chain entirely.
-        	- **method** - HTTP method used with URL pattern and, optionally, servlet path to match requests. If omitted all HTTP methods will match.
+        	- **method** - HTTP method used with URL pattern and, optionally, servlet path to match requests. If omitted all HTTP methods will match. 
+        	    - Examples of its values are `DELETE`, `POST`
         	- **pattern** - URL path pattern for which the Spring Security filter chain will be applied.
         	- **request-matcher-ref** - Reference to RequestMatcher bean used to determine if this <intercept-url> will be used.
         	- **requires-channel** - Possible values are “http”, “https” and “any”. The first two are for access over HTTP and
@@ -5038,6 +5063,7 @@ public class FooServiceTest {
 
 ### Logging
 
+- **Spring Boot uses Commons Logging for all internal logging but leaves the underlying log implementation open**
 - As per default, messages written with the ERROR, WARN and INFO levels will be output in a Spring Boot application. To enable DEBUG or TRACE logging for the entire application, 
   use the `--debug` or `--trace` flags or set the properties `debug=true` or `trace=true` in the `application.properties` file.
 - By default `Logback` over `SLF4J`
