@@ -442,6 +442,11 @@ modify bean meta-data. A bean factory post processor is only applied to the meta
 in the same container in which it is defined in.
      - Example:
           - `PropertySourcesPlaceholderConfigurer` - allows for injection of values from the current Spring environment the property sources of this environment.
+		```java
+		  public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerSupport implements EnvironmentAware {
+		  
+		  }
+		```
           - `DeprecatedBeanWarner` - logs warnings about beans which implementation class is annotated with the `@Deprecated` annotation.
           - `PropertySourcesPlaceholderConfigurer` - is a `BeanFactoryPostProcessor` that resolves property
              placeholders, on the ${PROPERTY_NAME} format, in Spring bean properties and Spring bean
@@ -1556,6 +1561,30 @@ public class MockPetServiceTest {
     - final classes and final methods; sometimes there is need for an insurance that the code will not be misused or to make sure that an object is constructed correctly
     - private methods and fields
     
+### Spring Boot's property sources
+
+Spring Boot uses a very particular `PropertySource` order that is designed to allow sensible overriding of values. 
+
+Properties are considered in the following order:
+- Devtools global settings properties on your home directory (~/.spring-boot-devtools.properties when devtools is active).
+- `@TestPropertySource` annotations on your tests.
+- `@SpringBootTest#properties` annotation attribute on your tests.
+- Command line arguments.
+- Properties from `SPRING_APPLICATION_JSON` (inline JSON embedded in an environment variable or system property).
+- `ServletConfig` init parameters.
+- `ServletContext` init parameters.
+- JNDI attributes from `java:comp/env`.
+- Java System properties (`System.getProperties()`).
+- OS environment variables.
+- A `RandomValuePropertySource` that has properties only in random.*.
+- Profile-specific application properties outside of your packaged jar (`application-{profile}.properties` and YAML variants).
+- Profile-specific application properties packaged inside your jar (`application-{profile}.properties` and YAML variants).
+- Application properties outside of your packaged jar (`application.properties` and YAML variants).
+- Application properties packaged inside your jar (`application.properties` and YAML variants).
+- `@PropertySource` annotations on your `@Configuration` classes.
+- Default properties (specified by setting `SpringApplication.setDefaultProperties`).
+
+    
 ## Testing Rest with Spring boot
 
 - Can use `SpringRunner` as an alternative to the `SpringJUnit4ClassRunner`
@@ -2627,10 +2656,31 @@ The `@EnableTransactionManagement` is more flexible; it looks for a bean of any 
 
 - `PlatformTransactionManager` is the base interface for all transaction managers that can be used in
   the Spring framework’s transaction infrastructure.
-    - PlatformTransactionManager interface contain the following methods:
-        - void commit(TransactionStatus)
-        - void rollback(TransactionStatus)
-        - TransactionStatus getTransaction(TransactionDefinition)
+    - `PlatformTransactionManager` interface contain the following methods:
+        - void `commit`(TransactionStatus)
+        - void `rollback`(TransactionStatus)
+        - TransactionStatus `getTransaction`(TransactionDefinition)
+
+### Using the PlatformTransactionManager
+
+- The transaction name can be explicitly set only programmatically.
+
+```java
+DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+// explicitly setting the transaction name is something that can only be done programmatically
+def.setName("SomeTxName");
+def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+
+TransactionStatus status = txManager.getTransaction(def);
+try {
+    // execute your business logic here
+}
+catch (MyException ex) {
+    txManager.rollback(status);
+    throw ex;
+}
+txManager.commit(status);
+```
 
 ### Programmatic Transactions
 
@@ -2678,7 +2728,8 @@ public class ProgramaticUserService implements UserService {
   an application in order to enable annotation-driven transaction management using the `@Transactional` annotation.
     - Components registered when the `@EnableTransactionManagement` annotation is used are:
         - `TransactionInterceptor`. <br/>
-          Intercepts calls to `@Transactional` methods creating new transactions as necessary etc.
+          	- Intercepts calls to `@Transactional` methods creating new transactions as necessary etc.
+          	- Spring's declarative transaction uses the `TransactionInterceptor` class in its AOP proxies in applying transactional advice.
         - A JDK Proxy or AspectJ advice. <br/>
           This advice intercepts methods annotated with `@Transactional` (or methods that are located in a class annotated with `@Transactional`).  
     - `@EnableTransactionManagement` annotation have the following three optional elements:      
@@ -4076,27 +4127,6 @@ public class TopSpendersReportGenerator extends HttpServlet {
 - `<form-login ../>` - configuration element is used to define the request URL for the login form where the user can provide its credentials.
 - `<logout ../> ` - configuration element is used to define the request URL for the logout form.
 - `<intercept-url …/>` - The paths defined as values for the pattern attribute are pieces of URLs defined 
-	- `<intercept-url>` element in Spring Security 5 XML configuration is used to specify an
-      URL pattern in the application and information deciding who will be able to access the resource(s) which URLs match the URL pattern.
-    - `<intercept-url>` element has the following attributes:
-    	- **access** - Access attributes, commonly role names, specifying the user(s) that has access
-      	- **filters** - Omitted or having the value “none”. In the latter case the Spring Security filter chain for the URL pattern will be bypassed.
-      	- **method** - HTTP method used with URL pattern and, optionally, servlet path to match requests. If omitted all HTTP methods will match.
-      	- **pattern** - URL path pattern for which the Spring Security filter chain will be applied.
-      	- **request-matcher-ref** - Reference to RequestMatcher bean used to determine if this <intercept-url> will be used.
-      	- **requires-channel** - Possible values are “http”, “https” and “any”. The first two are for access over HTTP and
-      		HTTPS respectively. Omitting this attribute or using the value “any” matches both HTTP and HTTPS.
-      	- **servlet-path** - Servlet path used in combination with method and pattern to match requests. Optional.  
-    - Multiple `<intercept-url>` elements may be defined and they will be evaluated in the order in which they are defined. When an `<intercept-url>` element with a matching pattern is found, evaluation
-      stops. It is therefore recommended to define more `<intercept-url>` elements with more specific pattern earlier and more general patterns later.  	
-    - There are two wildcards that can be used in URL patterns:
-    	- #### * <br/>
-    	Matches any path on the level at which the wildcard occur.  <br/>
-        Example: /services/* matches /services/users and /services/orders but not /services/orders/123/items.	
-        - #### ** <br/>
-        Matches any path on the level at the wildcard occurs and all levels below. If only /** or ** then will match any request.  <br/>
-        Example: /services/** matches /services, /services/, /services/users and /services/orders and also /services/orders/123/items etc.
-     
 - `mvcMatchers` API is newer than the `antMatchers` API.
 - ` <csrf disabled="true"/>` - using CSFR tokens in Spring forms to prevent cross-site request forgery
 - `authentication-failure-url` - is used to define where the user should be redirected when there is an authentication failure
@@ -4116,14 +4146,40 @@ public class TopSpendersReportGenerator extends HttpServlet {
 ```
 
         
-#### intercept-url 	 
+### intercept-url 	 
 
+- One single `<intercept-url>` element in Spring Security 5 XML configuration is used to specify an
+  URL pattern in the application and information deciding who will be able to access the resource(s)
+  which URLs match the URL pattern.
+- `<intercept-url>` element in Spring Security 5 XML configuration is used to specify an 
+	URL pattern in the application and information deciding who will be able to access the resource(s) which URLs match the URL pattern.
+	- `<intercept-url>` element has the following attributes:
+    	- **access** - Access attributes, commonly role names, specifying the user(s) that has access
+        	- **filters** - Omitted or having the value `none`. This will cause any matching request to bypass the Spring Security filter chain entirely.
+        	- **method** - HTTP method used with URL pattern and, optionally, servlet path to match requests. If omitted all HTTP methods will match.
+        	- **pattern** - URL path pattern for which the Spring Security filter chain will be applied.
+        	- **request-matcher-ref** - Reference to RequestMatcher bean used to determine if this <intercept-url> will be used.
+        	- **requires-channel** - Possible values are “http”, “https” and “any”. The first two are for access over HTTP and
+        		HTTPS respectively. Omitting this attribute or using the value “any” matches both HTTP and HTTPS.
+        	- **servlet-path** - Servlet path used in combination with method and pattern to match requests. Optional.  
+      	- Multiple `<intercept-url>` elements may be defined and they will be evaluated in the order in which they are defined. When an `<intercept-url>` element with a matching pattern is found, evaluation
+        stops. It is therefore recommended to define more `<intercept-url>` elements with more specific pattern earlier and more general patterns later.  	
+		- There are two wildcards that can be used in URL patterns:
+      		- #### * <br/>
+			Matches any path on the level at which the wildcard occur.  <br/>
+          	Example: /services/* matches /services/users and /services/orders but not /services/orders/123/items.	
+            - #### ** <br/>
+			Matches any path on the level at the wildcard occurs and all levels below. If only /** or ** then will match any request.  <br/>
+			Example: /services/** matches /services, /services/, /services/users and /services/orders and also /services/orders/123/items etc.
+       
+ 
 ```xml
 <beans:beans  ...>
         <http>
               <intercept-url pattern="/users/edit" access="ROLE_ADMIN"/>
               <intercept-url pattern="/users/list" access="ROLE_USER"/>
               <intercept-url pattern="/users/**" access="IS_AUTHENTICATED_FULLY"/>
+              <intercept-url pattern="/**" access="ROLE_USER" filters="none" />
         </http>
 </beans:beans> 
 ```
@@ -4366,6 +4422,22 @@ hash("hello" + "bv5PehSMfV11Cd") = d1d3ec2e6f20fd420d50e2642992841d8338a314b8ea1
 ```
 
 ![alt text](images/handout/Screenshot_75.png)
+
+### Filter Ordering
+
+The order that filters are defined in the chain is very important. Irrespective of which filters you are actually using, the order should be as follows:
+
+- `ChannelProcessingFilter`, because it might need to redirect to a different protocol
+- `SecurityContextPersistenceFilter`, so a SecurityContext can be set up in the SecurityContextHolder at the beginning of a web request, and any changes to the SecurityContext can be copied to the HttpSession when the web request ends (ready for use with the next web request)
+- `ConcurrentSessionFilter`, because it uses the SecurityContextHolder functionality and needs to update the SessionRegistry to reflect ongoing requests from the principal
+- Authentication processing mechanisms - `UsernamePasswordAuthenticationFilter`, `CasAuthenticationFilter`, `BasicAuthenticationFilter` etc - so that the `SecurityContextHolder` can be modified to contain a valid Authentication request token
+- The `SecurityContextHolderAwareRequestFilter`, if you are using it to install a Spring Security aware HttpServletRequestWrapper into your servlet container
+- The `JaasApiIntegrationFilter`, if a `JaasAuthenticationToken` is in the SecurityContextHolder this will process the FilterChain as the Subject in the JaasAuthenticationToken
+- `RememberMeAuthenticationFilter`, so that if no earlier authentication processing mechanism updated the SecurityContextHolder, and the request presents a cookie that enables remember-me services to take place, a suitable remembered Authentication object will be put there
+- `AnonymousAuthenticationFilter`, so that if no earlier authentication processing mechanism updated the SecurityContextHolder, an anonymous Authentication object will be put there
+- `ExceptionTranslationFilter`, to catch any Spring Security exceptions so that either an HTTP error response can be returned or an appropriate AuthenticationEntryPoint can be launched
+- `FilterSecurityInterceptor`, to protect web URIs and raise exceptions when access is denied
+
 
 #### Login and Logout
 
