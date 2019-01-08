@@ -875,7 +875,9 @@ private UserService userService;
 
 #### @Qualifier at Bean Definitions
 
-- Qualifiers can also be applied on bean definitions by annotating a method annotated with `@Bean` in a configuration class with `@Qualifier` and supplying a value in the `@Qualifier` annotation.
+- `@Qualifier` can also be applied on bean definitions by annotating a method annotated with `@Bean` in a configuration class with `@Qualifier` and supplying a value in the `@Qualifier` annotation.
+- `@Qualifier` annotation can also be used on types and fields.
+- `@Qualifier` annotation can be used on individual constructor arguments.
 
 ```java
 @Component
@@ -1373,7 +1375,7 @@ public class ConfigurationClass {
 
 ![alt text](images/handout/Screenshot_4.png "Screenshot_4")  
 
-# Testing Spring Applications
+# Spring Test 
 
 - Unit Testing
 	- Tests one unit of functionality
@@ -1399,6 +1401,8 @@ public class ConfigurationClass {
   
 - To customize property values in a test, the `@TestPropertySource` annotation allows using either a test-specific property file or customizing individual property values.  
 - `ReflectionTestUtils` make it possible to access private properties,
+- Spring has mock objects on `Environment`, `JNDI`, and `Servlet API` to assist in unit testing.
+- **By default, the framework will create and roll back a transaction for each test.**
 
 #### JUnit 4 Example 
  
@@ -2870,6 +2874,8 @@ public void testCount() {
 		- Handles SQLExceptions properly
 	- Without sacrificing power
 		- Provides full access to the standard JDBC constructs
+- After getting configured, instances of the `JdbcTemplate` class are threadsafe.
+- It is thread-safe to inject a single configured instance of a `JdbcTemplate` reference into multiple DAOs.
 
 ![alt text](images/handout/Screenshot_39.png "Screenshot_39")
 
@@ -3649,6 +3655,19 @@ public class UserController {
 }
 ```
 
+- Create a controller class by implementing the Controller interface or extending any of Controller's implementations like `AbstractController`.
+
+```java
+public class MyController extends AbstractController{
+	
+	  @Override
+	  protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		   ModelAndView model = new ModelAndView("MyPage");
+		   model.addObject("myReply", "hi there");		
+		   return model;
+	  }
+ }
+```
 ### Simpler Mapping Annotations
 
 - `@RequestMapping`
@@ -4179,7 +4198,9 @@ public class TopSpendersReportGenerator extends HttpServlet {
               <intercept-url pattern="/users/edit" access="ROLE_ADMIN"/>
               <intercept-url pattern="/users/list" access="ROLE_USER"/>
               <intercept-url pattern="/users/**" access="IS_AUTHENTICATED_FULLY"/>
-              <intercept-url pattern="/**" access="ROLE_USER" filters="none" />
+              <intercept-url pattern="/**" access="ROLE_USER" filters="none"/>
+              <intercept-url pattern="/**" access="authenticated"/>
+              <intercept-url pattern="/myPage.jsp*" access="ROLE_USER"/>
         </http>
 </beans:beans> 
 ```
