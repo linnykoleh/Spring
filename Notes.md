@@ -925,6 +925,8 @@ public class FactoryMethodComponent {
       annotated with the `@Bean` annotation, in order to intercept requests for the beans. If the bean is a
       singleton bean, subsequent requests for the bean will not yield new instances, but the existing
       instance of the bean.	
+- The `@Bean` annotation can be used inside an `@Configuration`-annotated class.  
+- The `@Bean` annotation can be used inside an `@Component`-annotated class.
 	
 ```java
 @Bean(name = "myFoo", initMethod = "init", destroyMethod = "cleanup")
@@ -1439,6 +1441,8 @@ public final class FooTest  {
 
 or
 
+- `AbstractJUnit4SpringContextTests` implements `ApplicationContextAware` and therefore provide access to the `ApplicationContext` automatically.
+
 ```java
 @ContextConfiguration
 public class MyTestClass extends AbstractJUnit4SpringContextTests {
@@ -1580,30 +1584,6 @@ public class MockPetServiceTest {
     - classes with static initializers
     - final classes and final methods; sometimes there is need for an insurance that the code will not be misused or to make sure that an object is constructed correctly
     - private methods and fields
-    
-### Spring Boot's property sources
-
-Spring Boot uses a very particular `PropertySource` order that is designed to allow sensible overriding of values. 
-
-Properties are considered in the following order:
-- Devtools global settings properties on your home directory (~/.spring-boot-devtools.properties when devtools is active).
-- `@TestPropertySource` annotations on your tests.
-- `@SpringBootTest#properties` annotation attribute on your tests.
-- Command line arguments.
-- Properties from `SPRING_APPLICATION_JSON` (inline JSON embedded in an environment variable or system property).
-- `ServletConfig` init parameters.
-- `ServletContext` init parameters.
-- JNDI attributes from `java:comp/env`.
-- Java System properties (`System.getProperties()`).
-- OS environment variables.
-- A `RandomValuePropertySource` that has properties only in random.*.
-- Profile-specific application properties outside of your packaged jar (`application-{profile}.properties` and YAML variants).
-- Profile-specific application properties packaged inside your jar (`application-{profile}.properties` and YAML variants).
-- Application properties outside of your packaged jar (`application.properties` and YAML variants).
-- Application properties packaged inside your jar (`application.properties` and YAML variants).
-- `@PropertySource` annotations on your `@Configuration` classes.
-- Default properties (specified by setting `SpringApplication.setDefaultProperties`).
-
     
 ## Testing Rest with Spring boot
 
@@ -1850,6 +1830,15 @@ public class LoggingAspect {
   the `@EnableAspectJAutoProxy` annotation should be 
   applied to a `@Configuration` class and aspects must be annotated with `@Component` 
   similar to functionality found in Spring's <aop:aspectj-autoproxy> XML element.
+- To enable `@AspectJ` support with Java `@Configuration` add the `@EnableAspectJAutoProxy` annotation:
+
+```java
+@Configuration
+@EnableAspectJAutoProxy
+public class AppConfig {
+
+}
+```
   
 ![alt text](images/handout/Screenshot_5.png "Screenshot_5")	
   
@@ -3584,7 +3573,13 @@ int setPageCount(int pageCount, String title);
 ![alt text](images/Screenshot_1.png "Screenshot_1")
 
 ### DispatcherServlet
-
+    
+  - The Spring Reference says:
+     **"In the Web MVC framework, each `DispatcherServlet` has its own `WebApplicationContext`, which inherits all the beans already defined in the root `WebApplicationContext`.  
+     These inherited beans can be overridden in the servlet-specific scope, and you can define new scope-specific beans local to a given Servlet instance."**
+  - The Spring Reference also says:
+    **"The `WebApplicationContext` is an extension of the plain `ApplicationContext` that has some extra features necessary for web applications. 
+     It differs from a normal `ApplicationContext` in that it is capable of resolving themes, and that it knows which Servlet it is associated with (by having a link to the ServletContext)**
   - The central piece of Spring Web MVC is the `DispatcherServlet` class, which is the entry point for every Spring Web application.
   - The `DispatcherServlet` converts HTTP requests into commands for controller components and manages rendered data as well.
   - In a Spring Web application, all HTTP requests first reach the `DispatcherServlet`
@@ -4125,6 +4120,10 @@ public class TopSpendersReportGenerator extends HttpServlet {
    
 # Spring Security   
 
+- The Spring Security Reference says:
+  **"Spring Security's web infrastructure is based entirely on standard servlet filters. 
+  It doesn't use servlets or any other servlet-based frameworks (such as Spring MVC) internally, so it has no strong links to any particular web technology. 
+  It deals in `HttpServletRequests` and `HttpServletResponses` and doesn't care whether the requests come from a browser, a web service client, an HttpInvoker or an AJAX application."**
 - Concepts
 	- `Principal` is the term that signifies a user, device, or system that could perform an action within the application.
 	- `Credentials` are identification keys that a principal uses to confirm its identity.
@@ -4136,7 +4135,8 @@ public class TopSpendersReportGenerator extends HttpServlet {
 	    - For instance, the only type of users that can create and delete users in a computer system is users in the administrator role.
           Thus the only users that have access to the create and delete functions of the application are users in the administrator role.
 	- `Secured` item is the term used to describe any resource that is being secured.
-
+- Spring secures web requests using standard Filters.
+- Spring secures method invocations using Spring AOP.
 - Common user roles 
 	- `ADMIN` is a role used for full power
 	- `MEMBER` is used for limited power
@@ -4153,7 +4153,7 @@ public class TopSpendersReportGenerator extends HttpServlet {
 7. Access is granted or denied to the resource based on the user rights and the resource attributes.
 	
 - To configure Spring Security, the `web.xml` must be modified to include the security filter
-    - DelegatingFilterProxy - Spring's DelegatingFilterProxy provides the link between `web.xml` and the application context.
+    - `DelegatingFilterProxy` - Spring's `DelegatingFilterProxy` provides the link between `web.xml` and the application context.
 
 ```xml
 <filter>
@@ -4228,6 +4228,7 @@ public class TopSpendersReportGenerator extends HttpServlet {
               <intercept-url pattern="/**" access="authenticated"/>
               <intercept-url pattern="/myPage.jsp*" access="ROLE_USER"/>
               <intercept-url pattern="/**" access="ROLE_USER,ROLE_ADMIN" />
+              <intercept-url pattern="/**" requires-channel="http,https,any"/>
         </http>
 </beans:beans> 
 ```
@@ -5001,6 +5002,8 @@ public class Application extends SpringBootServletInitializer {
 - @WebMvcTest - Used with @RunWith(SpringRunner.class) in tests that focuses on Spring MVC components.
 ```
 
+- You need to opt-in to auto-configuration by adding the `@EnableAutoConfiguration` or `@SpringBootApplication` annotations to one of your `@Configuration` classes
+
 ### Testing with Spring Boot
 
 - `@SpringBootTest` - this annotation should be used on a test class that runs Spring Boot-based tests
@@ -5205,6 +5208,30 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     }
 }
 ```
+
+### Spring Boot's property sources
+
+Spring Boot uses a very particular `PropertySource` order that is designed to allow sensible overriding of values. 
+
+Properties are considered in the following order:
+- Devtools global settings properties on your home directory (~/.spring-boot-devtools.properties when devtools is active).
+- `@TestPropertySource` annotations on your tests.
+- `@SpringBootTest#properties` annotation attribute on your tests.
+- Command line arguments.
+- Properties from `SPRING_APPLICATION_JSON` (inline JSON embedded in an environment variable or system property).
+- `ServletConfig` init parameters.
+- `ServletContext` init parameters.
+- JNDI attributes from `java:comp/env`.
+- Java System properties (`System.getProperties()`).
+- OS environment variables.
+- A `RandomValuePropertySource` that has properties only in random.*.
+- Profile-specific application properties outside of your packaged jar (`application-{profile}.properties` and YAML variants).
+- Profile-specific application properties packaged inside your jar (`application-{profile}.properties` and YAML variants).
+- Application properties outside of your packaged jar (`application.properties` and YAML variants).
+- Application properties packaged inside your jar (`application.properties` and YAML variants).
+- `@PropertySource` annotations on your `@Configuration` classes.
+- Default properties (specified by setting `SpringApplication.setDefaultProperties`).
+
 # Integration
 
 - Remoting and Web Services are ways of communicating between applications
