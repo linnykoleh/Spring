@@ -1364,6 +1364,7 @@ public class ConfigurationClass {
 ```
 
 - Profile names in the `@Profile` annotation can be prefixed with **!**, indicating that the bean(s) are to be registered when the the profile with specified name is not active.
+- Another example - `@Profile("!a & !b"`
 
 ```java
 @Profile("!prod")
@@ -4152,7 +4153,7 @@ public class TopSpendersReportGenerator extends HttpServlet {
 7. Access is granted or denied to the resource based on the user rights and the resource attributes.
 	
 - To configure Spring Security, the `web.xml` must be modified to include the security filter
-    - DelegatingFilterProxy - Spring's DelegatingFilterProxy provides the link between web.xml and the application context.
+    - DelegatingFilterProxy - Spring's DelegatingFilterProxy provides the link between `web.xml` and the application context.
 
 ```xml
 <filter>
@@ -4226,6 +4227,7 @@ public class TopSpendersReportGenerator extends HttpServlet {
               <intercept-url pattern="/**" access="ROLE_USER" filters="none"/>
               <intercept-url pattern="/**" access="authenticated"/>
               <intercept-url pattern="/myPage.jsp*" access="ROLE_USER"/>
+              <intercept-url pattern="/**" access="ROLE_USER,ROLE_ADMIN" />
         </http>
 </beans:beans> 
 ```
@@ -5158,7 +5160,7 @@ public void customize(ConfigurableEmbeddedServletContainer container) {
 	- eg. `@ConditionalOnMissingBean(DataSource.class)` → Created embedded data source
 	- Specifically declared beans usually disable automatically created ones
 	- If needed, specific autoconfiguration classes can be excluded explicitly
-	- `@EnableAutoConfiguration(exclude=DataSourceAutoConfiguration.class)`
+		- `@EnableAutoConfiguration(exclude=DataSourceAutoConfiguration.class)`
 	
 ```
 - @ConditionalOnClass - Presence of class on classpath.
