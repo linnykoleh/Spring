@@ -4427,10 +4427,16 @@ public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 
 ![alt text](images/handout/Screenshot_74.png)
 
-
 #### Password Encoding
 
 - Supports passwords hashing (md5, sha, ...)
+- The Spring Security Reference says:
+     **'Spring Security's PasswordEncoder interface is used to support the use of passwords which are encoded in some way in persistent storage.'**
+- The Spring Security Reference says:
+     **'A hash is "one-way" in the sense that it is very difficult (effectively impossible) to obtain the original input given the hash value, 
+     or indeed any possible input which would produce that hash value. This property makes hash values very useful for authentication purposes. 
+     They can be stored in your user database as an alternative to plaintext passwords and even if the values are compromised they do not immediately reveal a password which can be used to login. 
+     Note that this also means you have no way of recovering the password once it is encoded.'**
 
 ```java
 @Configuration
