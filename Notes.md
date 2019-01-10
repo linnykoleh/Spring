@@ -893,6 +893,7 @@ private UserService userService;
 - `@Qualifier` can also be applied on bean definitions by annotating a method annotated with `@Bean` in a configuration class with `@Qualifier` and supplying a value in the `@Qualifier` annotation.
 - `@Qualifier` annotation can also be used on types and fields.
 - `@Qualifier` annotation can be used on individual constructor arguments.
+- `@Qualifier` annotations applied on collections  (e.g. Set) are valid.
 
 ```java
 @Component
@@ -1414,8 +1415,8 @@ public class ConfigurationClass {
 - Test class needs to be annotated with `@RunWith(SpringJUnit4ClassRunner.class)`
 - Spring configuration classes to be loaded are specified in `@ContextConfiguration` annotation
   - If no value is provided `@ContextConfiguration`, config file `${classname}-context.xml` in the same package is imported
-  - XML config files are loaded by providing string value to annotation - `@ContextConfiguration("classpath:com/example/test-config.xml")`
-  - Java @Configuration files are loaded from classes attribute - `@ContextConfiguration(classes={TestConfig.class, OtherConfig.class})`
+  - **XML config files** are loaded by providing string value to annotation - `@ContextConfiguration("classpath:com/example/test-config.xml")`
+  - **Java `@Configuration` files** are loaded from classes attribute - `@ContextConfiguration(classes={TestConfig.class, OtherConfig.class})`
   
 - To customize property values in a test, the `@TestPropertySource` annotation allows using either a test-specific property file or customizing individual property values.  
 - `ReflectionTestUtils` make it possible to access private properties,
@@ -2553,6 +2554,7 @@ public class CitiesService {
 - It is mandatory to use `@Transactional`  on repository classes, too, in order to ensure transactional behavior
 - Methods that need to be executed in a transactional context are annotated with `@Transactional` Spring annotation
 - This annotation must be used only on public methods; otherwise, the transactional proxy won’t be able to apply the transactional behavior
+- The standard `javax.transaction.Transactional` annotation is also supported as a drop-in replacement to Spring's own annotation.
 
 ![alt text](images/pet-sitter/Screenshot_13.png "Screenshot_13")
 
@@ -2867,6 +2869,8 @@ public void testCount() {
 
 ##### @Commit
 
+- The TestContext framework can be instructed to cause the transaction to commit instead of roll back via the `@Commit` annotation
+
 ![alt text](images/handout/Screenshot_51.png "Screenshot_51")
 
 ##### @BeforeTransaction
@@ -2882,8 +2886,9 @@ public void testCount() {
 		- Handles SQLExceptions properly
 	- Without sacrificing power
 		- Provides full access to the standard JDBC constructs
-- After getting configured, instances of the `JdbcTemplate` class are threadsafe.
-- It is thread-safe to inject a single configured instance of a `JdbcTemplate` reference into multiple DAOs.
+- **After getting configured, instances of the `JdbcTemplate` class are threadsafe.**
+- **It is thread-safe to inject a single configured instance of a `JdbcTemplate` reference into multiple DAOs.**
+- `JdbcTemplate` has a property whose type is `DataSource`.
 
 ![alt text](images/handout/Screenshot_39.png "Screenshot_39")
 
@@ -2937,6 +2942,15 @@ jdbcTemplate.update("UPDATE MY_TABLE set NAME = ?, DURATION = ? where id = ?",
 
 ```java
 jdbcTemplate.update("delete from MY_TABLE where id = ?", id);
+```
+
+#### Execute 
+
+- You can use the `execute(..)` method to execute any arbitrary SQL, and as such the method is often used for DDL statements. 
+It is heavily overloaded with variants taking callback interfaces, binding variable arrays, and so on.
+
+```java
+this.jdbcTemplate.execute("create table mytable (id integer, name varchar(100))");
 ```
 
 ### Callback Interfaces
@@ -3588,6 +3602,7 @@ int setPageCount(int pageCount, String title);
   - When using a configuration without `web.xml`, a configuration class that extends `AbstractDispatcherServletInitializer` or `AbstractAnnotationConfigDispatcherServletInitializer` must be declared
   - Defined by `WebApplicationInitializer` or `web.xml`
   - Creates separate “servlet” application context
+  - Spring MVC has a JSP tag library that enables data binding and themes.
  
 ![alt text](images/handout/Screenshot_56.png "Screenshot_56")
  
@@ -3674,8 +3689,9 @@ public class UserController {
 }
 ```
 
-- Create a controller class by implementing the Controller interface or extending any of Controller's implementations like `AbstractController`.
-
+- Create a controller class by implementing the `Controller` interface or extending any of Controller's implementations like `AbstractController`.
+	- The ways of declaring controllers without annotation are not deprecated and there is no mention anywhere that they will be removed in the next major Spring version.
+	
 ```java
 public class MyController extends AbstractController{
 	
@@ -3687,6 +3703,70 @@ public class MyController extends AbstractController{
 	  }
  }
 ```
+
+- `BeanNameUrlHandlerMapping` is included in the Spring framework, and it is the default if no HandlerMapping bean is registered in the application context.
+	- Declare `BeanNameUrlHandlerMapping` is optional, by default, if Spring can’t found handler mapping, the `DispatcherServlet` will creates a `BeanNameUrlHandlerMapping` automatically.
+
+```xml
+<beans ...>
+
+   <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
+	
+   <bean name="/welcome.htm" 
+        class="com.common.controller.WelcomeController" />
+	
+   <bean name="/streetName.htm" 
+        class="com.common.controller.StreetNameController" />
+	
+   <bean name="/process*.htm" 
+        class="com.common.controller.ProcessController" />
+
+</beans>
+```
+
+or using Java config
+
+```java
+@Configuration
+public class BeanNameUrlHandlerMappingConfig {
+	
+    @Bean
+    BeanNameUrlHandlerMapping beanNameUrlHandlerMapping() {
+        return new BeanNameUrlHandlerMapping();
+    }
+ 
+    @Bean("/beanNameUrl")
+    public WelcomeController welcome() {
+        return new WelcomeController();
+    }
+}
+```
+
+- Using `SimpleUrlHandlerMapping`
+
+```java
+@Configuration
+public class SimpleUrlHandlerMappingConfig {
+ 
+    @Bean
+    public SimpleUrlHandlerMapping simpleUrlHandlerMapping() {
+        SimpleUrlHandlerMapping simpleUrlHandlerMapping
+          = new SimpleUrlHandlerMapping();
+         
+        Map<String, Object> urlMap = new HashMap<>();
+        urlMap.put("/simpleUrlWelcome", welcome());
+        simpleUrlHandlerMapping.setUrlMap(urlMap);
+         
+        return simpleUrlHandlerMapping;
+    }
+ 
+    @Bean
+    public WelcomeController welcome() {
+        return new WelcomeController();
+    }
+}
+```
+
 ### Simpler Mapping Annotations
 
 - `@RequestMapping`
@@ -4169,7 +4249,9 @@ public class TopSpendersReportGenerator extends HttpServlet {
 ```
 
 - `<form-login ../>` - configuration element is used to define the request URL for the login form where the user can provide its credentials.
+	- `<form-login login-page="/login.jsp" authentication-failure-url="/login.jsp?login_error=1"/>`	
 - `<logout ../> ` - configuration element is used to define the request URL for the logout form.
+	- `<logout logout-success-url="/index.jsp"/>`
 - `<intercept-url …/>` - The paths defined as values for the pattern attribute are pieces of URLs defined 
 - `mvcMatchers` API is newer than the `antMatchers` API.
 - ` <csrf disabled="true"/>` - using CSFR tokens in Spring forms to prevent cross-site request forgery
@@ -4199,23 +4281,23 @@ public class TopSpendersReportGenerator extends HttpServlet {
 	URL pattern in the application and information deciding who will be able to access the resource(s) which URLs match the URL pattern.
 	- `<intercept-url>` element has the following attributes:
     	- **access** - Access attributes, commonly role names, specifying the user(s) that has access
-        	- **filters** - Omitted or having the value `none`. This will cause any matching request to bypass the Spring Security filter chain entirely.
-        	- **method** - HTTP method used with URL pattern and, optionally, servlet path to match requests. If omitted all HTTP methods will match. 
-        	    - Examples of its values are `DELETE`, `POST`
-        	- **pattern** - URL path pattern for which the Spring Security filter chain will be applied.
-        	- **request-matcher-ref** - Reference to RequestMatcher bean used to determine if this <intercept-url> will be used.
-        	- **requires-channel** - Possible values are “http”, “https” and “any”. The first two are for access over HTTP and
-        		HTTPS respectively. Omitting this attribute or using the value “any” matches both HTTP and HTTPS.
-        	- **servlet-path** - Servlet path used in combination with method and pattern to match requests. Optional.  
-      	- Multiple `<intercept-url>` elements may be defined and they will be evaluated in the order in which they are defined. When an `<intercept-url>` element with a matching pattern is found, evaluation
-        stops. It is therefore recommended to define more `<intercept-url>` elements with more specific pattern earlier and more general patterns later.  	
-		- There are two wildcards that can be used in URL patterns:
-      		- #### * <br/>
-			Matches any path on the level at which the wildcard occur.  <br/>
-          	Example: /services/* matches /services/users and /services/orders but not /services/orders/123/items.	
-            - #### ** <br/>
-			Matches any path on the level at the wildcard occurs and all levels below. If only /** or ** then will match any request.  <br/>
-			Example: /services/** matches /services, /services/, /services/users and /services/orders and also /services/orders/123/items etc.
+		- **filters** - Omitted or having the value `none`. This will cause any matching request to bypass the Spring Security filter chain entirely.
+		- **method** - HTTP method used with URL pattern and, optionally, servlet path to match requests. If omitted all HTTP methods will match. 
+			- Examples of its values are `DELETE`, `POST`
+		- **pattern** - URL path pattern for which the Spring Security filter chain will be applied.
+		- **request-matcher-ref** - Reference to RequestMatcher bean used to determine if this <intercept-url> will be used.
+		- **requires-channel** - Possible values are “http”, “https” and “any”. The first two are for access over HTTP and
+			HTTPS respectively. Omitting this attribute or using the value “any” matches both HTTP and HTTPS.
+		- **servlet-path** - Servlet path used in combination with method and pattern to match requests. Optional.  
+	- Multiple `<intercept-url>` elements may be defined and they will be evaluated in the order in which they are defined. When an `<intercept-url>` element with a matching pattern is found, evaluation
+	stops. It is therefore recommended to define more `<intercept-url>` elements with more specific pattern earlier and more general patterns later.  	
+	- There are two wildcards that can be used in URL patterns:
+		- #### * <br/>
+		Matches any path on the level at which the wildcard occur.  <br/>
+		Example: /services/* matches /services/users and /services/orders but not /services/orders/123/items.	
+		- #### ** <br/>
+		Matches any path on the level at the wildcard occurs and all levels below. If only /** or ** then will match any request.  <br/>
+		Example: /services/** matches /services, /services/, /services/users and /services/orders and also /services/orders/123/items etc.
        
  
 ```xml
@@ -4582,7 +4664,7 @@ public class UserServiceImpl implements UserService {
 }
 ```
 
-#### @PreAuthorize
+#### @PreAuthorize @PreFilter @PostAuthorize @PostFilter
 
 - In order to be able to use `@PreAuthorize`, the `prePostEnabled` attribute in the `@EnableGlobalMethodSecurity` annotation needs to be set to true.
 - `@EnableGlobalMethodSecurity(prePostEnabled=true)`
@@ -6125,6 +6207,12 @@ public class PersonService {
 
 ![alt text](images/handout/Screenshot_82.png)  
 
+- **The return type and the second parameter should be the same.**
+
+```java 
+String result = restTemplate.getForObject("http://example.com/hotels/{hotel}/the bookings/{booking}", String.class, "hotel001", "booking21");
+```
+
 ## RESTful  
 
 [>> Hypertext Transfer Protocol](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods)  
@@ -6603,7 +6691,6 @@ private RestTemplate restTemplate;
 - Then call specific Microservice with the `restTemplate`
 
 ```java
-
 User user = restTemplate.getForObject(usersServiceUrl + "/users/id/{id}", User.class, id);
 ```
 
