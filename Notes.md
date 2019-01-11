@@ -519,7 +519,11 @@ public class DisplayNameBeanPostProcessor implements BeanPostProcessor {
 ```
 
 - When defining a `BeanPostProcessor` using an `@Bean` annotated method, 
- it is recommended that the method is static, in order for the post-processor to be  instantiated early in the Spring context creation process.
+  it is recommended that the method is static, in order for the post-processor to be  instantiated early in the Spring context creation process.
+ 	- The `static` modifier allows a method to be called without creating its containing configuration class as an instance.
+	- It is necessary when beans will get initialized early in the container lifecycle.
+	- It avoids triggering other parts of the configuration at that point of definition.
+	- They will never get intercepted by the container, not even within `@Configuration` classes.
 	
 ## Initializing beans priority	
 
@@ -582,7 +586,10 @@ public class TriangleLifecycle implements InitializingBean {
 
 ## Destroying beans priority
 
-- When you close a context the destruction phase completes: `applicationContext.close();`
+- These 2 ways will result in the publishing of a `ContextClosedEvent`.  You can create a listener to listen to the mentioned event, and do some actions when the application context is closing.
+  Both of them will result in `doClose()` being called.  `doClose()` publishes the `ContextClosedEvent`.
+	- Call `close()` on the application context
+	- Use the `registerShutdownHook()` on the application context
 - Called also when JVM exit normally
 - Not called for `prototype` beans
 - Destroying ways
@@ -771,7 +778,7 @@ public enum ScopedProxyMode {
 
 ![alt text](images/core_spring_in_detail/Screenshot_3.png "Screenshot_3")
 
-#### Annotations
+### Annotations
 
 - Spring manages lifecycle of beans, each bean has its scope
 - Default scope is `singleton` - one instance per application context
@@ -784,35 +791,7 @@ public enum ScopedProxyMode {
     - `@RestController`: indicates that a class is a specialized web controller for a REST service. Combines the `@Controller` and `@ResponseBody` annotations.
     - `@Configuration`: configuration class containing bean definitions (methods annotated with `@Bean`).
  
-![alt text](images/handout/Screenshot_13.png "Screenshot_13")      
-    
-- Autowiring and initialization annotations are used to define which dependency is injected and what the bean looks like. For example:
-    - `@Autowired`: core annotation for this group; is used on dependencies to instruct Spring IoC to take care of injecting them.
-     	- Can be used on fields, constructors, setters and methods. 
-     	- Use with `@Qualifier` from Spring to specify name of the bean to inject.
-     	- If a bean class contains one single constructor, then annotating it with `@Autowired` is not required
-          in order for the Spring container to be able to autowire dependencies. If a bean class contains more
-          than one constructor and autowiring is desired, at least one of the constructors need to be annotated
-          with `@Autowired` in order to give the container a hint on which constructor to use.
-        - Autowire by type then by name  
-        - Typed Map collections can be autowired as long as the expected key type is String.
-        ```java
-         @Autowired
-        public void setMovieCatalogs(Map<String, MovieCatalog> movieCatalogs) {
-            this.movieCatalogs = movieCatalogs;
-        }
-        ```
-    - `@Inject`: equivalent annotation to `@Autowired` from javax.inject package. Use with `@Qualifier` from javax.inject to specify name of the bean to inject. 
-    - `@Resource`: equivalent annotation to `@Autowired` from javax.annotation package.
-        - Autowire by name then by type
-    - `@Required`: Spring annotation that marks a dependency as mandatory, used on setters.
-    ```java
-    @Required
-    public void setMovieFinder(MovieFinder movieFinder) {
-        this.movieFinder = movieFinder;
-    }
-    ```
-    - `@Lazy`: dependency will be injected the first time it is used.    
+![alt text](images/handout/Screenshot_13.png "Screenshot_13")       
  
 ```java
 @Configuration
@@ -845,6 +824,7 @@ public class DataSourceConfig {
 - `@Bean` annotation is used to tell Spring that the result of the annotated method will be a bean that has to be managed by it. 
 - `@Bean` annotation together with the method are treated as a `bean definition`, and the method name becomes the bean `id`.
 - `@Bean ( initMethod = "init", destroyMethod = "destroy")` - for declare init and destroy methods
+- `@Lazy`: dependency will be injected the first time it is used.   
 - `@PropertySource` annotation will be used to read property values from a property file set as argument
     - The annotation is applied to classes annotated with `@Configuration`.
 
@@ -873,6 +853,46 @@ public class SpringApplication {
 
 ![alt text](images/handout/Screenshot_10.png "Screenshot_10") 
 
+#### @Autowired    
+
+- Autowiring and initialization annotations are used to define which dependency is injected and what the bean looks like.
+- `@Autowired`: core annotation for this group; is used on dependencies to instruct Spring IoC to take care of injecting them.
+	- Can be used on fields, constructors, setters and methods. 
+	- Use with `@Qualifier` from Spring to specify name of the bean to inject.
+	- If a bean class contains one single constructor, then annotating it with `@Autowired` is not required
+	  in order for the Spring container to be able to autowire dependencies. If a bean class contains more
+	  than one constructor and autowiring is desired, at least one of the constructors need to be annotated
+	  with `@Autowired` in order to give the container a hint on which constructor to use.
+	- Autowire by type then by name  
+	- Typed Map collections can be autowired as long as the expected key type is String.
+	```java
+	 @Autowired
+	public void setMovieCatalogs(Map<String, MovieCatalog> movieCatalogs) {
+		this.movieCatalogs = movieCatalogs;
+	}
+	```
+	- When the Autowired annotation is used on an array field or an array method argument 'MovieCatalog[]', all beans of type MyClass in the Spring context, will be in the array injected.
+	```java
+	@Autowired
+	private MovieCatalog[] movieCatalogs;
+	```
+- `@Inject`: equivalent annotation to `@Autowired` from javax.inject package. Use with `@Qualifier` from javax.inject to specify name of the bean to inject. 
+- `@Resource`: equivalent annotation to `@Autowired` from javax.annotation package.
+	- Autowire by name then by type
+- `@Required`: Spring annotation that marks a dependency as mandatory, used on setters.
+```java
+@Required
+public void setMovieFinder(MovieFinder movieFinder) {
+	this.movieFinder = movieFinder;
+}
+```
+- `@Autowired` may also be used for well-known "resolvable dependencies", these interfaces will be automatically resolved, with no special setup necessary.
+	- `BeanFactory` interface
+	- `ApplicationContext` interface
+	- `ResourceLoader` interface
+	- `ApplicationEventPublisher` interface 
+	- `MessageSource` interface
+    
 ### @Qualifier
 
 - `@Qualifier` annotation can aid in selecting one single bean to be dependency-injected into a field or parameter annotated with `@Autowired` when there are multiple candidates.
@@ -1422,6 +1442,7 @@ public class ConfigurationClass {
 - `ReflectionTestUtils` make it possible to access private properties,
 - Spring has mock objects on `Environment`, `JNDI`, and `Servlet API` to assist in unit testing.
 - **By default, the framework will create and roll back a transaction for each test.**
+- Tests that are annotated with `@Transactional` but have the propagation type set to `NOT_SUPPORTED` will not be run within a transaction.
 
 #### JUnit 4 Example 
  
@@ -1719,7 +1740,7 @@ base code, by applying advices to specific join points, specified by pointcuts.
 	  This is the most powerful type of advice, since it can perform custom behavior before and after the invocation
 - **Pointcut** - a pointcut selects one or more join points out of the set of all join points in an application.
     Pointcut expressions can be defined as arguments for Advice annotations or as arguments for the `@Pointcut` annotation. 
-- **Introduction** - declaring additional methods, fields, interfaces being implemented, annotations on behalf of another type.
+- **Introduction** - declaring additional methods, fields, interfaces being implemented, annotations on behalf of another type. Spring AOP allows you to introduce new interfaces (and a corresponding implementation) to any advised object. 
 - **AOP proxy** - the object created by AOP to implement the aspect contracts.    
 - **Weaving** -  linking aspects with other application types or objects to create an advised object. 
     This can be done at compile time (using the AspectJ compiler, for example), load time, or at runtime. 
@@ -2562,6 +2583,8 @@ public class CitiesService {
 
 - Configure transaction management support
 	- add a declaration of a bean of type `org.springframework.jdbc.datasource.DataSourceTransactionManager`
+		- `DataSourceTransactionManager` class is a `PlatformTransactionManager` implementation for single JDBC datasources. 
+		  It binds a JDBC connection from the specified data source to the currently executing thread, potentially allowing for one thread connection per data source."
 	- `<tx:annotation-driven ../>`
 
 ```xml
@@ -3501,8 +3524,8 @@ public class MongoDbConfig {...}
 ## Query Annotation
 
 - Queries annotated to the `@Query` will take precedence over queries defined using `@NamedQuery` or named queries declared in `orm.xml`.
-- `@Query` annotation allows to execute native queries by setting the 'nativeQuery' flag to true
-- Currently don't support execution of pagination or dynamic sorting for native queries as we'd have to manipulate the actual query declared and we cannot do this reliably for native SQL
+- `@Query` annotation allows to execute native queries by setting the **nativeQuery** flag to true
+- The execution of pagination or dynamic sorting for `native queries` is not supported.
 
 ![alt text](images/db/Screenshot_18.png "Screenshot_18")
 
@@ -3796,7 +3819,7 @@ public String list(Model model) {
 - Url `http://localhost:8080/mvc-basic/showUser?userId=105`
 handled by a method that has a parameter annotated with `@RequestParam` because the request is parametrized.
 - Can specify parameter from http request to be injected as method parameter
-- Can specify parameter weather required or not - `boolean required() default true;`
+- Can specify parameter weather required or not, **required by default**
 
 
 ```java
@@ -3826,7 +3849,9 @@ public String show(@PathVariable("userId") Long id, Model model) {
 - Need to provide view resolver e.g. `InternalResourceViewResolver`
 - View support classes for creating PDFs, Excel spreadsheets
 - Controllers typically return a 'logical view name' String.
-- ViewResolvers select View based on view name.
+- `ViewResolver` - resolve logical String-based view names to actual View types.
+-  `HandlerExceptionResolver`- maps exceptions to views also allowing for more complex exception handling code.
+- `ThemeResolver` -  resolves themes your web application can use, for example, to offer personalized layouts
 - The `DispatcherServlet` delegates to a `ViewResolver` to obtain View implementation based on view name.
 
 - ![alt text](images/handout/Screenshot_59.png "Screenshot_59.png")
@@ -4238,9 +4263,7 @@ public class TopSpendersReportGenerator extends HttpServlet {
 ```xml
 <filter>
     <filter-name>springSecurityFilterChain</filter-name>
-    <filter-class>
-         org.springframework.web.filter.DelegatingFilterProxy
-    </filter-class>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 </filter>
 <filter-mapping>
     <filter-name>springSecurityFilterChain</filter-name>
@@ -4311,6 +4334,7 @@ public class TopSpendersReportGenerator extends HttpServlet {
               <intercept-url pattern="/myPage.jsp*" access="ROLE_USER"/>
               <intercept-url pattern="/**" access="ROLE_USER,ROLE_ADMIN" />
               <intercept-url pattern="/**" requires-channel="http,https,any"/>
+              <intercept-url pattern="/**" access="authenticated" method="POST" requires-channel="https" />
         </http>
 </beans:beans> 
 ```
@@ -4575,6 +4599,26 @@ The order that filters are defined in the chain is very important. Irrespective 
 - `ExceptionTranslationFilter`, to catch any Spring Security exceptions so that either an HTTP error response can be returned or an appropriate AuthenticationEntryPoint can be launched
 - `FilterSecurityInterceptor`, to protect web URIs and raise exceptions when access is denied
 
+#### FilterChainProxy
+
+- `<filter-chain>` is used to set up security filter chains.  It includes an attribute where you can specify the filters that you prefer to use.
+
+```xml
+<bean id="filterChainProxy" class="org.springframework.security.web.FilterChainProxy">
+  <sec:filter-chain-map path-type="ant">
+     <sec:filter-chain pattern="/webServices/**" filters="
+           securityContextPersistenceFilterWithASCFalse,
+           basicAuthenticationFilter,
+           exceptionTranslationFilter,
+           filterSecurityInterceptor" />
+     <sec:filter-chain pattern="/**" filters="
+           securityContextPersistenceFilterWithASCTrue,
+           formLoginFilter,
+           exceptionTranslationFilter,
+           filterSecurityInterceptor" />
+  </sec:filter-chain-map>
+</bean>
+```
 
 #### Login and Logout
 
@@ -6205,7 +6249,12 @@ public class PersonService {
 
 ![alt text](images/handout/Screenshot_81.png)  
 
+PATCH and others
+
+[>> Overview of RestTemplate methods](https://docs.spring.io/spring-framework/docs/4.0.9.RELEASE/spring-framework-reference/html/remoting.html#rest-resttemplate) 
+
 ![alt text](images/handout/Screenshot_82.png)  
+
 
 - **The return type and the second parameter should be the same.**
 
