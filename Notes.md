@@ -4570,13 +4570,12 @@ public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 
 - Supports passwords hashing (md5, sha, ...)
 - The Spring Security Reference says:
-     **'Spring Security's PasswordEncoder interface is used to support the use of passwords which are encoded in some way in persistent storage.'**
+     **'Spring Security's `PasswordEncoder` interface is used to support the use of passwords which are encoded in some way in persistent storage.'**   
 - The Spring Security Reference says:
      **'A hash is "one-way" in the sense that it is very difficult (effectively impossible) to obtain the original input given the hash value, 
      or indeed any possible input which would produce that hash value. This property makes hash values very useful for authentication purposes. 
      They can be stored in your user database as an alternative to plaintext passwords and even if the values are compromised they do not immediately reveal a password which can be used to login. 
      Note that this also means you have no way of recovering the password once it is encoded.'**
-
 ```java
 @Configuration
 @EnableWebSecurity
@@ -4593,7 +4592,26 @@ public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 }
 ```
 
-- `Password Hashing` <br/>
+- `<password-encoder>` is used for supporting encoded passwords.   
+    - `<password-encoder>` Attributes
+        - `base64` - Whether a string should be base64 encoded
+        - `hash` - Defines the hashing algorithm used on user passwords. We recommend strongly against using MD4, as it is a very weak hashing algorithm.
+        - `ref` - Defines a reference to a Spring bean that implements `PasswordEncoder `.
+    ```xml
+    <authentication-manager>
+      <authentication-provider>
+        <password-encoder ref="bcryptEncoder"/>
+        <user-service>
+          <user name="jimi" password="d7e6351eaa13189a5a3641bab846c8e8c69ba39f"
+                authorities="ROLE_USER, ROLE_ADMIN" />
+          <user name="bob" password="4e7421b1b8765d8f9406d87e7cc6aa784c4ab97f"
+                authorities="ROLE_USER" />
+        </user-service>
+      </authentication-provider>
+    </authentication-manager>
+    ``` 
+
+#### Password Hashing
 
 Password hashing is the process of calculating a hash-value for a password. The hash-value is stored, for instance in a database, instead of storing the password itself. Later when a user attempts
 to log in, a hash-value is calculated for the password supplied by the user and compared to the stored hash-value. If the hash-values does not match, the user has not supplied the correct password.
@@ -4603,7 +4621,7 @@ hash("hello") = 2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
 hash("hbllo") = 58756879c05c68dfac9866712fad6a93f8146f337a69afe7dd238f3364946366
 ```
 
-- `Salting` <br/>
+#### Salting
 
 A salt used when calculating the hash-value for a password is a sequence of random bytes that are used in combination with the cleartext password to calculate a hash-value. The salt is stored in
 cleartext alongside the password hash-value and can later be used when calculating hash-values for user-supplied passwords at login.
