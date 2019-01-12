@@ -1434,6 +1434,8 @@ public class ConfigurationClass {
 - Distributed as separate artifact - `spring-test.jar`
 - Test class needs to be annotated with `@RunWith(SpringJUnit4ClassRunner.class)`
 - Spring configuration classes to be loaded are specified in `@ContextConfiguration` annotation
+  - `@ContextConfiguration` defines class-level metadata that is used to determine how to load and configure an `ApplicationContext` for integration tests. 
+  Specifically, `@ContextConfiguration` declares the application context resource **locations** or the annotated **classes** that will be used to load the context.  
   - If no value is provided `@ContextConfiguration`, config file `${classname}-context.xml` in the same package is imported
   - **XML config files** are loaded by providing string value to annotation - `@ContextConfiguration("classpath:com/example/test-config.xml")`
   - **Java `@Configuration` files** are loaded from classes attribute - `@ContextConfiguration(classes={TestConfig.class, OtherConfig.class})`
@@ -2719,7 +2721,7 @@ catch (MyException ex) {
 txManager.commit(status);
 ```
 
-### Programmatic Transactions
+### Programmatic Transactions using TransactionTemplate
 
 - **Example 1**
 
@@ -2991,6 +2993,37 @@ public interface RowMapper<T> {
 	T mapRow(ResultSet rs, int rowNum) throws SQLException;
 }
 ```
+
+- Querying and populating a single domain object:
+  
+```java
+Actor actor = this.jdbcTemplate.queryForObject(
+      "select first_name, last_name from t_actor where id = ?",
+      new Object[]{1212L},
+      new RowMapper<Actor>() {
+          public Actor mapRow(ResultSet rs, int rowNum) throws SQLException {
+              Actor actor = new Actor();
+              actor.setFirstName(rs.getString("first_name"));
+              actor.setLastName(rs.getString("last_name"));
+              return actor;
+          }
+      });
+```  
+
+- Querying and populating a number of domain objects:
+  
+```java
+List<Actor> actors = this.jdbcTemplate.query(
+      "select first_name, last_name from t_actor",
+      new RowMapper<Actor>() {
+          public Actor mapRow(ResultSet rs, int rowNum) throws SQLException {
+              Actor actor = new Actor();
+              actor.setFirstName(rs.getString("first_name"));
+              actor.setLastName(rs.getString("last_name"));
+              return actor;
+          }
+      });
+```  
 
 ![alt text](images/handout/Screenshot_43.png "Screenshot_43")
 
@@ -4584,7 +4617,7 @@ hash("hello" + "bv5PehSMfV11Cd") = d1d3ec2e6f20fd420d50e2642992841d8338a314b8ea1
 
 ![alt text](images/handout/Screenshot_75.png)
 
-### Filter Ordering
+### Spring Security filters order
 
 The order that filters are defined in the chain is very important. Irrespective of which filters you are actually using, the order should be as follows:
 
@@ -4797,7 +4830,7 @@ public CsrfTokenRepository repo() {
 <sec:authentication property="principal.username" />
 ```
 
-- The `accesscontrollist` tag - deprecated, use the authorize tag instead. Checks a list of permissions for a specific domain object.
+- The `accesscontrollist` tag - deprecated, use the `authorize` tag instead. Checks a list of permissions for a specific domain object.
 
 ```jsp
 <sec:accesscontrollist hasPermission="5, 7" domainObject="${order}">
@@ -5281,7 +5314,7 @@ public void customize(ConfigurableEmbeddedServletContainer container) {
 
 - [>> Common spring boot application properties](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
  
-## @Conditional
+### @Conditional
 
 - Enables bean instantiatiation only when specific condition is met
 - Core concept of spring boot
