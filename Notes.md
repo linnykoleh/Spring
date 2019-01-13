@@ -2,7 +2,41 @@
 
 [>> https://docs.spring.io/spring/docs/5.0.3.RELEASE](https://docs.spring.io/spring/docs/5.0.3.RELEASE/spring-framework-reference/index.html)
 
+Dependency injection is the process whereby a framework or such, for example the Spring
+framework, establishes the relationships between different parts of an application. This as opposed
+to the application code itself being responsible of establishing these relationships.
+When using the Spring framework for Java development, some of the advantages of dependency
+injection are:
+- Reduced coupling between the parts of an application.
+- Increased cohesion of the parts of an application.
+- Increased testability.
+- Better design of applications when using dependency injection.
+- Increased reusability.
+- Increased maintainability.
+- Standardizes parts of application development.
+- Reduces boilerplate code.
+
+No code needs to be written to establish relationships in domain classes. Such code or configuration is separated into XML or Java configuration classes.
+
 # Spring Configuration
+
+#### Interfaces recommended for Spring beans
+
+The following are reasons why it is recommended to define interfaces that are later implemented by
+the classes implement the Spring beans in an application:
+- Increased testability.
+Beans can be replaced with `mock` or `stub` objects that implement the same interface(s) as the
+real bean implementation.
+- Allows for use of the `JDK dynamic proxying` mechanism.
+- Allows for easier switching of Spring bean implementation.
+- Allows for hiding implementation.
+
+For instance, a service implemented in a module only have a public interface while the
+implementation is only visible within the module.
+
+Hiding the implementation also allows the developer to freely refactor code to methods,
+without having to fear that such methods will be visible outside of the module containing the
+implementation.
 
 ## XML Spring Configuration
 
@@ -11,9 +45,7 @@ In order to tell the Spring Container to create these objects and how to link th
 This configuration can be provided using XML files or XML + annotations or Java Configuration classes.
 ```
 
-In Spring, there are two types of dependency injection specific to XML: via **constructor** and via **setters**
-
-For XML, the class **org.springframework.context.support.ClassPathXmlApplicationContext** is used.
+Martin Fowler came up with the name Dependency Injection, to rename Inversion of Control principle
 
 ### Constructor Injection
 
@@ -389,14 +421,16 @@ public class SpringFactoryBean implements FactoryBean<SimpleBean> {
 
 ## Application Context 
 
-The application context in a Spring application is a Java object that implements the `ApplicationContext` interface and is responsible for:
-- Instantiating beans in the application context.
-- Configuring the beans in the application context.
-- Assembling the beans in the application context.
-- Managing the life-cycle of Spring beans.
+- In Spring, an object implementing the `ApplicationContext` interface is a container.  
+- The application context in a Spring application is a Java object that implements the `ApplicationContext` interface and is responsible for:
+    - Instantiating beans in the application context.
+    - Configuring the beans in the application context.
+    - Assembling the beans in the application context.
+    - Managing the life-cycle of Spring beans.
 
 Some commonly used implementations of the `ApplicationContext` interface are:
 - **AnnotationConfigApplicationContext** - Standalone application context used with configuration in the form of annotated classes.
+    - This type of application context is used with standalone applications that uses Java configuration, that is classes annotated with `@Configuration`.
 - **AnnotationConfigWebApplicationContext** - Same as `AnnotationConfigApplicationContext` but for web applications.
 - **ClassPathXmlApplicationContext** - Standalone application context used with XML configuration located on the `classpath` of the application.
 - **FileSystemXmlApplicationContext** - Standalone application context used with XML configuration located as one or more files in the `file system`.
@@ -411,7 +445,8 @@ Some commonly used implementations of the `ApplicationContext` interface are:
 ![alt text](images/handout/Screenshot_17.png "Screenshot_17.png")
 
 The lifecycle of a Spring bean looks like this:
-- Spring bean configuration is read and metadata in the form of a BeanDefinition object is created for each bean.
+- Spring bean configuration is read and metadata in the form of a `BeanDefinition` object is created for each bean.
+    - - For a configuration using Java Configuration annotations, the classpath is scanned by a bean of type `org.springframework.context.annotation.ClassPathBeanDefinitionScanner`, and the bean definitions are registered by a bean of type `org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader`.
 - All instances of `BeanFactoryPostProcessor` are invoked in sequence and are allowed an opportunity to alter the bean metadata.
 - For each bean in the container:
 	- An instance of the bean is created using the bean metadata.
@@ -419,14 +454,14 @@ The lifecycle of a Spring bean looks like this:
 	- `BeanPostProcessor`'s `postProcessBeforeInitialization` are given a chance to process the new bean instance `before initialization`.
     - Any methods in the bean implementation class annotated with `@PostConstruct` are invoked.
     - Any `afterPropertiesSet` method in a bean implementation class implementing the `InitializingBean` interface is invoked (this method is not recommended by the Spring). 
-    - Any custom bean initialization method is invoked. Bean initialization methods can be specified either in the value of the `init-method` attribute in the corresponding <bean> element in a Spring XML configuration or in the `initMethod` property of the `@Bean` annotation. 
+    - Any custom bean initialization method is invoked. Bean initialization methods can be specified either in the value of the `init-method` attribute in the corresponding `<bean>` element in a Spring XML configuration or in the `initMethod` property of the `@Bean` annotation. 
 	- `BeanPostProcessor`'s `postProcessAfterInitialization` are given a chance to process the new bean instance `after initialization`.	
 	- The bean is ready for use.
 - When the Spring application context is to shut down, the beans in it will receive destruction callbacks in this order:
 	- Any methods in the bean implementation class annotated with `@PreDestroy` are invoked.
 	- Any destroy method in a bean implementation class implementing the `DisposableBean` interface is invoked. If the same destruction method has already been invoked, it will not be invoked	again. (this method is not recommended by the Spring)
 	- Any custom bean destruction method is invoked.
-      Bean destruction methods can be specified either in the value of the `destroy-method` attribute in the corresponding <bean> element in a Spring XML configuration or in the `destroyMethod` property of the `@Bean` annotation.
+      Bean destruction methods can be specified either in the value of the `destroy-method` attribute in the corresponding `<bean>` element in a Spring XML configuration or in the `destroyMethod` property of the `@Bean` annotation.
       If the same destruction method has already been invoked, it will not be invoked again.
 
 ![alt text](images/core_spring_in_detail/Screenshot_1.png "Screenshot_1")
@@ -434,7 +469,8 @@ The lifecycle of a Spring bean looks like this:
 ### BeanFactoryPostProcessor
 
 - Configures bean definitions before beans are created.
-    - Could change BeanDefinitions
+    - Could change `BeanDefinitions`
+- `BeanFactoryPostProcessor` may interact with and modify bean definitions, bean metadata, but it may not instantiate beans.    
 - `BeanFactoryPostProcessor` is an interface that defines the property (a single method) of a type of
 container extension point that is allowed to modify Spring bean meta-data prior to instantiation of
 the beans in a container. A bean factory post processor may not create instances of beans, only
@@ -482,6 +518,9 @@ a special consideration must be taken for `@Bean` methods that return Spring `Be
 Because BFPP objects must be instantiated very early in the container lifecycle, they can interfere with processing 
 of annotations such as `@Autowired`, `@Value`, and `@PostConstruct` within `@Configuration` classes. 
 To avoid these lifecycle issues, mark BFPP-returning `@Bean` methods as static. 
+- Static `@Bean` methods can be defined in order to create, for instance, a `BeanFactoryPostProcessor`
+that need to be instantiated prior to the instantiation of any beans that the
+`BeanFactoryPostProcessor` is supposed to modify before the beans are being used.  
    
 ```java
 @Bean
@@ -493,9 +532,9 @@ public static PropertySourcesPlaceholderConfigurer pspc() {
 ### BeanPostProcessor
 
 - `BeanPostProcessor` is an interface that defines callback methods that allow for modification of bean instances. 
-`BeanPostProcessor` tells spring there some processing that spring have to do after initialising a bean. 
-Spring execute these method for each bean. BeanPostProcessor used to extend spring's functionality.
-A `BeanPostProcessor` may even replace a bean instance with, for instance, an AOP proxy.
+- `BeanPostProcessor` tells spring there some processing that spring have to do after initialising a bean. Spring execute these method for each bean. 
+- `BeanPostProcessor` used to extend spring's functionality.
+- `BeanPostProcessor` may even replace a bean instance with, for instance, an AOP proxy.
     - Examples
         - `AutowiredAnnotationBeanPostProcessor` - implements support for dependency injection with the `@Autowired` annotation.
         - `PersistenceExceptionTranslationPostProcessor` - applies exception translation to Spring beans annotated with the `@Repository` annotation.
@@ -525,6 +564,18 @@ public class DisplayNameBeanPostProcessor implements BeanPostProcessor {
 	- It avoids triggering other parts of the configuration at that point of definition.
 	- They will never get intercepted by the container, not even within `@Configuration` classes.
 	
+#### How BeanPostProcessor is different to a BeanFactoryPostProcessor?
+     	
+- Both `BeanPostProcessor` and `BeanFactoryPostProcessor` are interfaces that allow for definition of container extensions.     	
+- Both `BeanPostProcessor` and `BeanFactoryPostProcessor` instances operate only on beans and bean
+definitions respectively that are defined in the same Spring container.	
+- Classes implementing either the `BeanPostProcessor` or the `BeanFactoryPostProcessor` interfaces
+**may also implement** the `Ordered` interface in order to allow for setting a priority of a post-processor; 
+a lower order value will cause the post-processor to be invoked earlier.
+- When defining a `BeanPostProcessor` or a `BeanFactoryPostProcessor` using an `@Bean` annotated
+method, it is recommended that the method is **static**, in order for the post-processor to be
+instantiated early in the Spring context creation process.  
+  	
 ## Initializing beans priority	
 
 ```java
@@ -783,13 +834,29 @@ public enum ScopedProxyMode {
 - Spring manages lifecycle of beans, each bean has its scope
 - Default scope is `singleton` - one instance per application context
 - Scope can be defined by `@Scope`(eg. `@Scope(BeanDefinition.SCOPE_SINGLETON)`) annotation on the class-level of bean class
+- `@Order` is used to define sort order for components annotated with this annotation.
 - Stereotypes annotations are used to mark classes according to their purpose:
-    - `@Component`: template for any Spring-managed component(bean).
+    - `@Component`: Rootrstereotype, template for any Spring-managed component(bean).
     - `@Repository`: indicates that a class is a repository (persistence). template for a component used to provide data access, specialization of the `@Component` annotation for the the `Dao layer`.
     - `@Service`: template for a component that provides service execution, specialization of the `@Component` annotation for the `Service layer`.
     - `@Controller`: indicates that a class is a web controller. Template for a web component, specialization of the `@Component` annotation for the `Web layer`.
     - `@RestController`: indicates that a class is a specialized web controller for a REST service. Combines the `@Controller` and `@ResponseBody` annotations.
     - `@Configuration`: configuration class containing bean definitions (methods annotated with `@Bean`).
+- `@ComponentScan` - To enable component scanning, annotate a configuration class in your Spring application with the
+`@ComponentScan` annotation. The default component scanning behavior is to detect classes
+annotated with `@Component` or an annotation that itself is annotated with `@Component`. Note that
+the `@Configuration` annotation is annotated with the `@Component` annotation and thus are Spring
+Java configuration classes also candidates for auto-detection using component scanning.
+Filtering configuration can be added to the `@ComponentScan` annotation as to include or exclude certain classes.
+
+```java
+@ComponentScan(
+    basePackages = "com.linnyk.learning",
+    basePackageClasses = CalculatorService.class,
+    excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*Repository"),
+    includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = MyService.class)
+)
+```
  
 ![alt text](images/handout/Screenshot_13.png "Screenshot_13")       
  
@@ -825,7 +892,7 @@ public class DataSourceConfig {
 - `@Bean` annotation together with the method are treated as a `bean definition`, and the method name becomes the bean `id`.
 - `@Bean ( initMethod = "init", destroyMethod = "destroy")` - for declare init and destroy methods
 - `@Lazy`: dependency will be injected the first time it is used.   
-- `@PropertySource` annotation will be used to read property values from a property file set as argument
+- `@PropertySource` annotation can be used to add a property source to the Spring environment.
     - The annotation is applied to classes annotated with `@Configuration`.
 
 ![alt text](images/handout/Screenshot_9.png "Screenshot_9") 
@@ -853,9 +920,32 @@ public class SpringApplication {
 
 ![alt text](images/handout/Screenshot_10.png "Screenshot_10") 
 
+#### Meta-Annotations
+
+- Meta-annotations are annotations that can be applied to definitions of annotations. Note that this
+means that a meta-annotation must be applicable at type level, apart from any other locations it may
+appear at. The following example shows the definition of the Spring `@RestController` annotation:
+
+```java
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Controller
+@ResponseBody
+public @interface RestController {
+    
+}
+```
+
+- This annotation is annotated with the Spring meta-annotations `@Controller` and `@ResponseBody`.
+
 #### @Autowired    
 
 - Autowiring and initialization annotations are used to define which dependency is injected and what the bean looks like.
+- Java Configuration and all other annotations: a `org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor` bean is used to autowire dependencies
+- If a bean class contains one single constructor, then annotating it with `@Autowired` is not required in order for the Spring container to be able to autowire dependencies. 
+- If a bean class contains more than one constructor and autowiring is desired, at least one of the constructors need to be annotated
+  with `@Autowired` in order to give the container a hint on which constructor to use.
 - `@Autowired`: core annotation for this group; is used on dependencies to instruct Spring IoC to take care of injecting them.
 	- Can be used on fields, constructors, setters and methods. 
 	- Use with `@Qualifier` from Spring to specify name of the bean to inject.
@@ -1312,12 +1402,11 @@ public class JdbcAbstractRepo<T extends AbstractEntity> implements AbstractRepo<
 	- System environment properties.	
 		- Example KOTLIN_HOME environment variable: `@systemEnvironment['KOTLIN_HOME']`
 	- Spring application environment. Available through the environment reference, also available by default.
-		- Example retrieve name of first default profile: `@environment['defaultProfiles'][0]`
-    	
+		- Example retrieve name of first default profile: `@environment['defaultProfiles'][0]`	
 
-## Environment
+### Environment
 
-- The Environment is a part of the application container. The Environment contains profiles and properties, two important parts of the application environment.
+- The `Environment` is a part of the application container. The `Environment` contains profiles and properties, two important parts of the application environment.
   
 ![alt text](images/handout/Screenshot_2.png "Screenshot_2")  
   
@@ -1327,15 +1416,20 @@ public class JdbcAbstractRepo<T extends AbstractEntity> implements AbstractRepo<
 
 ![alt text](images/core_spring_in_detail/Screenshot_6.png "Screenshot_6")  
   
-## Bean Lifecycle 
-
-- For a configuration using Java Configuration annotations, the classpath is scanned by a bean of type `org.springframework.context.annotation.ClassPathBeanDefinitionScanner`, and the bean definitions are registered by a bean of type `org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader`.
-- Java Configuration and all other annotations: a `org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor` bean is used to autowire dependencies
-
-## @Lazy
+### @Lazy
 
 - This annotation can be used to postpone the creation of a bean until it is first accessed, by adding this annotation to the bean definition
-
+- To explicitly set whether beans are to be lazily or eagerly initialized, the `@Lazy` annotation can be applied either to:
+    - **Methods** annotated with the `@Bean` annotation.
+    
+      Bean will be lazy or not as specified by the boolean parameter to the @Lazy annotation (default value is true).
+    - **Classes** annotated with the `@Configuration` annotation.
+    
+      All beans declared in the configuration class will be lazy or not as specified by the boolean parameter to the `@Lazy` annotation (default value is true).
+    - **Classes** annotated with `@Component` or any related stereotype annotation.
+    
+      The bean created from the component class will be lazy or not as specified by the boolean parameter to the `@Lazy` annotation (default value is true).
+  
 ```java
 @Component
 @Lazy
@@ -1377,6 +1471,7 @@ implements PetRepo {
     - Application customization for different markets, customers 
 - One or more beans can be configured to be registered when one or more profiles are active using the `@Profile` annotation.
 - The beans in the below configuration class will be registered if the “dev” or “qa” profile is active.
+- Beans with no profile is available in all profiles
 
 ```java
 @Profile({"dev", "qa"})
@@ -1414,6 +1509,23 @@ public class ConfigurationClass {
 
 ![alt text](images/handout/Screenshot_4.png "Screenshot_4")  
 
+### Close an application context
+
+- **Standalone Application**
+    - Registering a shutdown-hook by calling the method `registerShutdownHook`, also
+      implemented in the AbstractApplicationContext class. <br/>
+      This will cause the Spring application context to be closed when the Java virtual machine is
+      shut down normally. This is the recommended way to close the application context in a non-web application.
+    - Calling the `close` method from the `AbstractApplicationContext` class. <br/>
+      This will cause the Spring application context to be closed immediately.
+- **Web Application**
+    - In a web application, closing of the Spring application context is taken care of by the
+      `ContextLoaderListener`, which implements the `ServletContextListener` interface. The
+      `ContextLoaderListener` will receive a `ServletContextEvent` when the web container stops the web application.
+- **Spring Boot Closing Application Context**
+    - Spring Boot will register a shutdown-hook as described above when a Spring application that uses Spring Boot is started.
+      The mechanism described above with the ContextLoaderListener also applies to Spring Boot web applications.
+      
 # Spring Test 
 
 - Unit Testing
@@ -1445,6 +1557,13 @@ public class ConfigurationClass {
 - Spring has mock objects on `Environment`, `JNDI`, and `Servlet API` to assist in unit testing.
 - **By default, the framework will create and roll back a transaction for each test.**
 - Tests that are annotated with `@Transactional` but have the propagation type set to `NOT_SUPPORTED` will not be run within a transaction.
+
+#### Create an ApplicationContext in an integration test
+
+Depending on whether JUnit 4 or JUnit 5 is used, the annotation `@RunWith` (JUnit 4) or
+`@ExtendWith` (JUnit 5) is used to annotate the test-class. In addition, the annotation
+`@ContextConfiguration` in both cases to specify either the XML configuration file(s) or the Java
+class(es) containing the Spring configuration to be loaded into the application context for the test.
 
 #### JUnit 4 Example 
  
@@ -2609,6 +2728,7 @@ public class TestDataConfig {
 ```
 
 - Apply the `@EnableTransactionManagement` annotation to exactly one `@Configuration` class in the application.
+- `@EnableTransactionManagement` can be used so that the `@Transactional` in the code will work
   
 ```java
 @Configuration
@@ -4691,13 +4811,17 @@ public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 
 ![alt text](images/handout/Screenshot_78.png)
 
-## Method Security
+### Method Security
 
 - Method-level security is accomplished using Spring AOP proxies.
 - Annotations based on Spring annotations or JSR-250 annotations
--  Java configuration to activate detection of annotations
+- Java configuration to activate detection of annotations
 
-### XML
+#### @Secured
+
+##### XML
+
+- In xml `<global-method-security pre-post-annotations="enabled"/>`
 
 ```xml
 <global-method-security secured-annotations="enabled" />
@@ -4705,12 +4829,9 @@ public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 </global-method-security>
 ```
 
-### Java 
-
-#### @Secured
+##### Java 
 
 - Configuration class annotate with `@EnableGlobalMethodSecurity(securedEnabled  =  true)`
-- In xml `<global-method-security pre-post-annotations="enabled"/>`
 - Methods annotate with annotation `@Secured`
 - The `@Secured` annotation is a legacy Spring Security 2 annotation that can be used to configured method security.
 	
