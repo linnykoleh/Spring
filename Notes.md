@@ -1412,10 +1412,10 @@ public class JdbcAbstractRepo<T extends AbstractEntity> implements AbstractRepo<
 	- Literal expressions.
 		- Example string: 'Hello World'
 	- Properties, arrays, lists and maps.	
-	- Example create a list of integers: `{1, 2, 3, 4, 5}`
-		- Example create a map: `{1 : "one", 2 : "two", 3 : "three", 4 : "four"}`
-		- Example retrieve third item in list referenced by variable theList: `#theList[3]`
-		- Example retrieve value from map in variable personsMap that has key “ivan”: `#personsMap['ivan']`
+        - Example create a list of integers: `{1, 2, 3, 4, 5}`
+        - Example create a map: `{1 : "one", 2 : "two", 3 : "three", 4 : "four"}`
+        - Example retrieve third item in list referenced by variable theList: `#theList[3]`
+        - Example retrieve value from map in variable personsMap that has key “ivan”: `#personsMap['ivan']`
 	- Method invocation.	
 		- Example invoke a method on a Java object stored in variable javaObject: `#javaObject.firstAndLastName()`
 	- Operators.
@@ -1424,18 +1424,21 @@ public class JdbcAbstractRepo<T extends AbstractEntity> implements AbstractRepo<
         - The Elvis operator: <variable-to-test-for-null> ?: <value-to-assign-if-variable-is-null>
         - Safe navigation operator: <object-reference-that-may-be-null>?.<field-in-object>
         - Regular expression “matches” operator: '168' matches '\\d+'
-    - User defined functions..
+    - Variables    
+        - Variables are set on the evaluation context and accessed in SpEL expressions using the # prefix.
+            - Example access the list in the numbersList variable: `#numbersList`
+    - User defined functions
     	- Implemented as static methods.
     - Referencing Spring beans in a bean factory (application context).	 
-    	- @mySuperComponent.injectedValue
+    	- `@mySuperComponent.injectedValue`
     - Collection selection expressions.
     	- Creates a new collection by selecting a subset of elements from a collection.	Syntax: .?[<selection-expression>]
     - Collection projection.	
     	- Creates a new collection by applying an expression to each element in a collection. Syntax: .![<expression>]
 - The following entities can be referenced from Spring Expression Language (SpEL) expressions.
 	- Static methods and static properties/fields.
-		- `T(se.ivankrizsan.spring.MyBeanClass).myStaticMethod()`
-		- `T(se.ivankrizsan.spring.MyBeanClass).myClassVariable`
+		- `T(com.linnyk.spring.MyBeanClass).myStaticMethod()`
+		- `T(com.linnyk.spring.MyBeanClass).myClassVariable`
 	- Properties and methods in Spring beans. A Spring bean is references using its name prefixed with **@** in SpEL.
 		- Example accessing property on Spring bean: `@mySuperComponent.injectedValue`
 		- Example invoking method on Spring bean: `@mySuperComponent.toString()`
@@ -1449,7 +1452,12 @@ public class JdbcAbstractRepo<T extends AbstractEntity> implements AbstractRepo<
 		- Example KOTLIN_HOME environment variable: `@systemEnvironment['KOTLIN_HOME']`
 	- Spring application environment. Available through the environment reference, also available by default.
 		- Example retrieve name of first default profile: `@environment['defaultProfiles'][0]`	
-
+- Expressions starting with **$**.
+  Such expressions reference a property name in the application’s environment. These expressions are evaluated by the 
+  `PropertySourcesPlaceholderConfigurer` Spring bean prior to bean creation and can only be used in @Value annnotations.
+- Expressions starting with **#**.
+  Spring Expression Language expressions parsed by a `SpEL` expression parser and evaluated by a SpEL expression instance.
+  
 ### Environment
 
 - The `Environment` is a part of the application container. The `Environment` contains profiles and properties, two important parts of the application environment.
@@ -3154,7 +3162,11 @@ jdbcTemplate.update("delete from MY_TABLE where id = ?", id);
 #### Execute 
 
 - You can use the `execute(..)` method to execute any arbitrary SQL, and as such the method is often used for DDL statements. 
-It is heavily overloaded with variants taking callback interfaces, binding variable arrays, and so on.
+- It can execute SQL `insert` statements.
+- It can execute SQL `delete` statements.
+- Invokes a simple stored procedure
+    - `this.jdbcTemplate.update("call SUPPORT.REFRESH_ACTORS_SUMMARY(?)", Long.valueOf(unionId));`
+- It is heavily overloaded with variants taking callback interfaces, binding variable arrays, and so on.
 
 ```java
 this.jdbcTemplate.execute("create table mytable (id integer, name varchar(100))");
@@ -4536,7 +4548,7 @@ public class TopSpendersReportGenerator extends HttpServlet {
 		- #### ** <br/>
 		Matches any path on the level at the wildcard occurs and all levels below. If only /** or ** then will match any request.  <br/>
 		Example: /services/** matches /services, /services/, /services/users and /services/orders and also /services/orders/123/items etc.
-       
+- If there are multiple `intercept-url` elements used, the first match will be used.     
  
 ```xml
 <beans:beans  ...>

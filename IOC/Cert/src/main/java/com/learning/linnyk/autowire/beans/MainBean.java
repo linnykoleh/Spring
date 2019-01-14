@@ -10,6 +10,7 @@ public class MainBean {
 
 	private BeanSetter beanSetter;
 	private BeanMethod beanMethod;
+	private BeanMethodReturnValue beanMethodReturnValue;
 
 	@Autowired
 	private BeanValue beanValue;
@@ -32,6 +33,13 @@ public class MainBean {
 		System.out.println("setter " + toString());
 	}
 
+    @Autowired
+    public BeanMethodReturnValue setBeanMethodReturnValue(BeanMethodReturnValue beanMethodReturnValue) {
+        this.beanMethodReturnValue = beanMethodReturnValue;
+        System.out.println("methodReturnValue " + toString());
+        return this.beanMethodReturnValue;
+    }
+
 	@Override
 	public String toString() {
 		return "{" +
@@ -39,6 +47,7 @@ public class MainBean {
 				", beanSetter=" + beanSetter +
 				", beanValue=" + beanValue +
 				", beanMethod=" + beanMethod +
+				", beanMethodReturnValue=" + beanMethodReturnValue +
 				'}';
 	}
 }
