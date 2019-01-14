@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 @Order(3)
 public class Average implements Rating {
 
-    @Override
-    public String toString() {
-        return "Average{order 3}";
-    }
+	@Override
+	public String toString() {
+		return "Average{order 3}";
+	}
 }

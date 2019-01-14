@@ -453,18 +453,29 @@ The lifecycle of a Spring bean looks like this:
 	- Properties and dependencies of the bean are set.
 	- `BeanPostProcessor`'s `postProcessBeforeInitialization` are given a chance to process the new bean instance `before initialization`.
     - Any methods in the bean implementation class annotated with `@PostConstruct` are invoked.
+    	- `@PostConstruct` is a standard Java lifecycle annotation, as specified in JSR-250.
+        - An annotated method may have any visibility, may not take any parameters and may only have the void return type.
     - Any `afterPropertiesSet` method in a bean implementation class implementing the `InitializingBean` interface is invoked (this method is not recommended by the Spring). 
+    	- While heavily used in the Spring framework, this method is not recommended by the Spring
+          Reference Documentation since it introduce unnecessary coupling to the Spring framework.
     - Any custom bean initialization method is invoked. Bean initialization methods can be specified either in the value of the `init-method` attribute in the corresponding `<bean>` element in a Spring XML configuration or in the `initMethod` property of the `@Bean` annotation. 
 	- `BeanPostProcessor`'s `postProcessAfterInitialization` are given a chance to process the new bean instance `after initialization`.	
 	- The bean is ready for use.
 - When the Spring application context is to shut down, the beans in it will receive destruction callbacks in this order:
 	- Any methods in the bean implementation class annotated with `@PreDestroy` are invoked.
+		- @PreDestroy is a standard Java lifecycle annotation, as specified in JSR-250.
+        - An annotated method may have any visibility, may not take any parameters and may only have the void return type.
 	- Any destroy method in a bean implementation class implementing the `DisposableBean` interface is invoked. If the same destruction method has already been invoked, it will not be invoked	again. (this method is not recommended by the Spring)
+		- While heavily used in the Spring framework, this method is not recommended by the Spring Reference Documentation since it introduce unnecessary coupling to the Spring framework.
 	- Any custom bean destruction method is invoked.
       Bean destruction methods can be specified either in the value of the `destroy-method` attribute in the corresponding `<bean>` element in a Spring XML configuration or in the `destroyMethod` property of the `@Bean` annotation.
       If the same destruction method has already been invoked, it will not be invoked again.
 
 ![alt text](images/core_spring_in_detail/Screenshot_1.png "Screenshot_1")
+
+- **Initialization methods** are always called when a Spring bean is created, regardless of the scope of the bean.
+- With Spring beans that have prototype scope, that is for which a new bean instance will be created
+  every time the Spring container receives a request for the bean, **no destruction callback** methods will be invoked by the Spring container.
 
 ### BeanFactoryPostProcessor
 
@@ -513,11 +524,9 @@ public class DeprecationHandlerBeanFactoryPostProcessor implements BeanFactoryPo
 }
 ```
 
-- `BeanFactoryPostProcessor` returning by `@Bean` methods this is a
-a special consideration must be taken for `@Bean` methods that return Spring `BeanFactoryPostProcessor` (BFPP) types. 
-Because BFPP objects must be instantiated very early in the container lifecycle, they can interfere with processing 
-of annotations such as `@Autowired`, `@Value`, and `@PostConstruct` within `@Configuration` classes. 
-To avoid these lifecycle issues, mark BFPP-returning `@Bean` methods as static. 
+- `BeanFactoryPostProcessor` returning by `@Bean` methods this is a a special consideration must be taken for `@Bean` methods that return Spring `BeanFactoryPostProcessor` (BFPP) types. 
+Because BFPP objects must be instantiated very early in the container lifecycle, they can interfere with processing  of annotations such as `@Autowired`, `@Value`, and `@PostConstruct` within `@Configuration` classes. 
+**To avoid these lifecycle issues, mark BFPP-returning `@Bean` methods as static.**
 - Static `@Bean` methods can be defined in order to create, for instance, a `BeanFactoryPostProcessor`
 that need to be instantiated prior to the instantiation of any beans that the
 `BeanFactoryPostProcessor` is supposed to modify before the beans are being used.  
@@ -605,6 +614,8 @@ public class TriangleLifecycle implements InitializingBean {
 
 - The `@PostConstruct` annotation is part of the JSR-250 and is used on a method that needs to be executed **after dependency injection** is done to perform initialization
 - The bean that registers `@PostConstruct` is `org.springframework.context.annotation.CommonAnnotationBeanPostProcessor`
+	- When creating a Spring application context using an implementation that uses annotation-based configuration, for instance `AnnotationConfigApplicationContext`, a default
+      `CommonAnnotationBeanPostProcessor` is automatically registered in the application context and no additional configuration is necessary to enable `@PostConstruct` and `@PreDestroy`.
 - The methods that can be annotated with `@PostConstruct` must respect the rules: 
  	- they must have no arguments 
  	- return void
@@ -816,10 +827,14 @@ public enum ScopedProxyMode {
 #### @Configuration
     
 - Classes annotated with `@Configuration` contain bean definitions.  
-- Not allowed to annotate a final class with `@Configuration`
+- Configuration classes cannot be final
     - The Spring container will create a subclass of each class annotated with `@Configuration` when
-      creating an application context using `CGLIB`. Final classes cannot be subclassed, thus classes
+      creating an application context using **CGLIB**. Final classes cannot be subclassed, thus classes
       annotated with `@Configuration` cannot be declared as final.
+    - Configuration classes are subclassed by the Spring container using **CGLIB** and final classes cannot be subclassed.  
+- `@Bean` methods can’t be final 
+- The reason for the Spring container subclassing `@Configuration` classes is to control bean creation **for singleton beans**, 
+   subsequent requests to the method creating the bean should return the same bean instance as created at the first invocation of the `@Bean` annotated method.    
 - Singleton beans are supported by the Spring container by subclassing classes annotated with
   `@Configuration` and overriding the `@Bean` annotated methods in the class. Invocations to the
   `@Bean` annotated methods are intercepted and, if a bean is a singleton bean and no instance of the
@@ -888,9 +903,17 @@ public class DataSourceConfig {
 }
 ```
 
-- `@Bean` annotation is used to tell Spring that the result of the annotated method will be a bean that has to be managed by it. 
-- `@Bean` annotation together with the method are treated as a `bean definition`, and the method name becomes the bean `id`.
-- `@Bean ( initMethod = "init", destroyMethod = "destroy")` - for declare init and destroy methods
+- **@Bean**
+	- `@Bean` annotation is used to tell Spring that the result of the annotated method will be a bean that has to be managed by it. 
+	- `@Bean` annotation together with the method are treated as a `bean definition`, and the method name becomes the bean `id`.
+	- `@Bean ( initMethod = "init", destroyMethod = "destroy")` - for declare init and destroy methods
+	- Configure autowiring of dependencies; whether by name or type.
+		- `autowire()` default Autowire.NO;
+			- `NO`(AutowireCapableBeanFactory.AUTOWIRE_NO)
+            - `BY_NAME`(AutowireCapableBeanFactory.AUTOWIRE_BY_NAME)
+            - `BY_TYPE`(AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE)
+    - The default bean name, also called bean id, is the name of the `@Bean` annotated method. 
+      This default id can be overridden using the name attribute of the `@Bean` annotation.        
 - `@Lazy`: dependency will be injected the first time it is used.   
 - `@PropertySource` annotation can be used to add a property source to the Spring environment.
     - The annotation is applied to classes annotated with `@Configuration`.
@@ -946,6 +969,12 @@ public @interface RestController {
 - If a bean class contains one single constructor, then annotating it with `@Autowired` is not required in order for the Spring container to be able to autowire dependencies. 
 - If a bean class contains more than one constructor and autowiring is desired, at least one of the constructors need to be annotated
   with `@Autowired` in order to give the container a hint on which constructor to use.
+- If there are multiple matching bean candidates and one of them is annotated with `@Primary`, then this bean is selected and injected into the field or parameter.  
+- If there are multiple matching bean candidates and the field or parameter is annotated with the @Qualifier annotation, 
+  then the Spring container will attempt to use the information from the `@Qualifier` annotation to select a bean to inject.
+- If there is no other resolution mechanism, such as the `@Primary` or `@Qualifier` annotations, and there are multiple matching beans, the Spring container will try to resolve the
+  appropriate bean by trying to match the bean name to the name of the field or parameter. This is the default bean resolution mechanism used when autowiring dependencies.
+- If still no unique match for the field or parameter can be determined, an exception will be thrown.  
 - `@Autowired`: core annotation for this group; is used on dependencies to instruct Spring IoC to take care of injecting them.
 	- Can be used on fields, constructors, setters and methods. 
 	- Use with `@Qualifier` from Spring to specify name of the bean to inject.
@@ -979,10 +1008,16 @@ public void setMovieFinder(MovieFinder movieFinder) {
 - `@Autowired` may also be used for well-known "resolvable dependencies", these interfaces will be automatically resolved, with no special setup necessary.
 	- `BeanFactory` interface
 	- `ApplicationContext` interface
+	- `Environment` interface
 	- `ResourceLoader` interface
 	- `ApplicationEventPublisher` interface 
 	- `MessageSource` interface
-    
+- If the type that is autowired is a map with the key type being String, then the Spring
+  container will collect all beans matching the value type of the map and insert these into the map with the bean name as key and inject the map.
+- When autowiring arrays, collections or maps containing Spring beans, dependency injection will, as default, fail with an error if there are no matching beans.
+	- Thus an empty array, collection or map will not be injected. If the array, collection or map
+	  parameter is made optional, null (and not an empty array, collection or map) will be injected if there are no beans of the matching type.
+        
 ### @Qualifier
 
 - `@Qualifier` annotation can aid in selecting one single bean to be dependency-injected into a field or parameter annotated with `@Autowired` when there are multiple candidates.
@@ -1003,7 +1038,15 @@ private UserService userService;
 - `@Qualifier` can also be applied on bean definitions by annotating a method annotated with `@Bean` in a configuration class with `@Qualifier` and supplying a value in the `@Qualifier` annotation.
 - `@Qualifier` annotation can also be used on types and fields.
 - `@Qualifier` annotation can be used on individual constructor arguments.
-- `@Qualifier` annotations applied on collections  (e.g. Set) are valid.
+- `@Qualifier` annotations applied on collections (e.g. Set) are valid.
+- The bean name is considered a default qualifier value.
+- The @Qualifier annotation can be used at three different locations:
+	- At injection points.
+		- The most basic use of the `@Qualifier` annotation is to specify the name of the Spring bean to be selected the bean to be dependency-injected.
+	- At bean definitions. 
+		- By annotating a method annotated with `@Bean` in a configuration class with `@Qualifier` and supplying a value in the `@Qualifier` annotation.
+		- If a bean has not been assigned a qualifier, the default qualifier, being the name of the bean, will be assigned the bean.
+	- At annotation definitions. This creates a custom qualifier annotation.
 
 ```java
 @Component
@@ -1269,6 +1312,9 @@ public class JdbcUserRepo extends JdbcAbstractRepo<User> implements UserRepo {
 - Methods with more than one parameter.
 - Methods with any visibility. <br />
   Example: Setter-methods annotated with `@Autowired` can be private – the Spring container will still detect and invoke them.
+- Methods that do not have a void return type.  
+- If a method annotated with `@Autowired(required = false)` has multiple parameters then this method
+  will not be invoked by the Spring container, and thus no dependency injection will take place, unless all the dependencies can be resolved in the Spring context.
 - If a method annotated with `@Autowired`, regardless of whether required is true or false, has parameters wrapped by the Java 8 Optional, then this method will always be invoked with the
   parameters for which dependencies can be resolved having a value wrapped in an `Optional` object. All parameters for which no dependencies can be resolved will have the value `Optional.EMPTY`.  
  
@@ -1494,7 +1540,13 @@ public class ConfigurationClass {
 
 - The `@Profile` annotation can be applied at the following locations:
     - At class level in `@Configuration` classes.
+    	- Beans in the configuration class and beans in configuration(s) imported with `@Import` annotation(s) will only be created and registered if the conditions in the `@Profile` annotation are met.
+    - At class level in classes annotated with `@Component` or annotated with any other annotation that in turn is annotated with `@Component`.
+    	- The component will only be created and registered if the conditions in the `@Profile` annotation are met.
     - On methods annotated with the `@Bean` annotation.
+    	- Applied to a single method annotated with the `@Bean` annotations. The bean will only be created and registered if the conditions in the `@Profile` annotation are met.
+    - Type level in custom annotations.
+        - Acts as a meta-annotation when creating custom annotations.	
 - Activating Profile(s)
    - Programmatic registration of active profiles when the Spring application context is created.
     ```java
@@ -1506,6 +1558,10 @@ public class ConfigurationClass {
    ```
    - In tests, the `@ActiveProfiles` annotation may be applied at class level to the test class
      specifying which the profile(s) that are to be activated when the tests in the class are run.
+
+- There is a default profile named `default` that will be active if no other profile is activated.
+- There does not seem to be any limitation concerning how many profiles that can be used in a Spring application.
+  The Spring framework (in the class ActiveProfilesUtils) use an integer to iterate over an array of active profiles, which implies a maximum number of 2^32 – 1 profiles.
 
 ![alt text](images/handout/Screenshot_4.png "Screenshot_4")  
 
@@ -1553,7 +1609,11 @@ public class ConfigurationClass {
   - **Java `@Configuration` files** are loaded from classes attribute - `@ContextConfiguration(classes={TestConfig.class, OtherConfig.class})`
   
 - To customize property values in a test, the `@TestPropertySource` annotation allows using either a test-specific property file or customizing individual property values.  
-- `ReflectionTestUtils` make it possible to access private properties,
+- `ReflectionTestUtils` make it possible to access private properties:
+	- Changing value of constants
+	- Setting a value or reference into a non-public field.
+	- Invoking a non-public setter method.
+	- Invoking a non-public configuration or lifecycle callback method.
 - Spring has mock objects on `Environment`, `JNDI`, and `Servlet API` to assist in unit testing.
 - **By default, the framework will create and roll back a transaction for each test.**
 - Tests that are annotated with `@Transactional` but have the propagation type set to `NOT_SUPPORTED` will not be run within a transaction.
@@ -1956,18 +2016,20 @@ public class LoggingAspect {
 	
 ![alt text](images/handout/Screenshot_18.png "Screenshot_18")	
 
-	
 - The default type of proxy used by the Spring framework is the `JDK dynamic proxy`.
 - Proxies limitations:
 	- `JDK Dynamic Proxies`
-		- Invocation of advised methods on self.
+		- Does not support self-invocations.
 		- Class for which a proxy is to be created must implement an interface.
 		- Only public methods in implemented interfaces will be proxied.
 	- `CGLIB Proxies`
-		- Invocation of advised methods on self.
+		- Does not support self-invocations.
 		- Class for which a proxy is to be created must not be final.
 		- Method(s) in class for which a proxy is to be created must not be final.
 		- Only public and protected methods will be proxied.
+		- Requires a third-party library.
+			- Not built into the Java language and thus require a library. 
+			- The CGLIB library has been included into Spring, so when using the Spring framework, no additional library is required.
 
 - To enable detection of Spring beans implementing advice which implementation classes are annotated with the `@Aspect` annotation, 
   the `@EnableAspectJAutoProxy` annotation should be 
