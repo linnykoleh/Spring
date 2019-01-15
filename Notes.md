@@ -2540,18 +2540,23 @@ public interface Server {
 # Data Access
 
 - **DML** stands for `Data Manipulation Language`, and the database operations presented so far are part of it, 
-the commands `SELECT`, `INSERT`, `UPDATE`, and `DELETE` are database statements used to create, update, or delete data from existing tables.
+   the commands `SELECT`, `INSERT`, `UPDATE`, and `DELETE` are database statements used to create, update, or delete data from existing tables.
 - **DDL** stands for `Data Definition Language`, and database operations that are part of it are used to manipulate database objects: 
-tables, views, cursors, etc. The commands `CREATE`, `ALTER`, `DROP`
-- **DataAccessException** class and all of its subclasses in the Spring Framework. All the exceptions in this exception hierarchy are unchecked.
-- The javax.sql.DataSource interface is the interface from which all data-source classes related to SQL stem.
+   tables, views, cursors, etc. The commands `CREATE`, `ALTER`, `DROP`
+- **DataAccessException** class and all of its subclasses in the Spring Framework. 
+	- All the exceptions in this exception hierarchy are unchecked.
+	- The purpose of the data access exception hierarchy is isolate application developers from the
+      particulars of JDBC data access APIs, for instance database drivers from different vendors. 
+    - This in turn enables easier switching between different JDBC data access APIs.
+
+![alt text](images/handout/Screenshot_35.png "Screenshot_35")
+
+- The `javax.sql.DataSource` interface is the interface from which all data-source classes related to SQL stem.
 	- DelegatingDataSource
     - AbstractDataSource
     - SmartDataSource
     - EmbeddedDatabase
-    
-![alt text](images/handout/Screenshot_35.png "Screenshot_35")
-    
+        
 - `DataSource` in a standalone application    
 
 ```java
@@ -2566,52 +2571,30 @@ public DataSource dataSource() {
 }
 ```
 
-- If the application uses Spring Boot, then it is not necessary to create a DataSource bean. Setting the values of a few properties are sufficient:
+- `DataSource` in Spring Boot, then it is not necessary to create a `DataSource` bean. 
+- Setting the values of a few properties are sufficient:
+
 ```xml
 spring.datasource.url= jdbc:hsqldb:hsql://localhost:1234/mydatabase
 spring.datasource.username=ivan
 spring.datasource.password=secret
 ```
 
-- DataSource in an application deployed to a server
+- `DataSource` in an application deployed to a server
 	- If the application is deployed to an application server then a way to obtain a data-source is by performing a JNDI lookup
-
-```java
-@Bean
-public DataSource dataSource() {
-	final JndiDataSourceLookup theDataSourceLookup = new JndiDataSourceLookup();
-	final DataSource theDataSource =
-	theDataSourceLookup.getDataSource("java:comp/env/jdbc/MyDatabase");
-	return theDataSource;
-}
-```
-
-- Spring Boot applications need only to rely on setting one single property:
-
-```xml
-spring.datasource.jndi-name=java:comp/env/jdbc/MyDatabase
-```
-
-- **JdbcTemplate** class is a Spring class that simplifies the use of JDBC by implementing common workflows for querying, updating, statement execution
-	- Instances of `JdbcTemplate` are thread-safe after they have been created and configured.
-	- **JdbcTemplate** acquire and release a database connection for every method called.
-	- **JdbcTemplate** callback	
-		- `ResultSetExtractor` - allows for processing of an entire result set, possibly consisting multiple rows of data, at once.
-			- Note that the `extractData` method in this interface returns a Java object.
-		- `RowCallbackHandler` - allows for processing rows in a result set one by one typically accumulating some type of result.
-			- Note that the `processRow` method in this interface has a void return type.
-		- `RowMapper` - allows for processing rows in a result set one by one and creating a Java object for each row.
-			- Note that the `mapRow` method in this interface returns a Java object.
-	- **JdbcTemplate** methods
-		- batchUpdate
-		- execute
-		- query
-		- queryForList
-		- queryForMap
-		- queryForObject
-		- queryForRowSet
-		- update
-		- ...
+	```java
+	@Bean
+	public DataSource dataSource() {
+		final JndiDataSourceLookup theDataSourceLookup = new JndiDataSourceLookup();
+		final DataSource theDataSource =
+		theDataSourceLookup.getDataSource("java:comp/env/jdbc/MyDatabase");
+		return theDataSource;
+	}
+	```
+	- Spring Boot applications need only to rely on setting one single property:
+	```xml
+	spring.datasource.jndi-name=java:comp/env/jdbc/MyDatabase
+	```
 
 ## Java Config of DataSource and populating db
 
@@ -3137,6 +3120,26 @@ public void testCount() {
 - **After getting configured, instances of the `JdbcTemplate` class are threadsafe.**
 - **It is thread-safe to inject a single configured instance of a `JdbcTemplate` reference into multiple DAOs.**
 - `JdbcTemplate` has a property whose type is `DataSource`.
+- `JdbcTemplate` class is a Spring class that simplifies the use of JDBC by implementing common workflows for querying, updating, statement execution
+	- **Instances of `JdbcTemplate` are thread-safe after they have been created and configured**
+	- `JdbcTemplate` acquire and release a database connection for every method called.
+	- `JdbcTemplate` callback	
+		- `ResultSetExtractor` - allows for processing of an entire result set, possibly consisting multiple rows of data, at once.
+			- Note that the `extractData` method in this interface **returns a Java object**.
+		- `RowCallbackHandler` - allows for processing rows in a result set one by one typically accumulating some type of result.
+			- Note that the `processRow` method in this interface has a **void return type**.
+		- `RowMapper` - allows for processing rows in a result set one by one and creating a Java object for each row.
+			- Note that the `mapRow` method in this interface **returns a Java object**.
+	-`*JdbcTemplate` methods
+		- batchUpdate
+		- execute
+		- query - uses for `insert` `update` `delete`
+		- queryForList
+		- queryForMap
+		- queryForObject
+		- queryForRowSet
+		- update
+		- ...
 
 ![alt text](images/handout/Screenshot_39.png "Screenshot_39")
 
