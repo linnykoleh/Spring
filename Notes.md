@@ -524,13 +524,18 @@ public class DeprecationHandlerBeanFactoryPostProcessor implements BeanFactoryPo
 }
 ```
 
+#### Static BeanFactoryPostProcessor
+
 - `BeanFactoryPostProcessor` returning by `@Bean` methods this is a a special consideration must be taken for `@Bean` methods that return Spring `BeanFactoryPostProcessor` (BFPP) types. 
 Because BFPP objects must be instantiated very early in the container lifecycle, they can interfere with processing  of annotations such as `@Autowired`, `@Value`, and `@PostConstruct` within `@Configuration` classes. 
 **To avoid these lifecycle issues, mark BFPP-returning `@Bean` methods as static.**
 - Static `@Bean` methods can be defined in order to create, for instance, a `BeanFactoryPostProcessor`
-that need to be instantiated prior to the instantiation of any beans that the
-`BeanFactoryPostProcessor` is supposed to modify before the beans are being used.  
-   
+  that need to be instantiated prior to the instantiation of any beans that the `BeanFactoryPostProcessor` is supposed to modify before the beans are being used.  
+- The 'static' modifier allows a method to be called without creating its containing configuration class as an instance.
+- It is necessary when beans will get initialized early in the container lifecycle.
+- It avoids triggering other parts of the configuration at that point of definition.
+- They will never get intercepted by the container, not even within `@Configuration` classes.
+
 ```java
 @Bean
 public static PropertySourcesPlaceholderConfigurer pspc() {
@@ -2043,6 +2048,7 @@ public class LoggingAspect {
 		- Used when class implements no interface
 		- Cannot be applied to final classes or methods
 		- Based on proxy inheriting the base class
+		- Spring AOP can use CGLIB proxies whether the target object implements an interface or not.
 	
 ![alt text](images/handout/Screenshot_18.png "Screenshot_18")	
 
@@ -2548,6 +2554,9 @@ public interface Server {
 	- The purpose of the data access exception hierarchy is isolate application developers from the
       particulars of JDBC data access APIs, for instance database drivers from different vendors. 
     - This in turn enables easier switching between different JDBC data access APIs.
+    - Its use helps convert proprietary checked exceptions, to a set of runtime exceptions.
+    - Its use allows one to switch between persistence technologies fairly easily and it also allows one to code 
+      without worrying about catching exceptions that are specific to each technology.
 
 ![alt text](images/handout/Screenshot_35.png "Screenshot_35")
 
@@ -2786,6 +2795,16 @@ public class CitiesService {
 
 ![alt text](images/pet-sitter/Screenshot_13.png "Screenshot_13")
 
+#### Difference between a local and a global transaction
+
+- Global transactions allow for transactions to span multiple transactional resources. As an example
+  consider a global transaction that spans a database update operation and the posting of a message to
+  the queue of a message broker. If the database operation succeeds but the posting to the queue fails
+  then the database operation will be rolled back (undone). 
+
+- Local transactions are transactions associated with one single resource, such as one single database
+  or a queue of a message broker, but not both in one and the same transaction.
+
 ## Configure Transactions Support
 
 - Configure transaction management support
@@ -2848,6 +2867,7 @@ The `@EnableTransactionManagement` is more flexible; it looks for a bean of any 
 ## @Transactional
 
 - **@Transactional** annotation is used for `declarative transaction management` and can be used on class and method level both in classes and interfaces.
+- In the Spring framework declarative transaction management is implemented using Spring AOP.
 - When using Spring AOP proxies, only `@Transactional` annotations on public methods will have any effect – 
   applying the `@Transactional` annotation to protected or private methods or
   methods with package visibility will not cause errors but will not give the desired transaction management,
@@ -2868,9 +2888,9 @@ The `@EnableTransactionManagement` is more flexible; it looks for a bean of any 
     
 ![alt text](images/handout/Screenshot_50.png "Screenshot_50")
 
-- Spring allows for using the JPA `javax.transaction.Transactional` annotation as a replacement for the <br/>
+- Spring allows for using the JPA `javax.transaction.Transactional` annotation as a replacement for the
   Spring `@Transactional` annotation, though it does not have as many configuration options.
-- If one `@Transactional` method call another `@Transactional` method,  <br/>
+- If one `@Transactional` method call another `@Transactional` method,
   the method will execute in the same transaction context as the first.
 - Declarative transaction management
     - This is accomplished using annotations or Spring XML configuration.
@@ -2880,6 +2900,9 @@ The `@EnableTransactionManagement` is more flexible; it looks for a bean of any 
     - The types of exceptions that are to cause a rollback can be configured using the `rollbackFor`
       element of the `@Transactional` annotation. In addition, the types of exceptions that not are to cause
       rollbacks can also be configured using the `noRollbackFor` element.  
+    - If a test-method annotated with `@Test` is also annotated with `@Transactional`, then the test-method
+      will be executed in a transaction. Such a transaction will automatically be rolled back after the completion of the test-method.  
+        - The rollback policy of a test can be changed using the `@Rollback` annotation and setting the value to false.
 - Target object wrapped in a proxy
 	- Uses an **Around** advice              
 - Proxy implements the following behavior
@@ -2899,8 +2922,7 @@ The `@EnableTransactionManagement` is more flexible; it looks for a bean of any 
 
 ### PlatformTransactionManager
 
-- `PlatformTransactionManager` is the base interface for all transaction managers that can be used in
-  the Spring framework’s transaction infrastructure.
+- `PlatformTransactionManager` is the base interface for all transaction managers that can be used in the Spring framework’s transaction infrastructure.
     - `PlatformTransactionManager` interface contain the following methods:
         - void `commit`(TransactionStatus)
         - void `rollback`(TransactionStatus)
@@ -2972,18 +2994,18 @@ public class ProgramaticUserService implements UserService {
 - `@EnableTransactionManagement` annotation is to annotate exactly one configuration class in
   an application in order to enable annotation-driven transaction management using the `@Transactional` annotation.
     - Components registered when the `@EnableTransactionManagement` annotation is used are:
-        - `TransactionInterceptor`. <br/>
+        - `TransactionInterceptor`.
           	- Intercepts calls to `@Transactional` methods creating new transactions as necessary etc.
           	- Spring's declarative transaction uses the `TransactionInterceptor` class in its AOP proxies in applying transactional advice.
         - A JDK Proxy or AspectJ advice. <br/>
           This advice intercepts methods annotated with `@Transactional` (or methods that are located in a class annotated with `@Transactional`).  
     - `@EnableTransactionManagement` annotation have the following three optional elements:      
-        - mode <br/>
+        - `mode` <br/>
           Allows for selecting the type of advice that should be used with transactions. Possible values
           are `AdviceMode.ASPECTJ` and `AdviceMode.PROXY` with the latter being the default.
-        - order <br/>  
+        - `order` <br/>  
           Precedence of the transaction advice when more than one advice is applied to a join-point. Default value is `Ordered.LOWEST_PRECEDENCE`.
-        - proxyTargetClass <br/>
+        - `proxyTargetClass` <br/>
           True of `CGLIB proxies` are to be used, false if `JDK interface-based proxies` are to be used in the application 
           
 ## Transaction Propagation
@@ -3053,6 +3075,7 @@ public class ProgramaticUserService implements UserService {
 #### SERIALIZABLE
  - `@Transactional (isolation=Isolation.SERIALIZABLE)`
  - Prevents phantom reads
+    - The serializable isolation level will lock the entire range, for both reading and writing by other transactions – a so-called range-lock.
 
 ![alt text](images/Screenshot_2.png "Screenshot_2")
 
@@ -3139,7 +3162,7 @@ public void testCount() {
 		- queryForObject
 		- queryForRowSet
 		- update
-		- ...
+- `JdbcTemplate` acquire and release a database connection for every method called.
 
 ![alt text](images/handout/Screenshot_39.png "Screenshot_39")
 
