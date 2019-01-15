@@ -1891,8 +1891,17 @@ public class TestCustomerRepo {
 AOP is a type of programming paradigm that aims to help with separation of cross-cutting concerns 
 to increase modularity; it implies declaring an aspect class that will alter the behavior of 
 base code, by applying advices to specific join points, specified by pointcuts.
-```    
+```
 
+- This is accomplished by specifying the following:
+	- Location(s) in the code where code of the cross cutting concern is to be inserted.
+	- Code of the cross cutting concern.   
+
+- Cross cutting concern
+	- Cross cutting concern is functionality that is used in multiple locations throughout an application.
+      Such functionality is applied/used in areas of an application that normally are not related to each other.
+    - Cross cutting concerns do not usually fit well in the model of object-oriented or procedural programming.  
+    
 - Examples of cross-cutting concerns:
 	- Caching
 	- Internationalization
@@ -1903,13 +1912,16 @@ base code, by applying advices to specific join points, specified by pointcuts.
 	- Logging
 	- Transaction management
 	- Security
+	- Monitoring
+	- Custom business rules
+
+- Problems which AOP solve
+	- Avoid code duplication.
+	- Avoid mixing of, for instance, business logic and cross cutting concerns.
 
 - The original library that provided components for creating aspects is named **AspectJ.**
 
 ![alt text](images/handout/Screenshot_27.png "Screenshot_27")
-
-
-
 
 ## AOP Terminology
     
@@ -1917,6 +1929,7 @@ base code, by applying advices to specific join points, specified by pointcuts.
 
 ![alt text](images/core_spring_in_detail/Screenshot_7.png "Screenshot_7")
   
+- **Aspect** - An aspect brings together one or more pointcuts with one or more advice.  
 - **Target object** - object to which the aspect applies.
 - **Target method** - the advised method.
 - **Advice** - action taken by an aspect at a join point. In Spring AOP there are multiple advice types:
@@ -1934,6 +1947,15 @@ base code, by applying advices to specific join points, specified by pointcuts.
 - **Weaving** -  linking aspects with other application types or objects to create an advised object. 
     This can be done at compile time (using the AspectJ compiler, for example), load time, or at runtime. 
     Spring AOP, like other pure Java AOP frameworks, performs weaving at runtime.
+	- **Compile time weaving** <br/>
+	  Byte code of classes is modified at compilation time at selected join points to execute advice
+      code. The AspectJ compiler uses compile time weaving.
+    - **Load time weaving**  <br/>
+      Byte code of classes is modified at class loading time when the application is run.
+    - **Runtime weaving**  <br/>
+      Proxy objects are created at runtime when the application is run. The proxy objects are used
+      instead of the original objects and divert method invocations to advice code.
+      **Spring AOP uses runtime weaving exclusively**
     
 ![alt text](images/core_spring_in_detail/Screenshot_8.png "Screenshot_8")    
 
@@ -2004,23 +2026,23 @@ public class LoggingAspect {
 
 - Proxy classes are created in the init phase by dedicated BeanPostProcessors
 - Two types of proxies
-- `JDK dynamic proxies` - creates a proxy object that implements all the interfaces implemented by the object to be proxied.
-	- Can only proxy by interface
-	- Proxied bean must implement java interface
-	- Part of JDK
-	- All interfaces implemented by the class are proxied
-	- Based on proxy implementing interfaces
-	
-![alt text](images/core_spring_in_detail/Screenshot_10.png "Screenshot_10")
-	
-- `CGLib proxies` - creates a subclass of the class of the object to be proxied. 
-	- third-party library
-	- The CGLIB proxy mechanism will be used by Spring AOP when the Spring bean for which to create a proxy does not implement any interfaces.
-	- Can create a proxy by subclassing. In this scenario the proxy becomes a subclass of the target class. No need for interfaces.
-	- Is not part of JDK, included in spring
-	- Used when class implements no interface
-	- Cannot be applied to final classes or methods
-	- Based on proxy inheriting the base class
+	- `JDK dynamic proxies` - creates a proxy object that implements all the interfaces implemented by the object to be proxied.
+		- `@EnableAspectJAutoProxy`
+		- Can only proxy by interface
+		- Proxied bean must implement java interface
+		- Part of JDK
+		- All interfaces implemented by the class are proxied
+		- Based on proxy implementing interfaces
+		- Any methods found in the target object but not in any interface implemented by the target object cannot be proxied.
+	- `CGLib proxies` - creates a subclass of the class of the object to be proxied. 
+		- `@EnableAspectJAutoProxy(proxyTargetClass = true)`
+		- third-party library
+		- The CGLIB proxy mechanism will be used by Spring AOP when the Spring bean for which to create a proxy does not implement any interfaces.
+		- Can create a proxy by subclassing. In this scenario the proxy becomes a subclass of the target class. No need for interfaces.
+		- Is not part of JDK, included in spring
+		- Used when class implements no interface
+		- Cannot be applied to final classes or methods
+		- Based on proxy inheriting the base class
 	
 ![alt text](images/handout/Screenshot_18.png "Screenshot_18")	
 
@@ -2040,10 +2062,10 @@ public class LoggingAspect {
 			- The CGLIB library has been included into Spring, so when using the Spring framework, no additional library is required.
 
 - To enable detection of Spring beans implementing advice which implementation classes are annotated with the `@Aspect` annotation, 
-  the `@EnableAspectJAutoProxy` annotation should be 
-  applied to a `@Configuration` class and aspects must be annotated with `@Component` 
+  the `@EnableAspectJAutoProxy` annotation should be  applied to a `@Configuration` class and aspects must be annotated with `@Component` 
   similar to functionality found in Spring's <aop:aspectj-autoproxy> XML element.
-- To enable `@AspectJ` support with Java `@Configuration` add the `@EnableAspectJAutoProxy` annotation:
+- To enable `@AspectJ` support with Java `@Configuration` add the `@EnableAspectJAutoProxy` annotation
+- When using the `@EnableAspectJAutoProxy` annotation, the `aspectjweaver.jar` library from AspectJ needs to be on the classpath.
 
 ```java
 @Configuration
@@ -2111,6 +2133,7 @@ public class AppConfig {
 	
 ## Defining Pointcuts	
 
+- Pointcuts can be combined using the logical operators && (and), || (or) and ! (not)
 - The template that a pointcut expression follows can be defined as follows:
 
 ```java
@@ -2121,6 +2144,8 @@ execution( [Modifiers] [ReturnType] [FullClassName].[MethodName] ([Arguments]) t
 	- The * wildcard replaces any group of characters
 	- The + wildcard is used to specify that the method to advise can also be found in subclasses identified by [FullClassName] criteria. 
 	- `!within(se.ivankrizsan.spring..*)` - will result in join points that are NOT within the package se.ivankrizsan.spring or any of its subpackages being selected.
+	- * - Matches types (return and argument types), whole or partial names (package, class, method).
+	- .. - Matches zero or more arguments or packages.
 
 - There is also a list of designators that can be used to define the reach of the pointcut; for example, the `within(...)` designator can be used to limit the pointcut to a package	
 
@@ -2148,33 +2173,30 @@ execution(public (public * com.ps.service.*.*Service+.*(..) && @annotation(org.s
 
 ### Pointcut Designators
 
+- If using an unsupported AspectJ pointcut designator with Spring AOP, an IllegalArgumentException will be thrown.
 - Pointcut designator: **execution**
     - The **execution** pointcut designator matches method execution join points.
         - `Method visibility` <br/>
-         Can be one of private, protected, public. Can be negated using !. May be omitted, in which
-         case all method visibilities will match.
+         Can be one of private, protected, public. Can be negated using `!`. May be omitted, in which case all method visibilities will match.
         - `Return type` <br/>
-          Object or primitive type. Can be negated with !. Wildcard * can be used, in which case all
-          return types will be matched.     
+          Object or primitive type. Can be negated with `!`. Wildcard `*` can be used, in which case all return types will be matched.     
         - `Package` <br/>
-          Package in which class(es) is/are located. May be omitted. Wildcard “..” may be used last in
-          package name to include all sub-packages. Wildcard * may be used in package name.  
+          Package in which class(es) is/are located. May be omitted. Wildcard `..` may be used last in
+          package name to include all sub-packages. Wildcard `*` may be used in package name.  
         - `Class` <br/>
-          Class in which method(s) to be selected is/are located. May be omitted. Includes subclasses
-          of the specified class. Wildcard * may be used.  
+          Class in which method(s) to be selected is/are located. May be omitted. Includes subclasses of the specified class. Wildcard `*` may be used.  
         - `Method` <br/>
           Name of method(s) in which join points to be selected are located. Whole or partial method
-          name. Wildcard * may be used, for example “gree*” will match a method named greet and
+          name. Wildcard `*` may be used, for example “gree*” will match a method named greet and
           any other methods which names start with “gree”.  
         - `Parameters` <br/>
-          Object or primitive types of parameters. A parameter-type can be negated with !, that is !int
-          will match any type except for int. The wildcard “..” can be used to match zero or more
-          subsequent parameters.  
+          Object or primitive types of parameters. A parameter-type can be negated with `!`, that is !int
+          will match any type except for int. The wildcard `..` can be used to match zero or more subsequent parameters.  
         - `Exceptions` <br/>
-          Type(s) of exception(s) that matching method(s) throws. An exception type can be negated using !.     
+          Type(s) of exception(s) that matching method(s) throws. An exception type can be negated using `!`.     
           
 ```java
-execution(public String se.ivankrizsan.spring.aopexamples.MySuperServiceImpl.*(String))
+execution(public String com.linnyk.spring.aopexamples.MySuperServiceImpl.*(String))
 
 Pattern 
 [method visibility] [return type] [package].[class].[method]([parameters] [throws exceptions])
@@ -2184,11 +2206,10 @@ Pattern
     - The **within** pointcut designator matches join points located in one or more classes, optionally
       specifying the package(s) in which the class(es) is/are located.
         - `Package` <br/>
-          Package in which class(es) to be selected is/are located. May be omitted. Wildcard “..” may
-          be used last in package name to include all sub-packages. Wildcard * may be used in
-          package name.
+          Package in which class(es) to be selected is/are located. May be omitted. Wildcard `..` may
+          be used last in package name to include all sub-packages. Wildcard * may be used in package name.
         - `Class` <br/>
-          Class(es) in which join points are to be selected. Wildcard * may be used. Join points in
+          Class(es) in which join points are to be selected. Wildcard `*` may be used. Join points in
           subclasses of the specified class will also be matched.
 
 
@@ -2201,7 +2222,9 @@ Pattern
 
 - Pointcut designator: **this**
 	- The **this** pointcut designator matches all join points where the currently executing object is of specified type (class or interface).
-	- The pattern specifying which join points to select only consists of a single type. Wildcards can not be used in type names.
+	- The pattern specifying which join points to select only consists of a single type. 
+	- Wildcards can not be used in type names.
+	- The below pointcut expression will match join points in proxy objects that implement the `MySuperService` interface.
 
 ```java
 this(MySuperService)
@@ -2216,9 +2239,11 @@ target(MySuperServiceImpl)
 
 - Pointcut designator: **args**
 	- The **args** pointcut designator matches join points, in Spring AOP method execution, where the argument(s) are of the specified type(s).
-		- The .. wildcard may be used to specify zero or more parameters of arbitrary type.
-        - The * wildcard can be used to specify one parameter of any type.
+		- The `..` wildcard may be used to specify zero or more parameters of arbitrary type.
+        - The `*` wildcard can be used to specify one parameter of any type.
         - Package information may be included in the pattern specifying which join points to select.
+        - The below example selects join points where the arguments are two long integers.
+        - The following example selects all join points where the arguments are of any type from the `java.util` package
         
 ```java
 args(long, long)
@@ -2228,17 +2253,17 @@ args(java.util.*)
 
 - Pointcut designator: **@target**
 	- The **@target** pointcut designator matches join points in classes annotated with the specified annotation(s).
-
+	- The below example selects all join points in all classes annotated with the Spring `@Service` annotation.
 ```java
 @target(org.springframework.stereotype.Service)
 ```
 
 - Pointcut designator: **@args**
-	- The @args pointcut designator matches join points where an argument type (class) is annotated with
-      the specified annotation. Note that it is not the argument that is to be annotated, but the class.
+	- The `@args` pointcut designator matches join points where an argument type (class) is annotated with the specified annotation. 
+    - Note that it is not the argument that is to be annotated, but the class.
 
 ```java
-@args(se.ivankrizsan.spring.aopexamples.CleanData)
+@args(com.linnyk.spring.aopexamples.CleanData)
 ```
 
 - Pointcut designator: **@within**
@@ -2252,12 +2277,13 @@ args(java.util.*)
 	- The **@annotation** pointcut designator matches join points in methods annotated with specified annotation.
 
 ```java
-@annotation(se.ivankrizsan.spring.aopexamples.MySuperSecurityAnnotation)
+@annotation(com.linnyk.spring.aopexamples.MySuperSecurityAnnotation)
 ```
 	
 - Pointcut designator: **bean**
 	- This pointcut designator selects all join points within a Spring bean.
-		- The wildcard * may be used in the pattern, making it possible to match a set of Spring beans with one pointcut expression.
+		- The wildcard `*` may be used in the pattern, making it possible to match a set of Spring beans with one pointcut expression.
+	- The below pointcut will select all join points in the Spring bean named `mySuperService`.	
 	
 ```java
 bean(mySuperService)
@@ -2271,12 +2297,15 @@ bean(mySuperService)
 
 #### Before
 
-- Executed before a join point. Cannot prevent proceeding to the join point unless the advice throws an exception.
+- Executed before a join point. 
+	- Cannot prevent proceeding to the join point unless the advice throws an exception.
 	- Examples: 
 		- Access control (security) <br/>
 		  Authorization can be implemented using before advice, throwing an exception if the current user is not authorized.
 		- Statistics  <br/>
 		  Counting the number of invocations of a join point.  
+- Before advice will, always proceed to the join point unless an execution is thrown from within the advice code.
+- Using a `JoinPoint` parameter in an advice is optional.
 
 ![alt text](images/aop/Screenshot_1.png "Screenshot_1")
 
@@ -2353,10 +2382,14 @@ public void afterFindById(JoinPoint joinPoint) throws Throwable {
 
 #### Around
 
+- Around advice is the most powerful of the advice types.
+- Around advice can be used for all of the use-cases for AOP
+- Can chose to execute the join point or not.
+- Can chose to return any return value from the execution of the join point or return some other return value.
 - Executed before and after (around) a join point.
 - The around advice is the most powerful type of advice, because it encapsulates the target method and has control over its execution, 
   meaning that the advice decides whether the target method is called, and if so, when.
-- The type `ProceedingJoinPoint` inherits from JoinPoint and adds the `proceed()` method that is used to call the target method
+- The type `ProceedingJoinPoint` inherits from `JoinPoint` and adds the `proceed()` method that is used to call the target method
 
 ![alt text](images/aop/Screenshot_5.png "Screenshot_5")
 
@@ -2375,32 +2408,34 @@ public Object monitorFind( ProceedingJoinPoint joinPoint) throws Throwable {
 
 ### JoinPoint
 
-- JoinPoint can be added to methods implementing the following types of advice:
+- `JoinPoint` can be added to methods implementing the following types of advice:
 	- Before
     - After returning
     - After throwing
     - After 
 - The parameter must, if present, be the first parameter of the advice method.
 - When the advice is invoked, the parameter will hold a reference to an object that holds static information about the join point as well as state information.
-- Examples of static information:
-	- Kind (type) of join point
-	- Signature at the join point
-- Examples of dynamic information available from the JoinPoint object:	
-	- Target object - `JoinPoint.getTarget`
-	- Currently executing object
+	- Examples of static information:
+		- Kind (type) of join point
+		- Signature at the join point
+	- Examples of dynamic information available from the `JoinPoint` object:	
+		- Target object - `JoinPoint.getTarget`
+		- Currently executing object
 
 ### ProceedingJoinPoint
 
+- Use of the `ProceedingJoinPoint` class as a parameter to an `Around` advice.
+- This type is used as the first parameter of a method implementing an around advice.
 - `ProceedingJoinPoint` class as a parameter to an around advice.
 - `ProceedingJoinPoint` parameter, it will be impossible to invoke the next advice method or target method in such a case.
 - `ProceedingJoinPoint` class is a subclass of the JoinPoint class it contains all the information described in the above section on the JoinPoint class.
 - `ProceedingJoinPoint` class contains these two additional methods:
 	- **proceed()** <br/>
       Proceed to invoke the next advice method or the target method without passing any
-      parameters. Will return an Object. May throw a Throwable exception.
+      parameters. Will return an Object. May throw a `Throwable` exception.
     - **proceed(Object[] args)** <br/>
       Proceed to invoke the next advice method or the target method passing an array of objects as
-      argument to the method to be invoked.  
+      argument to the method to be invoked. Will return an Object. May throw a Throwable exception.
 
 ```java
 @Around("publicServiceMethodInSpringPackagePointcut()")
@@ -2414,8 +2449,6 @@ public Object loggingAdvice(
 	return theResult;
 }
 ```
-
-
 
 ## PointCuts 
 
