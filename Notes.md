@@ -3130,7 +3130,7 @@ public void testCount() {
 			- Note that the `processRow` method in this interface has a **void return type**.
 		- `RowMapper` - allows for processing rows in a result set one by one and creating a Java object for each row.
 			- Note that the `mapRow` method in this interface **returns a Java object**.
-	-`*JdbcTemplate` methods
+	-`JdbcTemplate` methods
 		- batchUpdate
 		- execute
 		- query - uses for `insert` `update` `delete`
