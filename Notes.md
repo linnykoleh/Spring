@@ -3529,13 +3529,14 @@ public class HibernateUserRepo implements UserRepo {
 ## Spring + JPA Java configuration
 
 - The following steps are needed if you want to work with JPA in a Spring application:
-    - Declare the appropriate dependencies.  <br/>
-    In a Maven application, this is accomplished by creating dependencies in the pom.xml file.
-    The dependencies in question are typically the ORM framework dependency, a database driver dependency and a transaction manager dependency.
-    - Implement entity classes with mapping metadata in the form of annotations.  <br/>
+    - **Declare the appropriate dependencies.**  
+    In a Maven application, this is accomplished by creating dependencies in the pom.xml file. The dependencies in question are typically the ORM framework dependency, a database driver dependency and a transaction manager dependency.
+    - **Implement entity classes with mapping metadata in the form of annotations.**  
     As a minimum, entity classes need to be annotated with the `@Entity` annotation on class
     level and the `@Id` annotation annotating the field or property that is to be the primary key of the entity.
-    - Define an `EntityManagerFactory` bean.
+    	 - The `@Entity` annotation is used to annotate classes in order to make it possible to turn instances of the class into persistent entities.
+    	 - The `@Entity` annotation can be applied only at class level.
+    - **Define an `EntityManagerFactory` bean.**  
     The JPA support in the Spring framework offer three alternatives when creating an `EntityManagerFactoryBean`:
         - `LocalEntityManagerFactoryBean` <br/>
         Use this option, which is the simplest option, in applications that only use JPA for
@@ -3544,15 +3545,18 @@ public class HibernateUserRepo implements UserRepo {
         Use this option if the application is run in a JavaEE server.
         - `LocalContainerEntityManagerFactoryBean` <br/>
         Gives the application full JPA capabilities.
-    - Define a `DataSource` bean.
-    - Define a `TransactionManager` bean. <br/>
-    Typically using the `JpaTransactionManager` class from the Spring Framework.
-    - Implement repositories.
+    - **Define a `DataSource` bean.**  
+    - **Define a `TransactionManager` bean.**  
+       Typically using the `JpaTransactionManager` class from the Spring Framework.
+    - **Implement repositories.**
 
-- `@PersistenceContext`- The annotation is applied to a instance variable of the type `EntityManager` or
-   a setter method, taking a single parameter of the `EntityManager` type, into which an entity manager is to be injected.
-    - JPA's equivalent to `@Autowired`
-
+- `@PersistenceContext`- annotation is applied to a instance variable of the type `EntityManager` or a setter method, taking a single parameter of the `EntityManager` type, into which an entity manager is to be injected.
+	- Persistence context is a set of managed objects, entities.
+	- JPA's equivalent to `@Autowired`
+- The `EntityManager` provides an API for managing a persistence context and interacting with the entities in the persistence context.
+- The `EntityManager` manages the persistence context.
+- The `EntityManager` contains the implementation of operations for managing and interacting with persistence context.
+  
 ```java
 @PersistenceContext
 private EntityManager entityManager;
@@ -3711,26 +3715,42 @@ private EntityManager entityManager;
   Spring Data JPA is the `SimpleJpaRepository` class. It is possible to customize either the
   implementation of one specific repository type or customize the implementation used for all repositories.
 
+
 #### Spring Data Repositories
 
- - Spring searches for all interfaces extending `Repository<DomainObjectType, DomainObjectIdType>`
- - Repository is just marker interface and has no method on its own
- - Can annotate methods in the interface with `@Query("Select p from person p where ...")`
- - Can extend CrudRepository instead of Repository - added methods for CRUD
-	 - Method names generated automatically based on naming convention
-	 - findBy + Field (+ Operation)
-	 - FindByFirstName(String name), findByDateOfBirthGt(Date date), ...
-	 - Operations - Gt, Lt, Ne, Like, Between, ...
- - Can extend `PagingAndSortingRepository` - added sorting and paging
- - Most Spring data sub-projects have their own variations of Repository
- 	- `JpaRepository` for JPA
- - Repositories can be injected by type of their interface
- - Repository is an interface (not a class!)
- - Use JDK proxy
+- Spring searches for all interfaces extending `Repository<DomainObjectType, DomainObjectIdType>`
+- Repository is just marker interface and has no method on its own
+- Can annotate methods in the interface with `@Query("Select p from person p where ...")`
+- Can extend CrudRepository instead of Repository - added methods for CRUD
+ - Method names generated automatically based on naming convention
+ - findBy + Field (+ Operation)
+ - FindByFirstName(String name), findByDateOfBirthGt(Date date), ...
+ - Operations - Gt, Lt, Ne, Like, Between, ...
+- Can extend `PagingAndSortingRepository` - added sorting and paging
+- Most Spring data sub-projects have their own variations of Repository
+- `JpaRepository` for JPA
+- Repositories can be injected by type of their interface
+- Repository is an interface (not a class!)
+- Use JDK proxy
+	- Repositories are defined as interfaces in order for Spring Data to be able to use the **JDK dynamic proxy** mechanism to create the proxy objects that intercept calls to repositories.
+	- This also allows for supplying a custom base repository implementation class that will act as a (custom) base class for all the Spring Data repositories in the application.
+- Note that the body of the interface is empty.
+- If only basic CRUD operations and basic find-methods are the only types of methods needed in the repository, then no methods need to be declared in the interface.
  
+- **instant repository**
+	- An `instant repository`, also known as a Spring Data repository, is a repository that need no implementation and that supports the basic **CRUD** (create, read, update and delete) operations.
+	- Such a repository is declared as an interface that typically extend the `Repository` interface or an interface extending the `Repository` interface.
+	- The `Repository` uses Java generics and takes two type arguments; an entity type and a type of the primary key of entities.
+   
 ```java
 public interface PersonRepository extends Repository<Person, Long> {
     
+}
+```
+
+```java
+public interface PersonRepository extends JpaRepository<Person, SocialSecurityNumber> {
+	
 }
 ```
 
@@ -3762,9 +3782,39 @@ public class GemfireConfig {...}
 public class MongoDbConfig {...}
 ```
 
+#### Naming convention for finder methods
+
+- If following the naming convention below, Spring Data will recognize these find methods and supply an implementation for these methods.
+
+```java
+find(First[count])By[property expression][comparison operator][ordering operator]
+```
+
+- Finder method names
+	- `find`
+	- `findBy`
+	- `getBy`
+	- `readBy`
+- Optionally, `First` can be added after `find` in order to retrieve only the first found entity.	
+	- `findFirst10`
+- The optional property expression selects the property of a managed entity that will be used to select the entity/entities that are to be retrieved.	
+	- `IgnoreCase`
+	- Multiple property expressions can be chained using `AND` or `OR`
+- The optional comparison operator enables creation of finder methods that selects a range of entities.
+	- `LessThan`
+	- `GreaterThan`
+	- `Between`
+	- `Like`
+- The optional ordering operator allows for ordering a list of multiple entities on a property in the entity.
+	- `OrderBy`
+	- `Asc`
+	- `Desc`
+	- `findPersonByLastnameOrderBySocialsecuritynumberDesc` - find persons that have a supplied last name and order them in descending order by social security number.
+
 ## Spring Data Configuration
 
 - For Java configuration `@EnableJpaRepositories(basePackages="com.example.**.repository")` - Annotation to enable JPA repositories.
+	- With the Spring Data repository interfaces in place annotate a Spring configuration class with an annotation, `@EnableJpaRepositories` in the case of Spring Data JPA, to enable the discovery and creation of repositories.
 - For XML configuration `<jpa:repositories base-package=""com.example.**.repository""/>` - Annotation to enable JPA repositories.
 
 ---
