@@ -498,6 +498,7 @@ in the same container in which it is defined in.
           - `PropertySourcesPlaceholderConfigurer` - is a `BeanFactoryPostProcessor` that resolves property
              placeholders, on the ${PROPERTY_NAME} format, in Spring bean properties and Spring bean
              properties annotated with the `@Value` annotation.
+          - In XML activates by `<context:property-placeholder location="classpath:db/db.properties" />`
     - Example how to define own BPFP
 
 ```java
@@ -3240,6 +3241,7 @@ this.jdbcTemplate.execute("create table mytable (id integer, name varchar(100))"
 #### RowMapper
 
 - Spring provides a `RowMapper` interface **for mapping a single row** of a `ResultSet` to an object
+- Allows for processing rows in a result set one by one and creating a Java object for each row.
 
 ```java
 public interface RowMapper<T> {
@@ -3284,7 +3286,7 @@ List<Actor> actors = this.jdbcTemplate.query(
 
 #### RowCallbackHandler
 
-- It extracts values from each row of a ResultSet.
+- It extracts values from each row of a `ResultSet`.
 - Spring provides a simpler RowCallbackHandler interface when there is **no return object**
   - Streaming rows to a file
   - Converting rows to XML
@@ -3301,7 +3303,8 @@ public interface RowCallbackHandler {
 #### ResultSetExtractor
 
 - Spring provides a ResultSetExtractor interface **for processing an entire ResultSet at once**
-  - You are responsible for iterating the ResultSet
+	- You are responsible for iterating the `ResultSet`
+- Suitable when more than a single row of data is needed to create a Java object holding query result data.  
  
 ```java
 public interface ResultSetExtractor<T> {
@@ -5269,7 +5272,10 @@ by providing out of the box ready-to-use infrastructure beans
 			
 - Advantages of using Spring Boot
 	- Automatic configuration of “sensible defaults” reducing boilerplate configuration.
+		- Configuration adapted to dependencies on the classpath so that, for example, if a HSQLDB 
+          dependency is available on the class path, then a data-source bean connecting to an in-memory HSQLDB database is created.
 	- A Spring Boot project can produce an executable stand-alone JAR-file.
+		- Such a JAR-file can be run from the command line using the regular java -jar command and may even contain an embedded web server, for web applications, like Tomcat or Jetty.
 	- Provides a set of managed dependencies that have been verified to work together
 	- Provides a set of managed Maven plug-ins configured to produce certain artifacts.
 	- Provides non-functional features commonly needed in projects. <br/>
@@ -5277,9 +5283,15 @@ by providing out of the box ready-to-use infrastructure beans
     - Does not generate code.
     - Does not require XML configuration.
     - Popular in the developer community.
+    - Standardize parts of application structure.
 - How does it work? How does it know what to configure?
-	- Spring Boot detects the dependencies available on the classpath and configures Spring beans accordingly. There are a number of annotations, examples are `@ConditionalOnClass`,
-      `@ConditionalOnBean`, `@ConditionalOnMissingBean` and `@ConditionalOnMissingClass`, that allows for applying conditions to Spring configuration classes or Spring bean declaration methods in such classes.
+	- Spring Boot **has an opinion** on how development of an application is to be done, for
+	  instance concerning the technology-related modules (starters and autoconfiguration), organization of properties, configuration of modules etc.
+	- Spring Boot detects the dependencies available on the classpath and configures Spring beans accordingly. 
+	- There are a number of annotations, examples are `@ConditionalOnClass`, `@ConditionalOnBean`, `@ConditionalOnMissingBean` and `@ConditionalOnMissingClass`, 
+	  that allows for applying conditions to Spring configuration classes or Spring bean declaration methods in such classes.
+		- A Spring bean is to be created only if a certain dependency is available on the classpath. (`@ConditionalOnClass`)
+		- A Spring bean is to be created only if there is no bean of a certain type or with a certain name created. (`@ConditionalOnMissingBean`)
 	![alt text](images/handout/Screenshot_66.png) 	    	
     	- A Spring bean is to be created only if a certain dependency is available on the classpath. Use `@ConditionalOnClass` and supply a class contained in the dependency in question.
     	- A Spring bean is to be created only if there is no bean of a certain type or with a certain name created. Use `@ConditionalOnMissingBean` and specify name or type of bean to check.
@@ -5288,10 +5300,13 @@ by providing out of the box ready-to-use infrastructure beans
     	
 - Properties controlling the behavior of Spring Boot applications can be defined using:
 	- Property files
+		- `requestreceiver.timeout=5000`
 	- YAML files
+		- A structured alternative to property files.
 	- Environment variables	
-	- Command-line arguments (`java -jar myspringbootapp.jar –server.port=8081`)
-- The default properties of a Spring Boot application are stores in the application’s JAR in a file named **application.properties**. 
+	- Command-line arguments 
+		- `java -jar myspringbootapp.jar –server.port=8081`
+- The default properties of a Spring Boot application are stores in the application’s JAR in a file named **application.properties** in the **src/main/resources**. 
   When developing, this file is found in the `src/main/resources` directory.
 
 ![alt text](images/web/boot/Screenshot_1.png)	
@@ -5490,7 +5505,16 @@ public class Application extends SpringBootServletInitializer {
 ```
 
 - You need to opt-in to auto-configuration by adding the `@EnableAutoConfiguration` or `@SpringBootApplication` annotations to one of your `@Configuration` classes
-
+- `@EnableAutoConfiguration` annotation enables Spring Boot auto-configuration. Spring Boot autoconfiguration attempts to create and configure Spring beans based on the
+  dependencies available on the class-path to allow developers to quickly get started with different technologies in a Spring Boot application and reducing boilerplate code and configuration.
+- Spring Boot does not do component scanning unless a configuration class, annotated with `@Configuration`, that is also annotated with the @ComponentScan annotation or an annotation, for
+  instance `@SpringBootApplication`, that is annotated with the `@ComponentScan` annotation.
+- The base package(s) which to scan for components can be specified using the basePackages element in the `@ComponentScan` annotation or by specifying one or more classes that are located in
+  the base package(s) to scan for components by using the basePackageClasses element. If none of the above elements are used, component scanning will take place using the package in
+  which the configuration class annotated with `@ComponentScan` as the base package.
+- **Starter POM** - the advantage of having starter POMs are that all the dependencies needed to get started
+  with a certain technology have been gathered. A developer can rest assured that there are no dependencies missing and that all the dependencies have versions that work well together.  
+  
 ### Testing with Spring Boot
 
 - `@SpringBootTest` - this annotation should be used on a test class that runs Spring Boot-based tests
@@ -5556,6 +5580,9 @@ public class FooServiceTest {
 ### Logging
 
 - **Spring Boot uses Commons Logging for all internal logging but leaves the underlying log implementation open**
+	- Logback
+	- Log4J2
+	- Java Util Logging
 - As per default, messages written with the ERROR, WARN and INFO levels will be output in a Spring Boot application. To enable DEBUG or TRACE logging for the entire application, 
   use the `--debug` or `--trace` flags or set the properties `debug=true` or `trace=true` in the `application.properties` file.
 - By default `Logback` over `SLF4J`
