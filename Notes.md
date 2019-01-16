@@ -3950,24 +3950,31 @@ int setPageCount(int pageCount, String title);
 
 ### DispatcherServlet
     
-  - The Spring Reference says:
-     **"In the Web MVC framework, each `DispatcherServlet` has its own `WebApplicationContext`, which inherits all the beans already defined in the root `WebApplicationContext`.  
-     These inherited beans can be overridden in the servlet-specific scope, and you can define new scope-specific beans local to a given Servlet instance."**
-  - The Spring Reference also says:
-    **"The `WebApplicationContext` is an extension of the plain `ApplicationContext` that has some extra features necessary for web applications. 
-     It differs from a normal `ApplicationContext` in that it is capable of resolving themes, and that it knows which Servlet it is associated with (by having a link to the ServletContext)**
-  - The central piece of Spring Web MVC is the `DispatcherServlet` class, which is the entry point for every Spring Web application.
-  - The `DispatcherServlet` converts HTTP requests into commands for controller components and manages rendered data as well.
-  - In a Spring Web application, all HTTP requests first reach the `DispatcherServlet`
-  - The `DispatcherServlet` must be defined in `web.xml` when the application is configured using the old-style XML configuration
-  - The `DispatcherServlet` must be defined in `web.xml` when the application is configured using the old-style XML configuration.
-  - When using a configuration without `web.xml`, a configuration class that extends `AbstractDispatcherServletInitializer` or `AbstractAnnotationConfigDispatcherServletInitializer` must be declared
-  - Defined by `WebApplicationInitializer` or `web.xml`
-  - Creates separate “servlet” application context
-  - Spring MVC has a JSP tag library that enables data binding and themes.
+- The Spring Reference says:
+ **"In the Web MVC framework, each `DispatcherServlet` has its own `WebApplicationContext`, which inherits all the beans already defined in the root `WebApplicationContext`.  
+ These inherited beans can be overridden in the servlet-specific scope, and you can define new scope-specific beans local to a given Servlet instance."**
+- The Spring Reference also says:
+**"The `WebApplicationContext` is an extension of the plain `ApplicationContext` that has some extra features necessary for web applications. 
+ It differs from a normal `ApplicationContext` in that it is capable of resolving themes, and that it knows which Servlet it is associated with (by having a link to the ServletContext)**
+- The central piece of Spring Web MVC is the `DispatcherServlet` class, which is the entry point for every Spring Web application.
+- The `DispatcherServlet` converts HTTP requests into commands for controller components and manages rendered data as well.
+- In a Spring Web application, all HTTP requests first reach the `DispatcherServlet`
+- The `DispatcherServlet` must be defined in `web.xml` when the application is configured using the old-style XML configuration
+- The `DispatcherServlet` must be defined in `web.xml` when the application is configured using the old-style XML configuration.
+- When using a configuration without `web.xml`, a configuration class that extends `AbstractDispatcherServletInitializer` or `AbstractAnnotationConfigDispatcherServletInitializer` must be declared
+- Defined by `WebApplicationInitializer` or `web.xml`
+- Creates separate “servlet” application context
+- Receives requests and delegates them to registered handlers.
+- Spring MVC has a JSP tag library that enables data binding and themes.
+- The `DispatcherServlet` is not instantiated via an application context. It is instantiated before any application context is created.
  
 ![alt text](images/handout/Screenshot_56.png "Screenshot_56")
- 
+
+- **Model** - The model holds the current data and business logic of the application.
+- **View** - The view is responsible for presenting the data of the application to the user. The user interacts with the view.
+- **Controller** - Controllers acts as a mediator between the model and the view accepting requests from the
+  view, issuing commands to the model to manipulate the data of the application and finally interacts with the view to render the result.
+   
 The `DispatcherServlet` creates a separate **servlet application context** containing all specific web beans (controller, views, view resolvers). 
 This context is also called the web context or the `DispatcherServletContext`.
 
@@ -3977,6 +3984,12 @@ The relationship between the two contexts is a parent–child relationship, with
 **Thus, beans in the web context can access the beans in the parent context, but not conversely**
 
 ![alt text](images/handout/Screenshot_58.png "Screenshot_58.png")
+
+- When a request is issued to the application:
+    - `DispatcherServlet` of the application receives the request.
+    - `DispatcherServlet` maps the request to a method in a controller. The `DispatcherServlet` holds a list of classes implementing the `HandlerMapping` interface.
+    - `DispatcherServlet` dispatches the request to the controller.
+    - The method in the controller is executed.
 
 #### XML Configuration
 
@@ -4194,6 +4207,13 @@ public String show(@PathVariable("userId") Long id, Model model) {
 - The `DispatcherServlet` delegates to a `ViewResolver` to obtain View implementation based on view name.
 
 - ![alt text](images/handout/Screenshot_59.png "Screenshot_59.png")
+
+- When rendering a view, information to display is taken from the model. For example, if the current
+ view in the application is to display customer information then the view may refer to keys such as
+ `customerFirstName`, `customerLastName`, `customerStreet`, `customerCity `etc. 
+ Values are retrieved from the model by requesting a value for a certain key.
+ The model is passed as a parameter to the view when the dispatcher servlet asks the selected view to render itself as part of processing a request. 
+ The dispatcher servlet obtains an instance of `ModelAndView` as a result of invoking the handle method on a HandlerAdapter when processing a request.
 
 ```xml
 <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
