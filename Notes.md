@@ -720,6 +720,7 @@ public MyBeanClass myBeanWithACloseMethodNotToBeInvokedAsLifecycleCallback() {
 | **session**         | Single bean instance per HTTP `session`. Only in web-aware Spring application contexts. |
 | **application**     | Single bean instance per `ServletContext`. Only in web-aware Spring application contexts.|
 | **websocket**       | Single bean instance per `WebSocket`. Only in web-aware Spring application contexts.|
+| **globalSession**   | Connected to `Portlet` applications. Scopes a single bean definition to the lifecycle of a global HTTP Session.|
 | _custom_            | Developers are provided the possibility to define their own scopes with their own rules.|
 
 ```xml
@@ -3551,6 +3552,7 @@ public class HibernateUserRepo implements UserRepo {
     - **Define a `DataSource` bean.**  
     - **Define a `TransactionManager` bean.**  
        Typically using the `JpaTransactionManager` class from the Spring Framework.
+       	- `JpaTransactionManager` is an implementation of `PlatformTransactionManager` for a single JPA `EntityManagerFactory`
     - **Implement repositories.**
 
 - `@PersistenceContext`- annotation is applied to a instance variable of the type `EntityManager` or a setter method, taking a single parameter of the `EntityManager` type, into which an entity manager is to be injected.
