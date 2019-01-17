@@ -4561,6 +4561,8 @@ public class TopSpendersReportGenerator extends HttpServlet {
 
 ## Spring Rest 
 
+- REST stands for **REpresentational State Transfer** and is an architectural style which allows clients to access and manipulate textual representations of web resources given a set of constraints.
+- Resource - Any information that can be named can be a resource: a document or image, a temporal service, a collection of other resources, a non-virtual objec
 - `Uniform Resource Identifier (URI)` is a string of characters designed for unambiguous identification of resources and extensibility via the URI scheme.
 - HTTP methods (GET, POST, PUT, DELETE) are actions performed on resource (like CRUD)
 - `@RestController` - this is `@Controller` + `@ResponseBody` and not need to configure `ContentNegotiationViewResolver`
@@ -4570,7 +4572,17 @@ public class TopSpendersReportGenerator extends HttpServlet {
    - 3** - redirect
    - 4** - client error (404 Not found, 405 Method Not Allowed, 409 Conflict,...)
    - 5** - server error
-
+- Scalability
+	- The statelessness, the cacheability and the layered system constraints of the REST architectural style allows for scaling a REST web service
+	- Statelessness ensures that requests can be processed by any node in a cluster of services without having to consider server-side state.
+- Interoperability      
+	- A REST service can support different formats for the resource representation transferred to  clients and allow for clients to specify which format it wants to receive data in.
+		- XML
+		- JSON
+		- HTML
+	- REST resources are commonly identified using URIs, which do not depend on any particular language or implementation
+    - The REST architectural style allows for a fixed set of operations on resources.
+      	
 ### Accessing Request/Response Data
 
 - Annotate incoming data with `@RequestBody`
@@ -4616,26 +4628,16 @@ public class TopSpendersReportGenerator extends HttpServlet {
 6. The `Access Decision Manager` polls a list of voters to return a decision regarding the rights of the authenticated user to system resources.
 7. Access is granted or denied to the resource based on the user rights and the resource attributes.
 	
-- To configure Spring Security, the `web.xml` must be modified to include the security filter
-    - `DelegatingFilterProxy` - Spring's `DelegatingFilterProxy` provides the link between `web.xml` and the application context.
-
-```xml
-<filter>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-</filter>
-<filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/*</url-pattern>
-</filter-mapping>   
-```
-
 - `<form-login ../>` - configuration element is used to define the request URL for the login form where the user can provide its credentials.
 	- `<form-login login-page="/login.jsp" authentication-failure-url="/login.jsp?login_error=1"/>`	
 - `<logout ../> ` - configuration element is used to define the request URL for the logout form.
 	- `<logout logout-success-url="/index.jsp"/>`
 - `<intercept-url …/>` - The paths defined as values for the pattern attribute are pieces of URLs defined 
 - `mvcMatchers` API is newer than the `antMatchers` API.
+	- As an example `antMatchers("/services")` only matches the exact “/services” URL while `mvcMatchers("/services")` matches “/services” 
+      but also “/services/”, “/services.html” and   “/services.abc”.
+    - `mvcMatcher` matches more than the `antMatcher` and is more forgiving as far as configuration mistakes are concerned.  
+    - `mvcMatchers` API uses the same matching rules as used by the `@RequestMapping` annotation.
 - ` <csrf disabled="true"/>` - using CSFR tokens in Spring forms to prevent cross-site request forgery
 - `authentication-failure-url` - is used to define where the user should be redirected when there is an authentication failure
 - `default-target-url` -  is used to define where the user will be redirected after a successful authentication
@@ -4657,8 +4659,7 @@ public class TopSpendersReportGenerator extends HttpServlet {
 ### intercept-url 	 
 
 - One single `<intercept-url>` element in Spring Security 5 XML configuration is used to specify an
-  URL pattern in the application and information deciding who will be able to access the resource(s)
-  which URLs match the URL pattern.
+  URL pattern in the application and information deciding **who will be able to access the resource(s) which URLs match the URL pattern**.
 - `<intercept-url>` element in Spring Security 5 XML configuration is used to specify an 
 	URL pattern in the application and information deciding who will be able to access the resource(s) which URLs match the URL pattern.
 	- `<intercept-url>` element has the following attributes:
@@ -4668,8 +4669,8 @@ public class TopSpendersReportGenerator extends HttpServlet {
 			- Examples of its values are `DELETE`, `POST`
 		- **pattern** - URL path pattern for which the Spring Security filter chain will be applied.
 		- **request-matcher-ref** - Reference to RequestMatcher bean used to determine if this <intercept-url> will be used.
-		- **requires-channel** - Possible values are “http”, “https” and “any”. The first two are for access over HTTP and
-			HTTPS respectively. Omitting this attribute or using the value “any” matches both HTTP and HTTPS.
+		- **requires-channel** - Possible values are `http` `https` and `any`. The first two are for access over HTTP and
+			HTTPS respectively. Omitting this attribute or using the value `any` matches both HTTP and HTTPS.
 		- **servlet-path** - Servlet path used in combination with method and pattern to match requests. Optional.  
 	- Multiple `<intercept-url>` elements may be defined and they will be evaluated in the order in which they are defined. When an `<intercept-url>` element with a matching pattern is found, evaluation
 	stops. It is therefore recommended to define more `<intercept-url>` elements with more specific pattern earlier and more general patterns later.  	
@@ -4680,11 +4681,15 @@ public class TopSpendersReportGenerator extends HttpServlet {
 		- #### ** <br/>
 		Matches any path on the level at the wildcard occurs and all levels below. If only /** or ** then will match any request.  <br/>
 		Example: /services/** matches /services, /services/, /services/users and /services/orders and also /services/orders/123/items etc.
+- Multiple `<intercept-url>` elements may be defined and they will be evaluated in the order in which they are defined.		
+- When an `<intercept-url>` element with a matching pattern is found, evaluation stops.
+- It is therefore recommended to define more `<intercept-url>` elements with more specific pattern earlier and more general patterns later.
 - If there are multiple `intercept-url` elements used, the first match will be used.     
  
 ```xml
 <beans:beans  ...>
         <http>
+              <intercept-url pattern="/services/users*" access="ROLE_ADMIN" />
               <intercept-url pattern="/users/edit" access="ROLE_ADMIN"/>
               <intercept-url pattern="/users/list" access="ROLE_USER"/>
               <intercept-url pattern="/users/**" access="IS_AUTHENTICATED_FULLY"/>
@@ -4976,9 +4981,28 @@ The order that filters are defined in the chain is very important. Irrespective 
 - `ExceptionTranslationFilter`, to catch any Spring Security exceptions so that either an HTTP error response can be returned or an appropriate AuthenticationEntryPoint can be launched
 - `FilterSecurityInterceptor`, to protect web URIs and raise exceptions when access is denied
 
-#### FilterChainProxy
+#### Spring Security web infrastructure:
 
-- `<filter-chain>` is used to set up security filter chains.  It includes an attribute where you can specify the filters that you prefer to use.
+- **FilterChainProxy**
+	- `<filter-chain>` is used to set up security filter chains.  It includes an attribute where you can specify the filters that you prefer to use.
+- **DelegatingFilterProxy**
+	- To configure Spring Security, the `web.xml` must be modified to include the security filter
+	- `DelegatingFilterProxy` - Spring's `DelegatingFilterProxy` provides the link between `web.xml` and the application context.
+	- `DelegatingFilterProxy` class implements the `javax.servlet.Filter` interface and thus is a servlet filter.	
+	```xml
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>   
+	```
+- **SecurityFilterChain**	
+	- The security filter chain implements the SecurityFilterChain interface and the only implementation provided by Spring Security is the DefaultSecurityFilterChain class.
+
+![alt text](images/Screenshot_3.png)	
 
 ```xml
 <bean id="filterChainProxy" class="org.springframework.security.web.FilterChainProxy">
@@ -5022,9 +5046,12 @@ public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 - Method-level security is accomplished using Spring AOP proxies.
 - Annotations based on Spring annotations or JSR-250 annotations
 - Java configuration to activate detection of annotations
+- Security on the method level needs to be explicitly enabled using the `@EnableGlobalMethodSecurity`
+- Method security is an additional level of security in web applications but can also be the only layer of security in applications that do not expose a web interface.
+- Method-level security is commonly applied to services in the service layer of an application.
 
 #### @Secured
-
+  
 ##### XML
 
 - In xml `<global-method-security pre-post-annotations="enabled"/>`
@@ -5040,6 +5067,7 @@ public class HelloWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 - Configuration class annotate with `@EnableGlobalMethodSecurity(securedEnabled  =  true)`
 - Methods annotate with annotation `@Secured`
 - The `@Secured` annotation is a legacy Spring Security 2 annotation that can be used to configured method security.
+- Does not support using Spring Expression Language (SpEL)
 	
 ```java
 @Configuration
@@ -5065,7 +5093,8 @@ public class UserServiceImpl implements UserService {
      
 - Configuration class annotate with `@EnableGlobalMethodSecurity(jsr250Enabled  =  true)`
 - The `@RolesAllowed` annotation has its origin in the JSR-250 Java security standard. This annotation is more limited than the `@PreAuthorize` annotation in that it only supports role-based security.
-
+- The `@RolesAllowed` annotation with which method security can be configured either on individual methods or on class level.
+  
 ```java
 @Configuration
 @EnableWebSecurity
@@ -5091,13 +5120,13 @@ public class UserServiceImpl implements UserService {
 - In order to be able to use `@PreAuthorize`, the `prePostEnabled` attribute in the `@EnableGlobalMethodSecurity` annotation needs to be set to true.
 - `@EnableGlobalMethodSecurity(prePostEnabled=true)`
 - `@PreAuthorize` annotation allows for specifying access constraints to a method using the Spring Expression Language (SpEL). These constraints are evaluated prior to the method being
-   executed and may result in execution of the method being denied if the constraints are not fulfilled. The `@PreAuthorize` annotation is part of the Spring Security framework.	
-  
+   executed and may result in execution of the method being denied if the constraints are not fulfilled. The `@PreAuthorize` annotation is part of the Spring Security framework.	  
 - Use Pre/Post annotations for SpEL  
     - `@PreAuthorize`
     - `@PreFilter`
     - `@PostAuthorize`
     - `@PostFilter`
+- The `@PreAuthorize` annotation with which method security can be configured either on individual methods or on class level.    
 
 ```java
 @Service
@@ -6388,6 +6417,7 @@ public GetCourseDetailsResponse processCourseDetailsRequest(@RequestPayload GetC
 - The idea is that rather than using complex mechanisms such as `CORBA`, `RPC`, or `SOAP` to connect between machines, simple `HTTP` is used to make calls between machines
 - RESTful applications use HTTP requests to post data (create and/or update), read data (e.g., make queries), and delete data. 
 - REST uses HTTP for all four CRUD (Create/Read/Update/Delete) operations
+- Statelessness of a REST service is one of the fundamental constraints of the REST architectural style. Thus REST is always stateless or else it is no longer REST
 
 ![alt text](images/pet-sitter/Screenshot_25.png) 
 
@@ -6557,7 +6587,9 @@ public class RestExceptionProcessor {
 - `@ResponseBody` is applied to the response
 - `@RequestBody` is applied to the request
 - The client must know the format to use, or request a resource with a representation it understands from the server. 
-  Representations are converted to HTTP requests and from HTTP responses by implementations of the `org.springframework.http.converter.HttpMessageConverter<T>` interface
+- Representations are converted to HTTP requests and from HTTP responses by implementations of the `org.springframework.http.converter.HttpMessageConverter<T>` interface
+	- Convert a `HttpInputMessage` to an object of specified type.
+	- Convert an object to a `HttpOutputMessage`.
 - Message converters are automatically detected and used by Spring in applications configured with `<mvc:annotation-driven/>` or `@EnableWebMvc`
     - Or define explicitly (allows you to register extra convertors) - using `WebMvcConfigurer` or `<mvc/>`
 
