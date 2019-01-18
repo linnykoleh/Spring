@@ -2074,7 +2074,8 @@ public class LoggingAspect {
   similar to functionality found in Spring's <aop:aspectj-autoproxy> XML element.
 - To enable `@AspectJ` support with Java `@Configuration` add the `@EnableAspectJAutoProxy` annotation
 - When using the `@EnableAspectJAutoProxy` annotation, the `aspectjweaver.jar` library from AspectJ needs to be on the classpath.
-
+- AOP is not the part of spring core container.
+  
 ```java
 @Configuration
 @EnableAspectJAutoProxy
@@ -3165,6 +3166,7 @@ public void testCount() {
 		- queryForRowSet
 		- update
 - `JdbcTemplate` acquire and release a database connection for every method called.
+- `SimpleJdbcCall` class can be used to call Stored Procedures in spring.
 
 ![alt text](images/handout/Screenshot_39.png "Screenshot_39")
 
