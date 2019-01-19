@@ -2,6 +2,8 @@
 
 [>> https://docs.spring.io/spring/docs/5.0.3.RELEASE](https://docs.spring.io/spring/docs/5.0.3.RELEASE/spring-framework-reference/index.html)
 
+![alt text](images/Screenshot_4.png "Screenshot_3")
+
 Dependency injection is the process whereby a framework or such, for example the Spring
 framework, establishes the relationships between different parts of an application. This as opposed
 to the application code itself being responsible of establishing these relationships.
@@ -40,7 +42,7 @@ implementation.
 
 ## XML Spring Configuration
 
-```
+```lazily
 In order to tell the Spring Container to create these objects and how to link them together, a configuration must be provided. 
 This configuration can be provided using XML files or XML + annotations or Java Configuration classes.
 ```
