@@ -649,6 +649,8 @@ public class TriangleLifecycle implements InitializingBean {
 	- Scans the classpath for annotated components that will be auto-registered as Spring beans. 
     - By default, the Spring-provided `@Component`, `@Repository`, `@Service`, `@Controller`, `@RestController`, `@ControllerAdvice`, and `@Configuration` stereotypes  will be detected.                                                               
     - Reduce the number of classes to be scanned  
+    - The use of `<context:component-scan />` implicitly enables the functionality of `<context:annotation-config />`. 
+    - There is usually no need to include the `<context:annotation-config />` element when using `<context:component-scan />`.
     
 ![alt text](images/handout/Screenshot_11.png "Screenshot_11")
 
