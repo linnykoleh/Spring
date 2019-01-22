@@ -4992,6 +4992,7 @@ The order that filters are defined in the chain is very important. Irrespective 
 #### Spring Security web infrastructure:
 
 - **FilterChainProxy**
+    - Entry point for all of the web based security.
 	- `<filter-chain>` is used to set up security filter chains.  It includes an attribute where you can specify the filters that you prefer to use.
 - **DelegatingFilterProxy**
 	- To configure Spring Security, the `web.xml` must be modified to include the security filter
