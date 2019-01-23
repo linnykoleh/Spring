@@ -23,4 +23,10 @@ public class TestAspect {
 		System.out.println("testExecution3");
 	}
 
+	@Before("execution(private * com.learning.linnyk.services.MyClass.*(..))")
+	public void testExecution4() {
+		//Will never be executed due-to private method
+		System.out.println("testExecution4");
+	}
+
 }
