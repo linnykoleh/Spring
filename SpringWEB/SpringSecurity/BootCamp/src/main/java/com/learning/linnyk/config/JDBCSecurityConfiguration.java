@@ -11,7 +11,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 
-@Configuration
+/**
+ * Commented in order not to block InMemorySecurityConfiguration
+ */
+//@Configuration
 public class JDBCSecurityConfiguration {
 
 	@Bean
