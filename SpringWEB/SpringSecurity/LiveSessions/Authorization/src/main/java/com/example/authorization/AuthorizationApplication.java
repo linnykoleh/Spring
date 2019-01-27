@@ -50,16 +50,13 @@ class ActuatorSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-
-		//@formatter:off
-				http
-						.requestMatcher(EndpointRequest.toAnyEndpoint())
-								.authorizeRequests()
-										.requestMatchers(EndpointRequest.to(HealthEndpoint.class)).permitAll()
-										.anyRequest().authenticated()
-					.and()
-					.httpBasic();
-				//@formatter:off
+        http
+            .requestMatcher(EndpointRequest.toAnyEndpoint())
+                .authorizeRequests()
+                    .requestMatchers(EndpointRequest.to(HealthEndpoint.class)).permitAll()
+            .anyRequest().authenticated()
+            .and()
+            .httpBasic();
 		}
 }
 
@@ -67,138 +64,134 @@ class ActuatorSecurityConfiguration extends WebSecurityConfigurerAdapter {
 @EnableWebSecurity
 class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+            .csrf().disable();
 
-				http
-					.csrf().disable();
+        http
+            .formLogin().and().httpBasic();
 
-				http
-					.formLogin().and().httpBasic();
-
-				http
-					.authorizeRequests()
-					.mvcMatchers("/root").hasAnyAuthority("ROLE_ADMIN")
-					.mvcMatchers(HttpMethod.GET, "/a").access("hasRole('ROLE_ADMIN')")
-					.mvcMatchers(HttpMethod.POST, "/b").access("@authz.check( request, principal )")
-					.mvcMatchers("/users/{name}").access("#name == principal?.username ")
-					.anyRequest().permitAll();
-
-		}
+        http
+            .authorizeRequests()
+            .mvcMatchers("/root").hasAnyAuthority("ROLE_ADMIN")
+            .mvcMatchers(HttpMethod.GET, "/a").access("hasRole('ROLE_ADMIN')")
+            .mvcMatchers(HttpMethod.POST, "/b").access("@authz.check( request, principal )")
+            .mvcMatchers("/users/{name}").access("#name == principal?.username ")
+            .anyRequest().permitAll();
+    }
 }
 
 @Service("authz")
 @Log4j2
 class AuthService {
 
-		public boolean check(HttpServletRequest request, CustomUser principal) {
-				log.info("checking incoming request: " + request.getRequestURI() + " for principal " + principal.getUsername());
-				return true;
-		}
+    public boolean check(HttpServletRequest request, CustomUser principal) {
+        log.info("checking incoming request: " + request.getRequestURI() + " for principal " + principal.getUsername());
+        return true;
+    }
 }
 
 @RestController
 class RootRestController {
 
-		@GetMapping("/root")
-		String root() {
-				return "root";
-		}
+    @GetMapping("/root")
+    String root() {
+        return "root";
+    }
 }
 
 @RestController
 class LetterRestController {
 
-		@GetMapping("/a")
-		String a() {
-				return "a";
-		}
+    @GetMapping("/a")
+    String a() {
+        return "a";
+    }
 
-		@PostMapping("/b")
-		String b() {
-				return "b";
-		}
+    @PostMapping("/b")
+    String b() {
+        return "b";
+    }
 
 }
 
 @RestController
 class UserRestController {
 
-		@GetMapping("/users/{name}")
-		String userByName(@PathVariable String name) {
-				return "user: " + name;
-		}
+    @GetMapping("/users/{name}")
+    String userByName(@PathVariable String name) {
+        return "user: " + name;
+    }
 }
 
 @Service
 class CustomUserDetailsService implements UserDetailsService {
 
-		private final Map<String, UserDetails> detailsMap = new HashMap<>();
+    private final Map<String, UserDetails> detailsMap = new HashMap<>();
 
-		CustomUserDetailsService() {
-				this.detailsMap.put("jlong", new CustomUser("jlong", "password", true, "USER"));
-				this.detailsMap.put("rwinch", new CustomUser("rwinch", "password", true, "USER", "ADMIN"));
-		}
+    CustomUserDetailsService() {
+        this.detailsMap.put("jlong", new CustomUser("jlong", "password", true, "USER"));
+        this.detailsMap.put("rwinch", new CustomUser("rwinch", "password", true, "USER", "ADMIN"));
+    }
 
-		@Override
-		public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-				if (!this.detailsMap.containsKey(username)) {
-						throw new UsernameNotFoundException("can't find " + username + "!");
-				}
-				return this.detailsMap.get(username);
-		}
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        if (!this.detailsMap.containsKey(username)) {
+            throw new UsernameNotFoundException("can't find " + username + "!");
+        }
+        return this.detailsMap.get(username);
+    }
 }
 
 class CustomUser implements UserDetails {
 
-		private final Set<GrantedAuthority> authorities = new HashSet<>();
-		private final String username, password;
-		private final boolean active;
+    private final Set<GrantedAuthority> authorities = new HashSet<>();
+    private final String username, password;
+    private final boolean active;
 
-		CustomUser(String username, String password, boolean active,
-															String... authorities) {
-				this.username = username;
-				this.password = password;
-				this.active = active;
-				this.authorities.addAll(
-					Arrays
-						.stream(authorities)
-						.map(a -> new SimpleGrantedAuthority("ROLE_" + a))
-						.collect(Collectors.toSet()));
-		}
+    CustomUser(String username, String password, boolean active,
+               String... authorities) {
+        this.username = username;
+        this.password = password;
+        this.active = active;
+        this.authorities.addAll(Arrays.stream(authorities)
+                .map(a -> new SimpleGrantedAuthority("ROLE_" + a))
+                .collect(Collectors.toSet()));
+    }
 
-		@Override
-		public Collection<? extends GrantedAuthority> getAuthorities() {
-				return this.authorities;
-		}
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.authorities;
+    }
 
-		@Override
-		public String getPassword() {
-				return this.password;
-		}
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
 
-		@Override
-		public String getUsername() {
-				return this.username;
-		}
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
 
-		@Override
-		public boolean isAccountNonExpired() {
-				return this.active;
-		}
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.active;
+    }
 
-		@Override
-		public boolean isAccountNonLocked() {
-				return this.active;
-		}
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.active;
+    }
 
-		@Override
-		public boolean isCredentialsNonExpired() {
-				return this.active;
-		}
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.active;
+    }
 
-		@Override
-		public boolean isEnabled() {
-				return this.active;
-		}
+    @Override
+    public boolean isEnabled() {
+        return this.active;
+    }
 }

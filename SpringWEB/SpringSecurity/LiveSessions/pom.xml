@@ -13,6 +13,7 @@
         <module>BootCamp</module>
         <module>Authentication</module>
         <module>Authorization</module>
+        <module>CommonAttacks</module>
     </modules>
 
 </project>

@@ -1,0 +1,67 @@
+<!doctype html>
+<!--
+  ~ Copyright 2002-2018 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Bank</title>
+    <script th:src="@{/webjars/jquery/dist/jquery.min.js}"></script>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+<body>
+<div>
+    <h1>Balance</h1>
+    <p>Your balance is <span id="balance">Loading...</span></p>
+
+    <h1>Transfer</h1>
+    <form th:action="@{/transfer}" method="post">
+        <input type="text" name="amount"/>
+        <input type="submit" value="Transfer"/>
+    </form>
+</div>
+<script type="text/javascript">
+    $(function(){
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+        $(document).ajaxSend(function(e, xhr, options) {
+            xhr.setRequestHeader(header, token);
+        });
+
+        $.getJSON("./balance").done(function( data ) {
+            $("#balance").text(data.balance);
+        });
+        $("input[type=submit]").click(function() {
+            $("#balance").text("Loading...");
+            var input = $("form").find("input[name=amount]");
+            var amount = input.val();
+            $.ajax({
+                url: "./transfer",
+                method: "POST",
+                contentType:"application/json; charset=utf-8",
+                data: JSON.stringify({amount: amount}),
+                success: function(data, status) {
+                    $("#balance").text(data.balance);
+                    input.val("");
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>
