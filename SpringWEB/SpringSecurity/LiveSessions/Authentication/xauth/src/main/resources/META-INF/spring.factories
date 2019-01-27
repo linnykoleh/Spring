@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=livelessons.xauth.XAuthAutoConfiguration
+org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer=livelessons.xauth.XAuthDslConfigurer
