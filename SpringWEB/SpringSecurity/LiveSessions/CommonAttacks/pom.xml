@@ -22,12 +22,11 @@
     </parent>
 
     <modules>
-        <module>cache-control</module>
+        <module>cache</module>
         <module>https</module>
         <module>clickjacking</module>
         <module>csrf</module>
         <module>session-fixation</module>
-        <module>rfd</module>
         <module>xss</module>
     </modules>
 

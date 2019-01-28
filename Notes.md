@@ -4621,6 +4621,21 @@ public class TopSpendersReportGenerator extends HttpServlet {
 	- `Secured` item is the term used to describe any resource that is being secured.
 - Spring secures web requests using standard Filters.
 - Spring secures method invocations using Spring AOP.
+- Common attacks
+	- Cache Control
+	- HTTPS
+	- XSS
+	- Content Sniffing
+	- CSRF Protection
+	- Session Fixation
+	- Click Jacking
+	- CSP
+	- RFD Attacks
+	- HttpFirewall
+- Most of the attacks already known and protected by default if using Spring Security
+
+![alt text](images/Screenshot_5.png)
+
 - Common user roles 
 	- `ADMIN` is a role used for full power
 	- `MEMBER` is used for limited power

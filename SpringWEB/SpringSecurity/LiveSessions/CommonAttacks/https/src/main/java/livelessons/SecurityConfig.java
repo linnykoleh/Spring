@@ -9,9 +9,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.requiresChannel()
+		super.configure(http);
+
+		http.authorizeRequests().and().formLogin().permitAll();
+		http.logout().permitAll();
+
+		// Enabling/Disabling HTTPS
+		http
+			.headers()
+				.httpStrictTransportSecurity().disable() // Not recommended
+			.and()
+			.requiresChannel()
 				.requestMatchers(r -> r.getHeader("x-forwarded-proto") != null)
 				.requiresSecure();
+
+
 	}
 
 }

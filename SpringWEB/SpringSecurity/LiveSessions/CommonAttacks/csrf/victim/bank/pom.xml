@@ -10,9 +10,9 @@
     <parent>
         <groupId>com.learning.linnyk</groupId>
         <artifactId>csrf</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-    </parent>
-
+        <version>1.0-SNAPSHOT</version>
+		<relativePath>../..</relativePath>
+	</parent>
 
 	<dependencies>
 		<dependency>

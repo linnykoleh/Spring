@@ -16,6 +16,7 @@
 
 	<modules>
 		<module>evil</module>
+		<module>secure/admin</module>
 
 	<!--	<module>victim/admin</module>
 
