@@ -15,6 +15,7 @@
 		<module>Authorization</module>
 		<module>CommonAttacks</module>
 		<module>MethodSecurity</module>
+		<module>SecurityTesting</module>
 	</modules>
 
 </project>
