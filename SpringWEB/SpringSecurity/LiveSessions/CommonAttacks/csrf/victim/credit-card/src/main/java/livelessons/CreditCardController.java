@@ -9,10 +9,6 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Rob Winch
- * @since 5.1
- */
 @Controller
 public class CreditCardController {
 	private Map<String, String> principalNameToCreditCardNumber = new HashMap<>();

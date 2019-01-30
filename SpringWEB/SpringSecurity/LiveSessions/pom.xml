@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <packaging>pom</packaging>
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<packaging>pom</packaging>
 
-    <groupId>com.learning.linnyk</groupId>
-    <artifactId>LiveSessions</artifactId>
-    <version>1.0-SNAPSHOT</version>
+	<groupId>com.learning.linnyk</groupId>
+	<artifactId>LiveSessions</artifactId>
+	<version>1.0-SNAPSHOT</version>
 
-    <modules>
-        <module>BootCamp</module>
-        <module>Authentication</module>
-        <module>Authorization</module>
-        <module>CommonAttacks</module>
-        <module>MethodSecurity</module>
-    </modules>
+	<modules>
+		<module>BootCamp</module>
+		<module>Authentication</module>
+		<module>Authorization</module>
+		<module>CommonAttacks</module>
+		<module>MethodSecurity</module>
+	</modules>
 
 </project>

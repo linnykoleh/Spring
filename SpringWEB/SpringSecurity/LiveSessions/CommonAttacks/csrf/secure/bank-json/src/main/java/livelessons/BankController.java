@@ -10,10 +10,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
-/**
- * @author Rob Winch
- * @since 5.1
- */
 @RestController
 public class BankController {
 

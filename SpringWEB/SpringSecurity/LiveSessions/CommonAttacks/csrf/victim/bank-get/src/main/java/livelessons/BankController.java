@@ -7,10 +7,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
-/**
- * @author Rob Winch
- * @since 5.1
- */
 @Controller
 public class BankController {
 	private double balance = 100.00;

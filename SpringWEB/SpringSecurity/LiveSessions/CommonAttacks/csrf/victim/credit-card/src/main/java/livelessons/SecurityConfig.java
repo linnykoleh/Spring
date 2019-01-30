@@ -8,10 +8,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
-/**
- * @author Rob Winch
- * @since 5.1
- */
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
