@@ -6,4 +6,3 @@
 
 [>> Wiki](https://github.com/LinnykOleh/Spring/wiki)	
 
-**Copyright [2018 - 2019] [Linnyk Oleh]**
