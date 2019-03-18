@@ -3535,6 +3535,7 @@ public class HibernateUserRepo implements UserRepo {
     - `TransientDataAccessException` – these are the exception when recovery is possible without any explicit step, e.g. when there is a timeout to the database, you are retrying after few seconds.
 - The `DataAccessException` has a ton of subclasses which you can dig through, the hierarchy is extensive.
 - The logic done by `org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor`
+	- Bean post-processor that automatically applies persistence exception translation to any bean marked with Spring's `@Repository` annotation 
 
 ## Spring + JPA Java configuration
 
