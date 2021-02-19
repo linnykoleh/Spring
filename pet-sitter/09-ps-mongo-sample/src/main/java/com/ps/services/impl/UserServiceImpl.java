@@ -25,7 +25,6 @@ public class UserServiceImpl implements UserService {
         return userRepo.findOne(id);
     }
 
-
     @Override
     public void create(String email, String password, UserType userType) {
         User user = buildUser(email);

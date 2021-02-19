@@ -58,7 +58,6 @@
         <module>12-ps-remoting-solution</module>
         <module>13-ps-jms-practice</module>
         <module>13-ps-jms-solution</module>
-        <module>14-ps-ws-sample</module>
         <module>15-ps-ws-rest-practice</module>
         <module>15-ps-ws-rest-solution</module>
         <module>15-ps-rest-boot-sample</module>
@@ -289,7 +288,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.4</version>
+            <version>1.18.2</version>
         </dependency>
 
         <!--javax.servlet-->

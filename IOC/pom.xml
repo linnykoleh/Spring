@@ -10,7 +10,6 @@
     <packaging>pom</packaging>
 
     <properties>
-        <spring.version>5.0.3.RELEASE</spring.version>
         <apache-commons.version>3.7</apache-commons.version>
     </properties>
 
@@ -19,32 +18,25 @@
         <module>Cert</module>
     </modules>
 
-    <dependencyManagement>
-        <dependencies>
-            <!--
-                Used to define only ones main version for all spring dependencies
-                Another Spring dependencies will use spring-framework-bom version
-            -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>${spring.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <dependencies>
 
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <version>3.2.0.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
+            <version>3.2.0.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>3.2.0.RELEASE</version>
         </dependency>
 
         <!-- Apache commons -->
@@ -62,8 +54,10 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <version>5.2.8.RELEASE</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
