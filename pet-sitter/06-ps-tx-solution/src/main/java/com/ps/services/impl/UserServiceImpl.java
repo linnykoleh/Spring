@@ -24,24 +24,27 @@ public class UserServiceImpl implements UserService {
         this.userRepo = userRepo;
     }
 
-//    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public User findById(Long id) {
         logger.debug(">>> Preparing to execute SERVICE.findById");
         User user = userRepo.findById(id);
         logger.debug(">>> Done executing REPO.findById");
+        int i = countUsers(); // called not in transaction
+        logger.debug(">>> i" + i);
         return user;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public int countUsers() {
+        return userRepo.countUsers();
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public void htmlAllByNameAll(String name) {
         userRepo.htmlAllByName(name);
-    }
-
-    @Override
-    public int countUsers() {
-        return userRepo.countUsers();
     }
 
     @Transactional(rollbackFor = MailSendingException.class)
