@@ -19,7 +19,7 @@
         <joda.version>2.9.9</joda.version>
         <junit.version>4.12</junit.version>
         <apache-commons.version>3.7</apache-commons.version>
-        <log4j.version>2.8.2</log4j.version>
+        <log4j.version>2.16.0</log4j.version>
     </properties>
 
 
