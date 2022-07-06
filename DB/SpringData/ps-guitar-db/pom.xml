@@ -17,7 +17,7 @@
     <properties>
         <maven.test.failure.ignore>true</maven.test.failure.ignore>
         <spring.framework.version>4.1.2.RELEASE</spring.framework.version>
-        <spring.data.version>1.7.1.RELEASE</spring.data.version>
+        <spring.data.version>1.11.23.RELEASE</spring.data.version>
     </properties>
 
     <dependencies>
