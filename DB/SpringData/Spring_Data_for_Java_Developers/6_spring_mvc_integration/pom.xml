@@ -23,7 +23,7 @@
     </build>
 
     <properties>
-        <spring.framework.version>4.1.7.RELEASE</spring.framework.version>
+        <spring.framework.version>5.2.20.RELEASE</spring.framework.version>
     </properties>
 
     <dependencyManagement>
